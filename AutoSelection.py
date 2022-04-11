@@ -36,9 +36,13 @@ def AutoSelection(semester, username):
     print("Got sections data!\n")
 
     prepData = data2Dict(sectData, typeList, prefData)
-    allPlans = AlgorithmV2_1.autoMatchCourses(prepData, SameTeacherDict)
-    # allPlans = AlgorithmV2.autoMatchCourses(prepData, SameTeacherDict)
-    if (len(allPlans) == 0):
+
+    # choose one of the following algorithms
+    # allPlans = AlgorithmV2_1.autoMatchCourses(prepData, SameTeacherDict)
+    allPlans = AlgorithmV2.autoMatchCourses(prepData, SameTeacherDict, 1000)
+    # 3rd Arg: set max num of plans, "-1" means get all plans
+
+    f(len(allPlans) == 0):
         print("NO SCHEDULE IS AVAILABLE")
         return
     allPlansList = allPlan2List(allPlans, list(allPlans[0].keys()))

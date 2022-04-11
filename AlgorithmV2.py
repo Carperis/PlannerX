@@ -3,12 +3,12 @@
 import re
 
 
-def autoMatchCourses(prepData, SameTeacherDict):
+def autoMatchCourses(prepData, SameTeacherDict, limit):
     SameTeacherSect = getSameTeacherSections(prepData, SameTeacherDict)
     sectList = getSectList(prepData)  # ['CAS CH 131,LEC' ...]
     scheduleLayers = getScheduleLayers(sectList, prepData)
     numSect = len(sectList)
-    allPlans = getPlans(scheduleLayers, numSect, sectList, SameTeacherSect)
+    allPlans = getPlans(scheduleLayers, numSect, sectList, SameTeacherSect, limit)
     return allPlans
 
 
@@ -127,13 +127,13 @@ def copyLayers(layers):
     return newlayers
 
 
-def getPlans(scheduleLayers, numSect, sectList, SameTeacherSect):
+def getPlans(scheduleLayers, numSect, sectList, SameTeacherSect, limit):
     allPlans = []
     onePlan = dict.fromkeys(sectList)
     depth = numSect
     alist = [0] * numSect
     numPlanDone = [0]
-    planLimit = -1
+    planLimit = limit
 
     # see https://stackoverflow.com/questions/4138851/recursive-looping-function-in-python
     def recurse(layers, depth):
@@ -159,7 +159,7 @@ def getPlans(scheduleLayers, numSect, sectList, SameTeacherSect):
             alist[depth - 1] += 1
             print("\r", end="")
             print(alist, end="")
-            print(" %d Zip Plans Done" % (numPlanDone[0]), end="")
+            print(" %d Plans Done" % (numPlanDone[0]), end="")
             recurse(copyLayers(newlayers), depth-1)
 
     recurse(copyLayers(scheduleLayers), depth)
