@@ -2,7 +2,7 @@ import os
 import itertools
 from os import curdir
 import re
-
+import xlrd
 from xlrd import count_records
 
 # a = 0
@@ -157,8 +157,8 @@ from xlrd import count_records
 # x = [[1], []]
 # print(any(x))
 
-x = {'a': {'a1': [1]}, 'b': {'b1': [1]}}
-print(len(x))
+# x = {'a': {'a1': [1]}, 'b': {'b1': [1]}}
+# print(len(x))
 
 # x = [1, 2]
 # x = x + [3, 4]
@@ -170,11 +170,11 @@ print(len(x))
 # x.append(str)
 # print(len("123"))
 
-x = [1, 2]
-y = list(x)
-y[0] = 3
-print(x)
-print(y)
+# x = [1, 2]
+# y = list(x)
+# y[0] = 3
+# print(x)
+# print(y)
 
 # print([1, 2] + [3, 4])
 # print(False in [False])
@@ -206,17 +206,17 @@ print(y)
 # alist = [0] * 10
 # print(alist)
 
-def copyLayers(layers):
-    newlayers = {}
-    for key, layer in layers.items():
-        newlayers[key] = []
-        i = 0
-        for rowList in layer:
-            newlayers[key].append([])
-            for colList in rowList:
-                newlayers[key][i].append(colList.copy())
-            i += 1
-    return newlayers
+# def copyLayers(layers):
+#     newlayers = {}
+#     for key, layer in layers.items():
+#         newlayers[key] = []
+#         i = 0
+#         for rowList in layer:
+#             newlayers[key].append([])
+#             for colList in rowList:
+#                 newlayers[key][i].append(colList.copy())
+#             i += 1
+#     return newlayers
 
 
 # x = {'a': [[[1], [2]], [[3], [4]]], 'b': [[[5], [6]], [[7], [8]]]}
@@ -227,19 +227,33 @@ def copyLayers(layers):
 # x = y
 # print(y)
 
-x = {'a': []}
-print([''][0])
+# x = {'a': []}
+# print([''][0])
 
 
-print([0, 1] in [0, 2, 1])
+# print([0, 1] in [0, 2, 1])
 
 
-def clear(): return os.system('clear')
+# def clear(): return os.system('clear')
 
 
-clear()
+# clear()
 
-[a, b] = [1, 2]
-print(a, b)
+# [a, b] = [1, 2]
+# print(a, b)
 
+# def checkFolder(savePath):
+#     folders = savePath.split("/")
+#     newPath = folders[0] + "/"
+#     for i in range(1, len(folders)):
+#         pathNotExist = bool(1 - (os.path.exists(newPath)))
+#         if(pathNotExist):
+#             os.mkdir(newPath)
+#         newPath = newPath + folders[i] + "/"
+#     print("done")
+
+
+# checkFolder("./Semesters/abc/")
+
+xlrd.open_workbook("./Semesters/2022-FALL/2021-FALL Sections/CAS AA 103.xls")
 

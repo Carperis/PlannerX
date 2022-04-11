@@ -1,13 +1,25 @@
 # -*- coding: utf-8 -*-
-
+import os
 import xlwt
 
 
-def GetPreference(saveName):
+def GetPreference(username):
     dataList = getData()
-    savePath = "./"
-    firstRow = ["Code", "Sections", "Same Teacher", ]
+    savePath = "./User/" + username + "/"
+    checkFolder(savePath)
+    firstRow = ["Course"]
+    saveName = "Preferences " + username
     saveData(dataList, savePath, saveName, firstRow)
+
+
+def checkFolder(savePath):
+    folders = savePath.split("/")
+    newPath = folders[0] + "/"
+    for i in range(1, len(folders)):
+        pathNotExist = bool(1 - (os.path.exists(newPath)))
+        if(pathNotExist):
+            os.mkdir(newPath)
+        newPath = newPath + folders[i] + "/"
 
 
 def getData():
@@ -20,18 +32,18 @@ def getData():
         ans = input("Continue? y/n: ")
         if(ans == "y"):
             # 获取课程代码
-            code = input("What is Course %d code: " % courseNum)
-            data.append(code)
+            course = input("What is Course %d code: " % courseNum)
+            data.append(course)
 
-            # 获取课程种类
-            scores = input(
-                "What kinds of section does Course %d have: " % courseNum)
-            data.append(scores)
+            # # 获取课程种类
+            # scores = input(
+            #     "What kinds of section does Course %d have: " % courseNum)
+            # data.append(scores)
 
-            # 获取同教师Sections
-            sections = input(
-                "What sections above will be taught by the same teacher: " % courseNum)
-            data.append(sections)
+            # # 获取同教师Sections
+            # sections = input(
+            #     "What sections above will be taught by the same teacher: " % courseNum)
+            # data.append(sections)
 
             print("Get your course %d data!" % courseNum)
             dataList.append(data)
@@ -46,7 +58,7 @@ def getData():
 def saveData(dataList, savePath, saveName, firstRow):
     book = xlwt.Workbook(encoding="utf-8")  # 创建workbook对象
     # 创建表单对象，cell_overwrite_ok允许单元格被覆盖
-    sheetName = "My Preference"
+    sheetName = "Preferences"
     sheet = book.add_sheet(sheetName, cell_overwrite_ok=True)
     for i in range(0, len(firstRow)):
         sheet.write(0, i, firstRow[i])
@@ -64,5 +76,5 @@ def saveData(dataList, savePath, saveName, firstRow):
 
 
 if __name__ == "__main__":
-    prefName = "My Preference"
-    GetPreference(prefName)
+    username = "Sam"
+    GetPreference(username)

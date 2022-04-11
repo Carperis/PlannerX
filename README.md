@@ -1,1 +1,1 @@
-# PlannerX
+# Intelligent-BU-Course-Selection

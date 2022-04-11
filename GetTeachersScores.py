@@ -5,16 +5,27 @@ import re  # 正则表达式，文字匹配
 import urllib.request
 import urllib.error  # 定制url
 import xlwt  # excel操作
-import sqlite3  # SQL数据库操作
 import json
+import os
 
 
 def GetTeachersScores():
     baseURL = ["https://solr-aws-elb-production.ratemyprofessors.com//solr/rmp/select/?solrformat=true&rows=",
                "&wt=json&json.wrf=noCB&callback=noCB&q=*%3A*+AND+schoolid_s%3A", "&defType=edismax&qf=teacherfirstname_t%5E2000+teacherlastname_t%5E2000+teacherfullname_t%5E2000+autosuggest&bf=pow(total_number_of_ratings_i%2C2.1)&sort=total_number_of_ratings_i+desc&siteName=rmp&rows=20&start=", "&fl=pk_id+teacherfirstname_t+teacherlastname_t+total_number_of_ratings_i+averageratingscore_rf+schoolid_s&fq="]
     dataList = getData(baseURL)
-    savePath = "./"
+    savePath = "./Semesters/"
+    checkFolder(savePath)
     saveData(dataList, savePath)
+
+
+def checkFolder(savePath):
+    folders = savePath.split("/")
+    newPath = folders[0] + "/"
+    for i in range(1, len(folders)):
+        pathNotExist = bool(1 - (os.path.exists(newPath)))
+        if(pathNotExist):
+            os.mkdir(newPath)
+        newPath = newPath + folders[i] + "/"
 
 
 def getData(baseURL):
@@ -105,9 +116,10 @@ def saveData(dataList, savePath):
         data = dataList[i]
         for j in range(0, len(data)):
             sheet.write(i+1, j, data[j])  # i+1是因为第一行已经有了标题
-        print("已保存到第%d条" % (i+1))
+        # print("已保存到第%d条" % (i+1))
     savePath = savePath + saveName + ".xls"
     book.save(savePath)
+    print("Data saved!")
 
     # 3.保存数据
 if __name__ == "__main__":

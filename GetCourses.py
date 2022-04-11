@@ -6,7 +6,6 @@ import urllib.request
 import urllib.error  # 定制url
 import xlwt  # excel操作
 import os
-import sqlite3  # SQL数据库操作
 
 
 def GetCourses(semester):
@@ -14,15 +13,22 @@ def GetCourses(semester):
                "&nolog=", "&search_adv_all=", "&yearsem_adv=", "&credits=", "&hub_match=", "&pagesize="]
     dataList = getData(baseURL, semester)
 
-    savePath = "./" + semester + "/"
-    pathNotExist = bool(1 - (os.path.exists(savePath)))
-    if(pathNotExist):
-        os.mkdir(savePath)
+    savePath = "./Semesters/" + semester + "/"
+    checkFolder(savePath)
+    
     saveName = "BU Courses " + semester
     firstRow = ("Code", "Name", "Prerequisite", "Corequisite", "Intro", "Credits", "Hub Unit 1",
                 "Hub Unit 2", "Hub Unit 3", "Hub Unit 4", "Link")
     saveData(dataList, savePath, saveName, firstRow)
 
+def checkFolder(savePath):
+    folders = savePath.split("/")
+    newPath = folders[0] + "/"
+    for i in range(1, len(folders)):
+        pathNotExist = bool(1 - (os.path.exists(newPath)))
+        if(pathNotExist):
+            os.mkdir(newPath)
+        newPath = newPath + folders[i] + "/"
 
 findCode = re.compile(r'<h6>(.*?)</h6>')
 findName = re.compile(r'<h2>(.*?)</h2>')
@@ -164,6 +170,6 @@ def saveData(dataList, savePath, saveName, firstRow):
 
 
 if __name__ == "__main__":
-    semester = "2022-SPRG"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
+    semester = "2022-SUMM"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
     GetCourses(semester)
     # getAndSaveSections("https://www.bu.edu/phpbin/course-search/section/?t=casaa103&amp;semester=2021-SUMM&amp;return=%2Fphpbin%2Fcourse-search%2Fsearch.php%3Fpage%3D0%26pagesize%3D100%26adv%3D1%26nolog%3D%26search_adv_all%3D%26yearsem_adv%3D2021-SUMM%26credits%3D%2A%26hub_match%3Dall%26pagesize%3D100", "CAS AA 103", "2021-SUMM")

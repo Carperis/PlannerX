@@ -9,7 +9,7 @@ import time
 def main():
     semester = "2022-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
     scorPath = "./BU Teachers Scores.xls"
-    courPath = "./" + semester + "/" + "BU Courses " + semester + ".xls"
+    courPath = "./Semesters/" + semester + "/" + "BU Courses " + semester + ".xls"
     prefPath = "./My Preference F22.xls"
 
     prefSheetName = "My Preference"
@@ -29,7 +29,7 @@ def main():
         types = course[1].split(",")
         typeList.append(types)
         courCode = course[0]
-        sectPath = "./" + semester + "/" + semester + " Sections/" + courCode + ".xls"
+        sectPath = "./Semesters" + semester + "/" + semester + " Sections/" + courCode + ".xls"
         sections = readSectData(sectPath, courCode, scorData)
         sections = clearErrors(sections)
         sectData.append(sections)

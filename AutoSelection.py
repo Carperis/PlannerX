@@ -7,11 +7,11 @@ import AlgorithmV2
 import AlgorithmV2_1
 
 
-def AutoSelection(semester, prefName):
-    prefSheetName = "My Preference"
-    prefPath = "./" + prefName + ".xls"
-    schedulesPath = "./Results/"
-    allPlansInfoPath = "./Results/"
+def AutoSelection(semester, username):
+    prefSheetName = "Preferences"
+    prefPath = "./User/" + username + "/" + "Preferences " + username + ".xls"
+    schedulesPath = "./User/" + username + "/"
+    allPlansInfoPath = "./User/" + username + "/"
 
     prefData = readPrefData(prefPath, prefSheetName)
     print("Got preference data!")
@@ -19,15 +19,20 @@ def AutoSelection(semester, prefName):
     typeList = []
     SameTeacherDict = {}
     for course in prefData:
-        types = course[1].split(",")
-        SameTeacherTypes = course[2].split(",")
-        typeList.append(types)
-        courCode = course[0]
-        SameTeacherDict[courCode] = SameTeacherTypes
-        sectPath = "./" + semester + "/" + semester + " Sections/" + courCode + ".xls"
+        courCode = course[0]  # get course code
+
+        sectPath = "./Semesters/" + semester + "/" + \
+            semester + " Sections/" + courCode + ".xls"
         sections = readSectData(sectPath, courCode)
         sections = clearErrors(sections)
         sectData.append(sections)
+
+        types = getTypes(sections)
+        typeList.append(types)
+
+        SameTeacherTypes = getSameTeacherTypes(types, sections)
+        SameTeacherDict[courCode] = SameTeacherTypes
+
     print("Got sections data!\n")
 
     prepData = data2Dict(sectData, typeList, prefData)
@@ -41,19 +46,59 @@ def AutoSelection(semester, prefName):
 
     firstRow = ("Section", "Open Seats", "Instructor", "Type",
                 "Location", "Schedule", "Dates", "Notes", "Semester", "Code")
-    Info_bookName = semester + "_" + prefName + "_" + "Info"
+    Info_bookName = semester + " " + username + " " + "Info"
     saveMultiData(allPlansInfo, allPlansInfoPath,
                   Info_bookName, "Plan", firstRow)  # Save mult
 
     schedules = []
     for plan in allPlansInfo:
         schedules.append(getAndCheckSchedule(plan, ""))
-    Schedules_bookName = semester + "_" + prefName + "_" + "Schedules"
+    Schedules_bookName = semester + " " + username + " " + "Schedules"
     saveMultiData(schedules, schedulesPath,
                   Schedules_bookName, "Schedule", [])  # Save
 
 
 # Operate Data
+
+def getTypes(sections):
+    types = []
+    for i in range(0, len(sections)):
+        type = sections[i][3]
+        if (type not in types):
+            types.append(type)
+    return types
+
+
+def getSameTeacherTypes(types, sections):
+    result = []
+    professors = {}
+    for type in types:
+        subprofessors = []
+        noStaff = True
+        for i in range(0, len(sections)):
+            if(sections[i][3] == type):
+                subprofessors.append(sections[i][2])
+                if (sections[i][2] == "Staff"):
+                    noStaff = False
+        if (noStaff):
+            professors[type] = subprofessors
+    for type1 in list(professors.keys()):
+        isSame = False
+        for name1 in professors[type1]:
+            for type2 in list(professors.keys()):
+                if (type2 != type1):
+                    for name2 in professors[type2]:
+                        if (name1 == name2):
+                            isSame = True
+                            result.append(type1)
+                            break
+                if (isSame):
+                    break
+            if (isSame):
+                break
+    if (len(result) == 0):
+        result = [""]
+    return result
 
 
 def clearErrors(sections):
@@ -248,6 +293,6 @@ def saveMultiData(multiData, savePath, bookName, sheetName, firstRow):
 if __name__ == "__main__":
     start_time = time.time()
     semester = "2022-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
-    prefName = "My Preference F22_v2"
-    AutoSelection(semester, prefName)
+    username = "Sam"
+    AutoSelection(semester, username)
     print("--- %s seconds ---" % (time.time() - start_time))
