@@ -42,7 +42,7 @@ def AutoSelection(semester, username):
     allPlans = AlgorithmV2.autoMatchCourses(prepData, SameTeacherDict, 1000)
     # 3rd Arg: set max num of plans, "-1" means get all plans
 
-    f(len(allPlans) == 0):
+    if(len(allPlans) == 0):
         print("NO SCHEDULE IS AVAILABLE")
         return
     allPlansList = allPlan2List(allPlans, list(allPlans[0].keys()))
