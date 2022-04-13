@@ -255,5 +255,9 @@ from xlrd import count_records
 
 # checkFolder("./Semesters/abc/")
 
-xlrd.open_workbook("./Semesters/2022-FALL/2021-FALL Sections/CAS AA 103.xls")
+# xlrd.open_workbook("./Semesters/2022-FALL/2021-FALL Sections/CAS AA 103.xls")
+
+list = ["",""]
+list[0] = 1;
+print(list)
 
