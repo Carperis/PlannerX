@@ -6,7 +6,6 @@ import xlwt
 import AlgorithmV2
 import AlgorithmV2_1
 
-
 def AutoSelection(semester, username):
     prefSheetName = "Preferences"
     prefPath = "./User/" + username + "/" + "Preferences " + username + ".xls"

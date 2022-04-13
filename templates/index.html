@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Task Master</title>
+{% endblock %}
+
+{% block body %}
+<center>
+    {% for cls in classes %}
+    {{cls}}<br>
+    {% endfor %}
+    <form action="/" method="POST">
+        <input type="text" name="content" id="content" placeholder="Classes">
+        <input type="text" name="username" id="username" placeholder="Name">
+        <input type="submit" value="Add Task">
+    </form>
+</center>
+{% endblock %}
