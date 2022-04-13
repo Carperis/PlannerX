@@ -1,6 +1,7 @@
-from flask import Flask, redirect, render_template, request
+from flask import Flask, redirect, render_template, request, flash
 import GetPreferenceWeb
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 
 @app.route('/', methods=['POST', 'GET'])
@@ -15,7 +16,13 @@ def index():
         prefDict["AvgScore"] = [3.5]
         prefDict["EarlyTime"] = [8]
         prefDict["LateTime"] = [18]
-        GetPreferenceWeb.GetPreference(username, prefDict, "2022-FALL")
+        result = GetPreferenceWeb.GetPreference(
+            username, prefDict, "2022-FALL")
+        if (result == False):
+            print(classes)
+            flash("Invalid course input!")
+        else:
+            flash("Preferences Saved!")
     else:
         pass
     return render_template('index.html', classes=classes)
