@@ -41,6 +41,8 @@ browser.find_element(By.ID, "passcode").click()
 sleep(1)
 # pageSource = browser.page_source
 # print(pageSource)
+
+
 i = ""
 while(i != "q"):
     i = input("Enter course: ")
