@@ -45,5 +45,7 @@ def timeExtrema (filename):
     return timeExteme
 
 #test
-name = 'Results/2022-FALL_My Preference F22_v2_Info.xls'
+username = input("Enter your user name: ")
+name = "./User/" + username + "/2022-Fall "+ username +" Info.xls"
+print(name)
 timeExtrema(name)
