@@ -9,6 +9,7 @@ def timeExtrema(filename):
     endMin = 0
     for j in range(len(df)):
         name = 'Plan' + str(j+1)
+        sth = df[name].shape[0]
         for i in range(df[name].shape[0]):
             a = df[name].loc[i].at["Schedule"]
             days, start, mix, when2 = a.split(' ')
@@ -46,15 +47,12 @@ def timeExtrema(filename):
     timeExteme = [startMax, endMin]
     return timeExteme
 
-<<<<<<< HEAD
 #test
 username = input("Enter your user name: ")
 name = "./User/" + username + "/2022-Fall "+ username +" Info.xls"
 print(name)
 timeExtrema(name)
-=======
 
 # test
 name = './User/Sam/2022-FALL Sam Info.xls'
 timeExtrema(name)
->>>>>>> 338ea482229d565651ab3569e00fd079efc1034a

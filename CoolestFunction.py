@@ -32,6 +32,8 @@ def GetAverageScores(name, year, semester):
     # Pair the teacher's scores with their scores
     for i in range(1, sheet.nrows):
         if sheet.cell_value(i, 0) in scores and scores[sheet.cell_value(i, 0)] == -1:
+            a = sheet.cell_value(i, 0)
+            b = scores[sheet.cell_value(i, 0)]
             scores[sheet.cell_value(i, 0)] = sheet.cell_value(i, 3)
 
     # Use the dict to find the average of the teacher's scores
@@ -42,6 +44,7 @@ def GetAverageScores(name, year, semester):
     for cursheet in book2.sheets():
         sum = 0
         num = 0
+        a = cursheet.nrows
         for row in range(1, cursheet.nrows):
             # To be edited: Currently, this only doesn't count repeat teachers of the same class if the PREVIOUS row has the same teacher and class
             # Doesnt work if there are more than 2 sections of a class (Like if it has a lecture, discussion, and lab would count same prof twice if same prof for lec and lab)

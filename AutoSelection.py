@@ -60,7 +60,6 @@ def AutoSelection(semester, username):
     saveMultiData(schedules, schedulesPath,
                   Schedules_bookName, "Schedule", [])  # Save
 
-
 # Operate Data
 
 def getTypes(sections):
