@@ -209,6 +209,37 @@ def showPrevious(id):
     # return render_template('index.html', msg=msg, users=users)
 
 
+@app.route('/goto', methods=['POST'])
+def goto():
+    msg = []
+    try:
+        num = int(request.form['num'])
+        num = num - 1
+        user = PlannerX.query.get(1)
+        temp = user.planNum
+        user.planNum = num
+        db.session.commit()
+        s = user.semester
+        u = user.username
+        try:
+            rankPath = "./User/" + u + "/"
+            rankName = s + " " + u + " Ranking"
+            book = xlrd.open_workbook(rankPath + rankName + ".xls")
+            sheet = book.sheet_by_name(rankName)
+            planName = sheet.cell_value(num, 0)
+        except:
+            planName = "Plan " + str(num+1)
+        try:
+            GetSchedulePic.GetSchedulePic(s, u, planName)
+        except:
+            user.planNum = temp
+            db.session.commit()
+    except:
+        msg.append("Can't create your schedules")
+    session['messages'] = msg
+    return redirect('/')
+
+
 if __name__ == "__main__":
     # from web import db
     # db.create_all()

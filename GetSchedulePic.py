@@ -2,8 +2,8 @@ import os
 import xlrd
 import pdfschedule
 from datetime import datetime
-from reportlab.lib import pagesizes
 import pdf2image
+from reportlab.lib.colors import black
 
 
 def convertTime(time):
@@ -58,6 +58,7 @@ def GetSchedulePic(semesterNew, username, planName):
     outfile = "./static/schedule.pdf"
     c = pdfschedule.Canvas(outfile, (800, 600))
     c.setFont("Helvetica", 14)
+
     pwidth = 800
     pheight = 600
     inch = 20
@@ -76,6 +77,8 @@ def GetSchedulePic(semesterNew, username, planName):
         os.remove("./static/schedule.png")
     except:
         pass
+
+    c.setFillColor(black)
     c.save()
     image = pdf2image.convert_from_path("./static/schedule.pdf")[0]
     image.save("./static/schedule.png")
