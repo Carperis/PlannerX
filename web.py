@@ -40,10 +40,6 @@ def index():
     prefDict = {}
 
     if (request.method == 'POST'):
-        # if (PlannerX.query.all()):
-        #     users = PlannerX.query.all()
-        #     for user in users:
-        #         db.session.delete(user)
         try:
             courses = (request.form['courses']).strip()
             username = request.form['username']
@@ -115,8 +111,6 @@ def getPlans(id):
 
     session['messages'] = msg
     return redirect('/')
-    # users = PlannerX.query.all()
-    # return render_template('index.html', msg=msg, users=users)
 
 
 @app.route('/rankplans/<int:id>')
@@ -135,8 +129,6 @@ def rankPlans(id):
 
     session['messages'] = msg
     return redirect('/')
-    # users = PlannerX.query.all()
-    # return render_template('index.html', msg=msg, users=users)
 
 
 @app.route('/shownext/<int:id>')
@@ -170,8 +162,6 @@ def showNext(id):
 
     session['messages'] = msg
     return redirect('/')
-    # users = PlannerX.query.all()
-    # return render_template('index.html', msg=msg, users=users)
 
 
 @app.route('/showprevious/<int:id>')
@@ -205,8 +195,6 @@ def showPrevious(id):
 
     session['messages'] = msg
     return redirect('/')
-    # users = PlannerX.query.all()
-    # return render_template('index.html', msg=msg, users=users)
 
 
 @app.route('/goto', methods=['POST'])
@@ -236,6 +224,22 @@ def goto():
             db.session.commit()
     except:
         msg.append("Can't create your schedules")
+    session['messages'] = msg
+    return redirect('/')
+
+
+@app.route('/delete')
+def delete():
+    msg = []
+    try:
+        users = PlannerX.query.all()
+        for user in users:
+            db.session.delete(user)
+            db.session.commit()
+        msg.append("Successfully delete your records")
+    except:
+        msg.append("Fail to delete your records!")
+    print(PlannerX.query.all())
     session['messages'] = msg
     return redirect('/')
 
