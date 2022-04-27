@@ -57,7 +57,9 @@ def GetSchedulePic(semesterNew, username, planName):
     # outfile = "./static/" + semesterNew + " " + username + " Schedule.pdf"
     outfile = "./static/schedule.pdf"
     c = pdfschedule.Canvas(outfile, (800, 600))
-    c.setFont("Helvetica", 14)
+    c.setFillColorRGB(1, 1, 1)
+    c.setStrokeColorRGB(1, 1, 1)
+    c.setFont("Helvetica", 20)
 
     pwidth = 800
     pheight = 600
@@ -80,7 +82,7 @@ def GetSchedulePic(semesterNew, username, planName):
 
     c.setFillColor(black)
     c.save()
-    image = pdf2image.convert_from_path("./static/schedule.pdf")[0]
+    image = pdf2image.convert_from_path("./static/schedule.pdf", fmt='png', transparent=True)[0]
     image.save("./static/schedule.png")
 
 

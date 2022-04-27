@@ -1,27 +1,27 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<title>BU PlannerX</title>
+
 {% endblock %}
 
 {% block body %}
-<div class="container-fluid">
-    <div id="top">
-        <h1 id="web_name">BU PlannerX</h1>
-    </div>
+
+<div class="flex justify-between py-2 px-48 bg-blue-500 text-white">
+    <h1 class="text-white text-lg mainfont-bold my-auto">BU PlannerX</h1>
+    <button class="bg-white text-blue-500 px-8 py-2 rounded-lg mainfont-bold">Login</button>
+</div>
+
+<div class="container-fluid bg-gray-900">
     <div class="row">
         <div class="col-md-12">
             {% if msg != [] %}
             <div class="alert alert-success alert-dismissable">
 
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-                    x
+                    <i class="fa-solid fa-circle-xmark fa-2xs"></i>
                 </button>
-                <h4>
-                    Message:
-                </h4>
                 {% for message in msg%}
-                <div class="alert" style="margin-bottom: 0; padding-top: 0; padding-bottom: 0; ">{{ message }}</div>
+                <div class="alert mainfont-bold" style="margin-bottom: 0; padding-top: 0; padding-bottom: 0; ">{{ message }}</div>
                 {% endfor %}
             </div>
             {% endif %}
@@ -29,25 +29,25 @@
                 {% for user in users%}
                 {% if (user.planNum != -1) %}
                 <div class="col-md-2" style="display: flex; align-items: center; justify-content: center;">
-                    <button class="btn btn-primary" onclick="window.location.href='/showprevious/{{
+                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg" onclick="window.location.href='/showprevious/{{
                         user.id }}';">
                         Show Previous
                     </button>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-8 mainfont-bold text-white">
                     <form role="form" action="/goto" method="POST"
                         style="display: flex; align-items: center; justify-content: center;">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg">
                             Go to
                         </button>
                         Plan
-                        <input type="number" name="num" id="num" value="{{user.planNum+1}}" class="form-control">
+                        <input type="number" name="num" id="num" value="{{user.planNum+1}}" class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
                     </form>
                     <br>
                     <img src="./static/schedule.png" id="img" style="width: 100%; height: 600;" />
                 </div>
                 <div class="col-md-2" style="display: flex; align-items: center; justify-content: center;">
-                    <button class="btn btn-primary" onclick="window.location.href='/shownext/{{
+                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg" onclick="window.location.href='/shownext/{{
                         user.id }}';">
                         Show Next
                     </button>
@@ -55,30 +55,32 @@
                 {% endif %}
                 {% endfor %}
             </div>
-            <div class="row">
+            <div class="row mainfont-bold text-white">
                 <div class="col-md-6">
                     <form role="form" action="/" method="POST">
                         <div class="form-group">
+                            <i class="fa-solid fa-user fa-inverse"></i>
                             <label for="username">
                                 Username
                             </label>
                             <input type="text" name="username" id="username" placeholder="Name"
                                 value="{% if (not (request.form['username'])) %}{% for user in users %}{{ user.username }}{% endfor %}{% else %}{{request.form['username']}}{% endif %}"
-                                class="form-control">
+                                class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
                         </div>
 
                         <div class="form-group">
+                            <i class="fa-solid fa-calendar-days fa-inverse"></i>
                             <label for="content">
                                 Semester
                             </label>
                             <div style="display: flex;">
-                                <select class="form-control" name="years" id="">
+                                <select class="bg-gray-800 text-white w-full p-2 rounded-lg mainfont-regular" name="years" id="">
                                     <option value="2022">2022</option>
                                     <option value="2023">2023</option>
                                     <option value="2024">2024</option>
                                     <option value="2025">2025</option>
                                 </select>
-                                <select class="form-control" name="term" id="">
+                                <select class="bg-gray-800 text-white w-full p-2 rounded-lg mainfont-regular" name="term" id="">
                                     <option value="SPRG" {% if (not (request.form['term'])) %}{% for user in users %}{%
                                         if (user.semester.split("-")[1]=="SPRG" ) %}selected="selected" {% endif %}{%
                                         endfor %}{% else %}{% if ( request.form['term']=="SPRG" ) %}selected="selected"
@@ -103,48 +105,48 @@
                         </div>
 
                         <div class="form-group">
-
+                            <i class="fa-solid fa-book-open-reader fa-inverse"></i>
                             <label for="content">
                                 Classes
                             </label>
                             <input type="text" name="courses" id="courses" placeholder="Classes"
                                 value="{% if (not (request.form['courses'])) %}{% for user in users %}{{ user.courses }}{% endfor %}{% else %}{{request.form['courses']}}{% endif %}"
-                                class="form-control">
+                                class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
                         </div>
 
 
                         <div class="form-group">
-
+                            <i class="fa-solid fa-chalkboard-user fa-inverse"></i>
                             <label for="content">
-                                Enter your average score
+                                Average RMP Score
                             </label>
                             <input type="number" step="0.01" name="AvgScore" id="AvgScore"
                                 placeholder="Expected Average Score"
                                 value="{% if (not (request.form['AvgScore'])) %}{% for user in users %}{{ user.AvgScore }}{% endfor %}{% else %}{{request.form['AvgScore']}}{% endif %}"
-                                class="form-control">
+                                class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
                         </div>
 
                         <div class="form-group">
-
+                            <i class="fa-solid fa-person-running fa-inverse fa-lg"></i>
                             <label for="content">
-                                Enter your prefer starting time
+                                Prefer Starting Time
                             </label>
                             <input type="time" name="EarlyTime" id="EarlyTime" placeholder="Expected starting time"
                                 value="{% if (not (request.form['EarlyTime'])) %}{% for user in users %}{{ user.EarlyTime }}{% endfor %}{% else %}{{request.form['EarlyTime']}}{% endif %}"
-                                class="form-control">
+                                class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
                         </div>
 
 
                         <div class="form-group">
-
+                            <i class="fa-solid fa-person-running fa-inverse fa-flip-horizontal fa-lg"></i>
                             <label for="content">
-                                Enter your prefer finishing time
+                                Prefer Ending Time
                             </label>
                             <input type="time" name="LateTime" id="LateTime" placeholder="Expected finishing time"
                                 value="{% if (not (request.form['LateTime'])) %}{% for user in users %}{{ user.LateTime }}{% endfor %}{% else %}{{request.form['LateTime']}}{% endif %}"
-                                class="form-control">
+                                class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
                         </div>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg">
                             Submit / Update
                         </button>
                     </form>
@@ -153,6 +155,7 @@
                     <br>
                     {% for user in users %}
                     <h3>Hi {{ user.username }}:</h3>
+                    <div class="mainfont-regular">
                     Your {{ user.semester }} classes:
                     <ol>
                         {% for cls in user.courses.split(",") %}
@@ -164,18 +167,19 @@
                     Your prefer avergae score: {{ user.AvgScore }}<br>
                     Your prefer starting time: {{ user.EarlyTime }}<br>
                     Your prefer finishing time: {{ user.LateTime }}<br>
+                    </div>
                     <br>
-                    <button class="btn btn-primary" onclick="window.location.href='/getplans/{{
+                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg" onclick="window.location.href='/getplans/{{
                             user.id }}';">
-                        Get plans
+                        Get Plans
                     </button>
-                    <button class="btn btn-primary" onclick="window.location.href='/rankplans/{{
+                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg" onclick="window.location.href='/rankplans/{{
                         user.id }}';">
-                        Rank plans
+                        Rank Plans
                     </button>
-                    <button class="btn btn-primary" onclick="window.location.href='/shownext/{{
+                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg" onclick="window.location.href='/shownext/{{
                         user.id }}';">
-                        Show plans
+                        Show Plans
                     </button>
                     {% endfor %}
                 </div>
