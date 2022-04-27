@@ -6,9 +6,12 @@ import xlwt
 import AlgorithmV2
 import AlgorithmV2_1
 
-def AutoSelection(semester, username):
+
+def AutoSelection(semesterNew, username):
+    semester = semesterNew.split("_")[0]
     prefSheetName = "Preferences"
-    prefPath = "./User/" + username + "/" + "Preferences " + username + ".xls"
+    prefPath = "./User/" + username + "/" + \
+        semesterNew + " Preferences " + username + ".xls"
     schedulesPath = "./User/" + username + "/"
     allPlansInfoPath = "./User/" + username + "/"
 
@@ -49,18 +52,19 @@ def AutoSelection(semester, username):
 
     firstRow = ("Section", "Open Seats", "Instructor", "Type",
                 "Location", "Schedule", "Dates", "Notes", "Semester", "Code")
-    Info_bookName = semester + " " + username + " " + "Info"
+    Info_bookName = semesterNew + " " + username + " " + "Info"
     saveMultiData(allPlansInfo, allPlansInfoPath,
-                  Info_bookName, "Plan", firstRow)  # Save mult
+                  Info_bookName, "Plan", firstRow)  # Save Plans
 
     schedules = []
     for plan in allPlansInfo:
         schedules.append(getAndCheckSchedule(plan, ""))
-    Schedules_bookName = semester + " " + username + " " + "Schedules"
+    Schedules_bookName = semesterNew + " " + username + " " + "Schedules"
     saveMultiData(schedules, schedulesPath,
-                  Schedules_bookName, "Schedule", [])  # Save
-
+                  Schedules_bookName, "Schedule", [])  # Save Schedules
+    return len(allPlansList)
 # Operate Data
+
 
 def getTypes(sections):
     types = []
@@ -273,7 +277,8 @@ def saveMultiData(multiData, savePath, bookName, sheetName, firstRow):
     num = 1
     for oneData in multiData:
         # 创建表单对象，cell_overwrite_ok允许单元格被覆盖
-        sheet = book.add_sheet(sheetName + str(num), cell_overwrite_ok=True)
+        sheet = book.add_sheet(
+            sheetName + " " + str(num), cell_overwrite_ok=True)
         if(firstRow):
             for i in range(0, len(firstRow)):
                 sheet.write(0, i, firstRow[i])
@@ -294,7 +299,7 @@ def saveMultiData(multiData, savePath, bookName, sheetName, firstRow):
 
 if __name__ == "__main__":
     start_time = time.time()
-    semester = "2022-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
-    username = "Sam"
-    AutoSelection(semester, username)
+    semesterNew = "2022-SPRG"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
+    username = "Sam2"
+    AutoSelection(semesterNew, username)
     print("--- %s seconds ---" % (time.time() - start_time))

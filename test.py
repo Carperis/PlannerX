@@ -5,6 +5,8 @@ import re
 import xlrd
 from xlrd import count_records
 
+from GetSeats import GetSeats
+
 # a = 0
 # set = [a]
 # for i in range(0, 10):
@@ -260,7 +262,30 @@ from xlrd import count_records
 # list = ["",""]
 # list[0] = 1;
 # print(list)
-a = {}
-a["a"] = 0
-a["a"]["b"]
-print(a)
+# a = {}
+# a["a"] = 0
+# a["a"]["b"]
+# print(a)
+
+
+# a = [1,2]
+# b = [3,4]
+# c = a + 0
+# print(c)
+
+# import GetSeats
+# sectionData = [
+#     "CAS AH 111 SB1"
+# ]
+# semester = "2022-SUMM"
+# summTerm = "2"
+# result = GetSeats.findCourseScore(sectionData, semester, summTerm)
+# print(result)
+
+
+# a = "END"
+# print(a.split("_"))
+
+import pdf2image
+image = pdf2image.convert_from_path("./static/schedule.pdf")[0]
+image.save("./static/schedule.png")

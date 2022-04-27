@@ -4,15 +4,13 @@ import xlwt
 import xlrd
 
 
-def GetPreference(username, prefDict, semester):
-    check = checkCourses(prefDict["Courses"], semester)
+def GetPreference(username, prefDict, semesterNew):
+    check = checkCourses(prefDict["Courses"], semesterNew.split("_")[0])
     if (check == False):
-        print("Error!")
         return False
     savePath = "./User/" + username + "/"
-    # "Courses","AvgScore","EarlyTime", "LateTime"
     checkFolder(savePath)
-    saveName = "Preferences " + username
+    saveName = semesterNew + " Preferences " + username
     firstRow = list(prefDict.keys())
 
     prefList = dict2List(prefDict)
@@ -57,11 +55,14 @@ def checkCourses(courses, semester):
         return dataList
 
     filePath = "./Semesters/" + semester + "/BU Courses " + semester + ".xls"
-    allCourses = getAllCourses(filePath, semester)
-    for course in courses:
-        if (course not in allCourses):
-            return False
-    return True
+    try:
+        allCourses = getAllCourses(filePath, semester)
+        for course in courses:
+            if (course not in allCourses):
+                return False
+        return True
+    except:
+        return False
 
 
 def checkFolder(savePath):

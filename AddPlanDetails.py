@@ -2,21 +2,29 @@ import xlwt
 import xlrd
 
 
-def AddPlanDetails(semester, username):
-    Info_bookName = semester + " " + username + " " + "Info"
+def AddPlanDetails(semesterNew, username):
+    Info_bookName = semesterNew + " " + username + " " + "Info"
     allPlansInfoPath = "./User/" + username + "/"
     allPlansInfoDict = readPlanData(allPlansInfoPath, Info_bookName)
+
+    seatName = semesterNew + " " + username + " Seats"
+    seatPath = "./User/" + username + "/"
+    seatDict = readSeatData(seatPath, seatName)
+
     firstRow = ("Section", "Open Seats", "Instructor", "Type", "Location", "Schedule",
                 "Dates", "Notes", "Semester", "Code", "RMP Score", "Average Score", "Earliest Time", "Latest Time")
     preAllocate(allPlansInfoDict, firstRow)
+
     addAverageScores(allPlansInfoDict)
     addTimeExtrema(allPlansInfoDict)
+    addSeats(allPlansInfoDict, seatDict)
     savePlanData(allPlansInfoDict, allPlansInfoPath, Info_bookName, firstRow)
+
+# def addSeats(allPlansInfoDict):
 
 
 def readPlanData(path, bookName):
     filePath = path + bookName + ".xls"
-    print(filePath)
     dataList = {}
     book = xlrd.open_workbook(filePath)
     sheetNames = book.sheet_names()
@@ -31,6 +39,18 @@ def readPlanData(path, bookName):
                 data.append(sheet.cell_value(r, c))
             planData.append(data)
         dataList[sheetName] = planData
+    return dataList
+
+
+def readSeatData(path, bookName):
+    filePath = path + bookName + ".xls"
+    dataList = {}
+    book = xlrd.open_workbook(filePath)
+    sheet = book.sheet_by_name(bookName)
+    rows = sheet.nrows
+    cols = sheet.ncols
+    for r in range(rows):  # 从1开始，去掉标题
+        dataList[sheet.cell_value(r, 0)] = int(sheet.cell_value(r, 1))
     return dataList
 
 
@@ -164,6 +184,17 @@ def addTimeExtrema(allPlansInfoDict):
     return
 
 
+def addSeats(allPlansInfoDict, seatDict):
+    planKeys = list(allPlansInfoDict.keys())
+    sectLen = len(allPlansInfoDict[planKeys[0]])
+    for planKey in planKeys:
+        plan = allPlansInfoDict[planKey]
+        for section in plan:
+            sectionName = section[9] + "-" + section[0]
+            section[1] = seatDict[sectionName]
+    return
+
+
 def savePlanData(allPlansInfoDict, allPlansInfoPath, Info_bookName, firstRow):
     book = xlwt.Workbook(encoding="utf-8")  # 创建workbook对象
     plans = list(allPlansInfoDict.keys())
@@ -183,12 +214,12 @@ def savePlanData(allPlansInfoDict, allPlansInfoPath, Info_bookName, firstRow):
                 for j in range(0, len(data)):
                     sheet.write(i+n, j, data[j])  # i+n是因为第一行已经有了标题
                 # print("已保存到第%d条" % (i+1))
-    savePath = allPlansInfoPath + Info_bookName + ".xls"
+    savePath = allPlansInfoPath + Info_bookName + "Details.xls"
     book.save(savePath)
     print("Data Updated!")
 
 
 if __name__ == "__main__":
-    semester = "2022-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
-    username = "Sam"
-    AddPlanDetails(semester, username)
+    semesterNew = "2022-SPRG"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
+    username = "Sam2"
+    AddPlanDetails(semesterNew, username)

@@ -1,18 +1,186 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<title>PlannerX</title>
+<title>BU PlannerX</title>
 {% endblock %}
 
 {% block body %}
-<center>
-    {% for cls in classes %}
-    {{cls}}<br>
-    {% endfor %}
-    <form action="/" method="POST">
-        <input type="text" name="content" id="content" placeholder="Classes">
-        <input type="text" name="username" id="username" placeholder="Name">
-        <input type="submit" value="Add Task">
-    </form>
-</center>
+<div class="container-fluid">
+    <div id="top">
+        <h1 id="web_name">BU PlannerX</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {% if msg != [] %}
+            <div class="alert alert-success alert-dismissable">
+
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                    x
+                </button>
+                <h4>
+                    Message:
+                </h4>
+                {% for message in msg%}
+                <div class="alert" style="margin-bottom: 0; padding-top: 0; padding-bottom: 0; ">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <div class="row">
+                {% for user in users%}
+                {% if (user.planNum != -1) %}
+                <div class="col-md-2" style="display: flex; align-items: center; justify-content: center;">
+                    <button class="btn btn-primary" onclick="window.location.href='/showprevious/{{
+                        user.id }}';">
+                        Show Previous
+                    </button>
+                </div>
+                <div class="col-md-8">
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <button class="btn btn-primary" onclick="window.location.href='/showthis/{{
+                            user.id }}';">
+                            Go to 
+                        </button>
+                        Plan
+                        <input type="number" name="num" id="num" value="{{user.planNum+1}}" class="form-control">
+                    </div>
+                    <br>
+                    <img src="./static/schedule.png" id="img" style="width: 100%; height: 600;" />
+                </div>
+                <div class="col-md-2" style="display: flex; align-items: center; justify-content: center;">
+                    <button class="btn btn-primary" onclick="window.location.href='/shownext/{{
+                        user.id }}';">
+                        Show Next
+                    </button>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <form role="form" action="/" method="POST">
+                        <div class="form-group">
+                            <label for="username">
+                                Username
+                            </label>
+                            <input type="text" name="username" id="username" placeholder="Name"
+                                value="{% if (not (request.form['username'])) %}{% for user in users %}{{ user.username }}{% endfor %}{% else %}{{request.form['username']}}{% endif %}"
+                                class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="content">
+                                Semester
+                            </label>
+                            <div style="display: flex;">
+                                <select class="form-control" name="years" id="">
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                </select>
+                                <select class="form-control" name="term" id="">
+                                    <option value="SPRG" {% if (not (request.form['term'])) %}{% for user in users %}{%
+                                        if (user.semester.split("-")[1]=="SPRG" ) %}selected="selected" {% endif %}{%
+                                        endfor %}{% else %}{% if ( request.form['term']=="SPRG" ) %}selected="selected"
+                                        {% endif %}{% endif %}>Spring
+                                    </option>
+                                    <option value="FALL" {% if (not (request.form['term'])) %}{% for user in users %}{%
+                                        if (user.semester.split("-")[1]=="FALL" ) %}selected="selected" {% endif %}{%
+                                        endfor %}{% else %}{% if ( request.form['term']=="FALL" ) %}selected="selected"
+                                        {% endif %}{% endif %}>Fall
+                                    </option>
+                                    <option value="SUMM_1" {% if (not (request.form['term'])) %}{% for user in users
+                                        %}{% if (user.semester.split("-")[1]=="SUMM_1" ) %}selected="selected" {% endif
+                                        %}{% endfor %}{% else %}{% if ( request.form['term']=="SUMM_1" )
+                                        %}selected="selected" {% endif %}{% endif %}>Summer 1
+                                    </option>
+                                    <option value="SUMM_2" {% if (not (request.form['term'])) %}{% for user in users
+                                        %}{% if (user.semester.split("-")[1]=="SUMM_2" ) %}selected="selected" {% endif
+                                        %}{% endfor %}{% else %}{% if ( request.form['term']=="SUMM_2" )
+                                        %}selected="selected" {% endif %}{% endif %}>Summer 2</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="content">
+                                Classes
+                            </label>
+                            <input type="text" name="courses" id="courses" placeholder="Classes"
+                                value="{% if (not (request.form['courses'])) %}{% for user in users %}{{ user.courses }}{% endfor %}{% else %}{{request.form['courses']}}{% endif %}"
+                                class="form-control">
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="content">
+                                Enter your average score
+                            </label>
+                            <input type="number" step="0.01" name="AvgScore" id="AvgScore"
+                                placeholder="Expected Average Score"
+                                value="{% if (not (request.form['AvgScore'])) %}{% for user in users %}{{ user.AvgScore }}{% endfor %}{% else %}{{request.form['AvgScore']}}{% endif %}"
+                                class="form-control">
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="content">
+                                Enter your prefer starting time
+                            </label>
+                            <input type="time" name="EarlyTime" id="EarlyTime" placeholder="Expected starting time"
+                                value="{% if (not (request.form['EarlyTime'])) %}{% for user in users %}{{ user.EarlyTime }}{% endfor %}{% else %}{{request.form['EarlyTime']}}{% endif %}"
+                                class="form-control">
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="content">
+                                Enter your prefer finishing time
+                            </label>
+                            <input type="time" name="LateTime" id="LateTime" placeholder="Expected finishing time"
+                                value="{% if (not (request.form['LateTime'])) %}{% for user in users %}{{ user.LateTime }}{% endfor %}{% else %}{{request.form['LateTime']}}{% endif %}"
+                                class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            Submit / Update
+                        </button>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <br>
+                    {% for user in users %}
+                    <h3>Hi {{ user.username }}:</h3>
+                    Your {{ user.semester }} classes:
+                    <ol>
+                        {% for cls in user.courses.split(",") %}
+                        <li class="list-item">
+                            {{cls}}
+                        </li>
+                        {% endfor %}
+                    </ol>
+                    Your prefer avergae score: {{ user.AvgScore }}<br>
+                    Your prefer starting time: {{ user.EarlyTime }}<br>
+                    Your prefer finishing time: {{ user.LateTime }}<br>
+                    <br>
+                    <button class="btn btn-primary" onclick="window.location.href='/getplans/{{
+                            user.id }}';">
+                        Get plans
+                    </button>
+                    <button class="btn btn-primary" onclick="window.location.href='/rankplans/{{
+                        user.id }}';">
+                        Rank plans
+                    </button>
+                    <button class="btn btn-primary" onclick="window.location.href='/shownext/{{
+                        user.id }}';">
+                        Show plans
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
