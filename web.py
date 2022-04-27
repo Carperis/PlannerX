@@ -37,6 +37,7 @@ def index():
     except:
         session['messages'] = []
         msg = session['messages']
+    session.clear()
     prefDict = {}
 
     if (request.method == 'POST'):
@@ -228,14 +229,17 @@ def goto():
     return redirect('/')
 
 
-@app.route('/delete')
-def delete():
+@app.route('/delete/<int:id>')
+def delete(id):
     msg = []
     try:
-        users = PlannerX.query.all()
-        for user in users:
-            db.session.delete(user)
-            db.session.commit()
+        # users = PlannerX.query.all()
+        # for user in users:
+        #     db.session.delete(user)
+        #     db.session.commit()
+        user = PlannerX.query.get_or_404(id)
+        db.session.delete(user)
+        db.session.commit()
         msg.append("Successfully delete your records")
     except:
         msg.append("Fail to delete your records!")

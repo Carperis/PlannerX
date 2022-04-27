@@ -21,7 +21,8 @@
                     <i class="fa-solid fa-circle-xmark fa-2xs"></i>
                 </button>
                 {% for message in msg%}
-                <div class="alert mainfont-bold" style="margin-bottom: 0; padding-top: 0; padding-bottom: 0; ">{{ message }}</div>
+                <div class="alert mainfont-bold" style="margin-bottom: 0; padding-top: 0; padding-bottom: 0; ">{{
+                    message }}</div>
                 {% endfor %}
             </div>
             {% endif %}
@@ -29,7 +30,8 @@
                 {% for user in users%}
                 {% if (user.planNum != -1) %}
                 <div class="col-md-2" style="display: flex; align-items: center; justify-content: center;">
-                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg" onclick="window.location.href='/showprevious/{{
+                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
+                        onclick="window.location.href='/showprevious/{{
                         user.id }}';">
                         Show Previous
                     </button>
@@ -37,17 +39,20 @@
                 <div class="col-md-8 mainfont-bold text-white">
                     <form role="form" action="/goto" method="POST"
                         style="display: flex; align-items: center; justify-content: center;">
-                        <button type="submit" class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg">
+                        <button type="submit"
+                            class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg">
                             Go to
                         </button>
                         Plan
-                        <input type="number" name="num" id="num" value="{{user.planNum+1}}" class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
+                        <input type="number" name="num" id="num" value="{{user.planNum+1}}"
+                            class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
                     </form>
                     <br>
                     <img src="./static/schedule.png" id="img" style="width: 100%; height: 600;" />
                 </div>
                 <div class="col-md-2" style="display: flex; align-items: center; justify-content: center;">
-                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg" onclick="window.location.href='/shownext/{{
+                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
+                        onclick="window.location.href='/shownext/{{
                         user.id }}';">
                         Show Next
                     </button>
@@ -74,13 +79,15 @@
                                 Semester
                             </label>
                             <div style="display: flex;">
-                                <select class="bg-gray-800 text-white w-full p-2 rounded-lg mainfont-regular" name="years" id="">
+                                <select class="bg-gray-800 text-white w-full p-2 rounded-lg mainfont-regular"
+                                    name="years" id="">
                                     <option value="2022">2022</option>
                                     <option value="2023">2023</option>
                                     <option value="2024">2024</option>
                                     <option value="2025">2025</option>
                                 </select>
-                                <select class="bg-gray-800 text-white w-full p-2 rounded-lg mainfont-regular" name="term" id="">
+                                <select class="bg-gray-800 text-white w-full p-2 rounded-lg mainfont-regular"
+                                    name="term" id="">
                                     <option value="SPRG" {% if (not (request.form['term'])) %}{% for user in users %}{%
                                         if (user.semester.split("-")[1]=="SPRG" ) %}selected="selected" {% endif %}{%
                                         endfor %}{% else %}{% if ( request.form['term']=="SPRG" ) %}selected="selected"
@@ -146,7 +153,8 @@
                                 value="{% if (not (request.form['LateTime'])) %}{% for user in users %}{{ user.LateTime }}{% endfor %}{% else %}{{request.form['LateTime']}}{% endif %}"
                                 class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
                         </div>
-                        <button type="submit" class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg">
+                        <button type="submit"
+                            class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg">
                             Submit / Update
                         </button>
                     </form>
@@ -156,30 +164,38 @@
                     {% for user in users %}
                     <h3>Hi {{ user.username }}:</h3>
                     <div class="mainfont-regular">
-                    Your {{ user.semester }} classes:
-                    <ol>
-                        {% for cls in user.courses.split(",") %}
-                        <li class="list-item">
-                            {{cls}}
-                        </li>
-                        {% endfor %}
-                    </ol>
-                    Your prefer avergae score: {{ user.AvgScore }}<br>
-                    Your prefer starting time: {{ user.EarlyTime }}<br>
-                    Your prefer finishing time: {{ user.LateTime }}<br>
+                        Your {{ user.semester }} classes:
+                        <ol>
+                            {% for cls in user.courses.split(",") %}
+                            <li class="list-item">
+                                {{cls}}
+                            </li>
+                            {% endfor %}
+                        </ol>
+                        Your prefer avergae score: {{ user.AvgScore }}<br>
+                        Your prefer starting time: {{ user.EarlyTime }}<br>
+                        Your prefer finishing time: {{ user.LateTime }}<br>
                     </div>
                     <br>
-                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg" onclick="window.location.href='/getplans/{{
+                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
+                        onclick="window.location.href='/getplans/{{
                             user.id }}';">
                         Get Plans
                     </button>
-                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg" onclick="window.location.href='/rankplans/{{
+                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
+                        onclick="window.location.href='/rankplans/{{
                         user.id }}';">
                         Rank Plans
                     </button>
-                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg" onclick="window.location.href='/shownext/{{
+                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
+                        onclick="window.location.href='/shownext/{{
                         user.id }}';">
                         Show Plans
+                    </button>
+                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
+                        onclick="window.location.href='/delete/{{
+                        user.id }}';">
+                        Delete Record
                     </button>
                     {% endfor %}
                 </div>
