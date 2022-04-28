@@ -1,4 +1,8 @@
 /*Empty CSS file for your own CSS */
+.form-control:focus {
+  color: white;
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity));
+}
 
 #btn:hover {
   background-color: rgba(78, 129, 238, 0.7);
