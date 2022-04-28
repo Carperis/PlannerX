@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from bs4 import BeautifulSoup  # 获取数据
-from lxml import etree
 import urllib.request
 import urllib.error
 import xlrd

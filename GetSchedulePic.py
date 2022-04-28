@@ -1,6 +1,6 @@
 import os
 import xlrd
-import pdfschedule
+import pdfscheduler
 from datetime import datetime
 import pdf2image
 from reportlab.lib.colors import black
@@ -44,19 +44,19 @@ def GetSchedulePic(semesterNew, username, planName):
     book = xlrd.open_workbook(path)
     sheet = book.sheet_by_name(planName)
 
-    schedu = pdfschedule.Schedule(
+    schedu = pdfscheduler.Schedule(
         ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
     colors = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [0, 1, 1], [1, 0, 1], [1, 0.5, 0.5], [1, 0.5, 0], [0.5, 1, 0], [0.5, 0.5, 1], [
         0.5, 0, 1], [0.5, 1, 0.5], [0, 1, 0.5], [0, 0.5, 1], [1, 0.5, 1], [1, 0, 0.5], [0, 0.5, 0], [0.5, 0, 0], [0, 0, 0.5], [0.5, 0.5, 0.5]]
     for i in range(1, sheet.nrows):
         out = sheet.cell_value(i, 5).split()
         out2 = out[2].split('-')
-        schedu.add_event(pdfschedule.Event(datetime.strptime(out[1] + out2[0], '%I:%M%p').time(), datetime.strptime(out2[1] + out[3], '%I:%M%p').time(), [sheet.cell_value(
+        schedu.add_event(pdfscheduler.Event(datetime.strptime(out[1] + out2[0], '%I:%M%p').time(), datetime.strptime(out2[1] + out[3], '%I:%M%p').time(), [sheet.cell_value(
             i, 9), sheet.cell_value(i, 3) + " " + convertTime(out[1] + out2[0]) + "-" + convertTime(out2[1] + out[3]), sheet.cell_value(i, 0)], colors[i], convertDays(out[0])))
 
     # outfile = "./static/" + semesterNew + " " + username + " Schedule.pdf"
     outfile = "./static/schedule.pdf"
-    c = pdfschedule.Canvas(outfile, (800, 600))
+    c = pdfscheduler.Canvas(outfile, (800, 600))
     c.setFillColorRGB(1, 1, 1)
     c.setStrokeColorRGB(1, 1, 1)
     c.setFont("Helvetica", 20)
@@ -82,7 +82,8 @@ def GetSchedulePic(semesterNew, username, planName):
 
     c.setFillColor(black)
     c.save()
-    image = pdf2image.convert_from_path("./static/schedule.pdf", fmt='png', transparent=True)[0]
+    image = pdf2image.convert_from_path(
+        "./static/schedule.pdf", fmt='png', transparent=True)[0]
     image.save("./static/schedule.png")
 
 

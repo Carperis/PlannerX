@@ -89,7 +89,7 @@ def addAverageScores(allPlansInfoDict):
 
     # Pair the teacher's scores with their scores
     for i in range(1, sheet.nrows):
-        if sheet.cell_value(i, 0) in scores and scores[sheet.cell_value(i, 0)] == -1:
+        if sheet.cell_value(i, 0) in scores and scores[sheet.cell_value(i, 0)] == -1 and sheet.cell_value(i, 3) != "NS":
             scores[sheet.cell_value(i, 0)] = sheet.cell_value(i, 3)
 
     # store teacher's scores in the dictionary
@@ -220,6 +220,6 @@ def savePlanData(allPlansInfoDict, allPlansInfoPath, Info_bookName, firstRow):
 
 
 if __name__ == "__main__":
-    semesterNew = "2022-SPRG"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
-    username = "Sam2"
+    semesterNew = "2022-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
+    username = "Vivian"
     AddPlanDetails(semesterNew, username)

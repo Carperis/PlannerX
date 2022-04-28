@@ -10,8 +10,8 @@ def AutoRanking(semesterNew, username):
     prefDict = readPrefData(prefPath, prefSheetName)
 
     prefRank = {  # key: a certain preference, value: weight(importance) of this preference (1 is lowest)
-        "Average Score": 3,
-        "Earliest Time": 2,
+        "Average Score": 1,
+        "Earliest Time": 1,
         "Latest Time": 1
     }
     keys = list(prefRank.keys())
@@ -77,7 +77,8 @@ def getPlanScore(allPlansInfoDetailDict, prefRank, prefDict):
         planScore = 0
         plan = allPlansInfoDetailDict[planKey]
         seatList = plan["Open Seats"]
-        if (checkOpenSeats(seatList)):
+        NoCheckSeats = True
+        if (NoCheckSeats or checkOpenSeats(seatList)):
             for prefKey in list(plan.keys()):
                 if (prefKey == keys[0]):
                     avgScore = plan[prefKey]

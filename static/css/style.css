@@ -3,6 +3,18 @@ body {
   height: 100%;
   background-color: whitesmoke;
 }
+
+#btn:hover {
+  background-color: rgba(78, 129, 238, 0.5);
+  transition: background-color 0.01s ease-out, color 0.01s ease-out;
+}
+
+li {
+  display: list-item;
+  list-style-type: decimal;
+  list-style-position: inside;
+}
+
 .container-fluid {
   height: 100%;
   padding: 15px;
@@ -29,6 +41,5 @@ body {
 }
 
 .main-font {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
-

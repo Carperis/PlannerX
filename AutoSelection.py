@@ -46,7 +46,7 @@ def AutoSelection(semesterNew, username):
 
     if(len(allPlans) == 0):
         print("NO SCHEDULE IS AVAILABLE")
-        return
+        return 0
     allPlansList = allPlan2List(allPlans, list(allPlans[0].keys()))
     allPlansInfo = [plan2Sections(plan, prepData) for plan in allPlansList]
 

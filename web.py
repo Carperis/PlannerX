@@ -9,6 +9,7 @@ import AutoRanking
 import GetSeats
 import GetSchedulePic
 import xlrd
+import shutil
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///web.db'
@@ -122,7 +123,9 @@ def rankPlans(id):
     u = user.username
     try:
         GetSeats.GetSeats(s, u)
+        msg.append("Seats are checked.")
         AddPlanDetails.AddPlanDetails(s, u)
+        msg.append("Plan details are added.")
         AutoRanking.AutoRanking(s, u)
         msg.append("Your plans are ranked!")
     except:
@@ -238,12 +241,14 @@ def delete(id):
         #     db.session.delete(user)
         #     db.session.commit()
         user = PlannerX.query.get_or_404(id)
+        username = user.username
+        path = "./User/"+username+"/"
         db.session.delete(user)
         db.session.commit()
+        shutil.rmtree(path)
         msg.append("Successfully delete your records")
     except:
         msg.append("Fail to delete your records!")
-    print(PlannerX.query.all())
     session['messages'] = msg
     return redirect('/')
 
