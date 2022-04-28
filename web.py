@@ -10,6 +10,7 @@ import GetSeats
 import GetSchedulePic
 import xlrd
 import shutil
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///web.db'
@@ -246,6 +247,8 @@ def delete(id):
         db.session.delete(user)
         db.session.commit()
         shutil.rmtree(path)
+        os.remove("./static/schedule.pdf")
+        os.remove("./static/schedule.png")
         msg.append("Successfully delete your records")
     except:
         msg.append("Fail to delete your records!")
