@@ -81,14 +81,14 @@
                             </label>
                             <div style="display: flex;">
                                 <select class="bg-gray-800 text-white w-full p-2 rounded-lg mainfont-regular"
-                                    name="years" id="">
+                                    name="years" id="" style="margin-right: 5px;">
                                     <option value="2022">2022</option>
                                     <option value="2023">2023</option>
                                     <option value="2024">2024</option>
                                     <option value="2025">2025</option>
                                 </select>
                                 <select class="bg-gray-800 text-white w-full p-2 rounded-lg mainfont-regular"
-                                    name="term" id="">
+                                    name="term" id="" style="margin-left: 5px;">
                                     <option value="SPRG" {% if (not (request.form['term'])) %}{% for user in users %}{%
                                         if (user.semester.split("-")[1]=="SPRG" ) %}selected="selected" {% endif %}{%
                                         endfor %}{% else %}{% if ( request.form['term']=="SPRG" ) %}selected="selected"
