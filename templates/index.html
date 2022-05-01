@@ -127,7 +127,7 @@
                         <div class="form-group">
                             <i class="fa-solid fa-book-open-reader fa-inverse"></i>
                             <label for="content">
-                                Classes
+                                Courses
                             </label>
                             <input type="text" name="courses" id="courses" placeholder="CAS XX 101,ENG XX 101,QST XX 101"
                                 value="{% if (not (request.form['courses'])) %}{% for user in users %}{{ user.courses }}{% endfor %}{% else %}{{request.form['courses']}}{% endif %}"
