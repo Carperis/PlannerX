@@ -1,1 +1,3 @@
-# Intelligent-BU-Course-Selection
+# PlannerX 
+
+To correct setup 
