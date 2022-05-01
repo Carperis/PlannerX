@@ -129,7 +129,7 @@
                             <label for="content">
                                 Classes
                             </label>
-                            <input type="text" name="courses" id="courses" placeholder="Classes"
+                            <input type="text" name="courses" id="courses" placeholder="CAS XX 101,ENG XX 101,QST XX 101"
                                 value="{% if (not (request.form['courses'])) %}{% for user in users %}{{ user.courses }}{% endfor %}{% else %}{{request.form['courses']}}{% endif %}"
                                 class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
                         </div>
@@ -138,10 +138,10 @@
                         <div class="form-group">
                             <i class="fa-solid fa-chalkboard-user fa-inverse"></i>
                             <label for="content">
-                                Average RMP Score
+                                Average Professors Score
                             </label>
                             <input type="number" step="0.01" name="AvgScore" id="AvgScore"
-                                placeholder="Expected Average Score"
+                                placeholder="Rate Your Professors!"
                                 value="{% if (not (request.form['AvgScore'])) %}{% for user in users %}{{ user.AvgScore }}{% endfor %}{% else %}{{request.form['AvgScore']}}{% endif %}"
                                 class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
                         </div>
@@ -151,7 +151,7 @@
                             <label for="content">
                                 Prefer Starting Time
                             </label>
-                            <input type="time" name="EarlyTime" id="EarlyTime" placeholder="Expected starting time"
+                            <input type="time" name="EarlyTime" id="EarlyTime"
                                 value="{% if (not (request.form['EarlyTime'])) %}{% for user in users %}{{ user.EarlyTime }}{% endfor %}{% else %}{{request.form['EarlyTime']}}{% endif %}"
                                 class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
                         </div>
@@ -162,7 +162,7 @@
                             <label for="content">
                                 Prefer Ending Time
                             </label>
-                            <input type="time" name="LateTime" id="LateTime" placeholder="Expected finishing time"
+                            <input type="time" name="LateTime" id="LateTime"
                                 value="{% if (not (request.form['LateTime'])) %}{% for user in users %}{{ user.LateTime }}{% endfor %}{% else %}{{request.form['LateTime']}}{% endif %}"
                                 class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
                         </div>
