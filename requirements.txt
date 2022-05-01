@@ -1,0 +1,8 @@
+flask
+flask_sqlalchemy
+xlwt
+xlrd
+pdf2image
+pdfschedule
+beautifulsoup4
+pymupdf
