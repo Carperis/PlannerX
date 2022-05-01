@@ -6,3 +6,4 @@ pdf2image
 pdfschedule
 beautifulsoup4
 pymupdf
+selenium
