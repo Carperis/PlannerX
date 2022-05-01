@@ -5,4 +5,5 @@ pip install xlrd
 pip install pdf2image
 pip install pdfschedule
 pip install beautifulsoup4
+pip install pymupdf
 conda install -c conda-forge poppler

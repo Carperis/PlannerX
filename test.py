@@ -326,4 +326,10 @@ from GetSeats import GetSeats
 # # os.chmod(path, num)
 # # os.rmdir(path)
 # shutil.rmtree(path)
-print(not bool(""))
+
+import fitz  # PyMuPDF, imported as fitz for backward compatibility reasons
+file_path = "./static/schedule.pdf"
+doc = fitz.open(file_path)  # open document
+for page in doc:
+    pix = page.get_pixmap()  # render page to an image
+    pix.save("./static/schedule.png")
