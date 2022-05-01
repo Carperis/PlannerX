@@ -2,8 +2,9 @@ import os
 import xlrd
 import pdfscheduler
 from datetime import datetime
-import pdf2image
+# import pdf2image
 from reportlab.lib.colors import black
+import fitz
 
 
 def convertTime(time):
@@ -82,9 +83,13 @@ def GetSchedulePic(semesterNew, username, planName):
 
     c.setFillColor(black)
     c.save()
-    image = pdf2image.convert_from_path(
-        "./static/schedule.pdf", fmt='png', transparent=True)[0]
-    image.save("./static/schedule.png")
+    doc = fitz.open("./static/schedule.pdf")
+    for page in doc:
+        pix = page.get_pixmap(alpha=True)
+        pix.save("./static/schedule.png")
+    # image = pdf2image.convert_from_path(
+    #     "./static/schedule.pdf", fmt='png', transparent=True)[0]
+    # image.save("./static/schedule.png")
 
 
 if __name__ == "__main__":
