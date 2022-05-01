@@ -129,7 +129,10 @@ def addAverageScores(allPlansInfoDict):
                     if (oneCourse[type] != -1):
                         sum += oneCourse[type]
                         num += 1
-        avgscores.append(sum / num)
+        if (num != 0):
+            avgscores.append(sum / num)
+        else:
+            avgscores.append(0)
     for i in range(0, len(avgscores)):
         allPlansInfoDict[keys[i]][0][11] = avgscores[i]
     return
@@ -221,5 +224,5 @@ def savePlanData(allPlansInfoDict, allPlansInfoPath, Info_bookName, firstRow):
 
 if __name__ == "__main__":
     semesterNew = "2022-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
-    username = "Vivian"
+    username = "Sam"
     AddPlanDetails(semesterNew, username)

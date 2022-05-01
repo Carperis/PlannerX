@@ -82,12 +82,10 @@ def getPlanScore(allPlansInfoDetailDict, prefRank, prefDict):
             for prefKey in list(plan.keys()):
                 if (prefKey == keys[0]):
                     avgScore = plan[prefKey]
-                    planScore += checkAverageScore(avgScore) * \
-                        prefRank[prefKey]
+                    planScore += checkAverageScore(avgScore) * prefRank[prefKey]
                 elif (prefKey == keys[1]):
                     earlyTime = plan[prefKey]
-                    planScore += checkEarliestTime(earlyTime) * \
-                        prefRank[prefKey]
+                    planScore += checkEarliestTime(earlyTime) * prefRank[prefKey]
                 elif (prefKey == keys[2]):
                     lateTime = plan[prefKey]
                     planScore += checkLastestTime(lateTime) * prefRank[prefKey]
@@ -104,7 +102,11 @@ def readPrefData(filePath, sheetName):
     rows = sheet.nrows
     cols = len(sheet.row_slice(0))
     for c in range(cols):
-        if (sheet.cell_value(2, c) == ""):
+        try:
+            noValue = bool(sheet.cell_value(2, c) == "")
+        except:
+            noValue = True
+        if (noValue):
             try:
                 value = float(sheet.cell_value(1, c))
             except:
@@ -145,6 +147,6 @@ def readPlanDetailData(path, bookName, keys):
 
 
 if __name__ == "__main__":
-    semesterNew = "2022-SPRG"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
-    username = "Sam2"
+    semesterNew = "2022-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
+    username = "Sam"
     AutoRanking(semesterNew, username)

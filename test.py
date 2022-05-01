@@ -318,11 +318,12 @@ from GetSeats import GetSeats
 
 # c.save()
 
-import os
-import shutil
-username = "Sam"
-path = "./User/"+username+"/"
-num = 777
-# os.chmod(path, num)
-# os.rmdir(path)
-shutil.rmtree(path)
+# import os
+# import shutil
+# username = "Sam"
+# path = "./User/"+username+"/"
+# num = 777
+# # os.chmod(path, num)
+# # os.rmdir(path)
+# shutil.rmtree(path)
+print(not bool(""))
