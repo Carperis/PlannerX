@@ -74,7 +74,7 @@
                 {% endfor %}
             </div>
             <div class="row mainfont-bold text-white">
-                <div class="col-md-9">
+                <div class="col-md-8">
                     <form role="form" action="/" method="POST">
                         <div class="form-group">
                             <i class="fa-solid fa-user fa-inverse"></i>
@@ -172,7 +172,7 @@
                         </button>
                     </form>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <br>
                     {% if(users) %}
                     {% for user in users %}
@@ -221,19 +221,12 @@
                     <h3>Welcome to BU PlannerX</h3>
                     <br>
                     <div class="mainfont-regular">
-                        <p>Please follow the steps below to get your best schedule for the next semester!</p>
+                        <p>Please fill out ALL columns for an optimized schedule!</p>
                         <br>
-                        <ol>
-                            <li class="list-item">
-                                Step 1
-                            </li>
-                            <li class="list-item">
-                                Step 2
-                            </li>
-                            <li class="list-item">
-                                Step 3
-                            </li>
-                        </ol><br>
+                        <p>Classes Input Template: <br>
+                            CAS XX 101,ENG XX 101,QST XX 101 
+                        </p><br>
+                        <p>*** Make sure there's no space after the comma! ***</p>
                     </div>
                     {% endif %}
 
@@ -243,12 +236,12 @@
     </div>
 </div>
 
-<footer class="py-2 bg-blue-500 text-white" style="display: flex; align-items: center; justify-content:center;">
+<footer class="py-1.5 bg-gray-800 text-white" style="display: flex; align-items: center; justify-content:center;">
     <div style="width: 80%; display: flex; align-items: center; justify-content:space-between;">
-        <p class="text-white xl mainfont-bold my-auto" style="padding-right: 20px;">
-            Created by Sam, Vivian, Trevor, Yunting, Ken, Yuri
+        <p class="text-gray-300 xl mainfont-regular my-auto" style="padding-right: 20px;">
+            CREATED BY SAM, VIVIAN, TREVOR, YUNTING, KEN, YURI
         </p>
-        <button id="btn2" class="bg-white text-blue-500 px-8 py-2 rounded-lg mainfont-bold"
+        <button id="btn2" class="bg-gray-800 text-gray-500 px-8 py-1 rounded-lg mainfont-bold"
             onclick="window.location.href='https://github.com/Carperis/PlannerX';"
             style="display: flex; align-items: center; justify-content: center; padding: 10px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
