@@ -80,6 +80,14 @@ def index():
                 msg.append("Your prefereces is saved!")
                 if (PlannerX.query.get(1)):
                     user = PlannerX.query.get(1)
+                    name = user.username
+                    try:
+                        path = "./User/"+name+"/"
+                        shutil.rmtree(path)
+                        os.remove("./static/schedule.pdf")
+                        os.remove("./static/schedule.png")
+                    except:
+                        pass
                     user.semester = semester
                     user.username = username
                     user.courses = courses
@@ -244,9 +252,9 @@ def delete(id):
         #     db.session.commit()
         user = PlannerX.query.get_or_404(id)
         username = user.username
-        path = "./User/"+username+"/"
         db.session.delete(user)
         db.session.commit()
+        path = "./User/"+username+"/"
         shutil.rmtree(path)
         os.remove("./static/schedule.pdf")
         os.remove("./static/schedule.png")
