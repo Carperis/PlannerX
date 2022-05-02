@@ -81,13 +81,14 @@ def index():
                 if (PlannerX.query.get(1)):
                     user = PlannerX.query.get(1)
                     name = user.username
-                    try:
-                        path = "./User/"+name+"/"
-                        shutil.rmtree(path)
-                        os.remove("./static/schedule.pdf")
-                        os.remove("./static/schedule.png")
-                    except:
-                        pass
+                    if (name != username):
+                        try:
+                            path = "./User/"+name+"/"
+                            shutil.rmtree(path)
+                            os.remove("./static/schedule.pdf")
+                            os.remove("./static/schedule.png")
+                        except:
+                            pass
                     user.semester = semester
                     user.username = username
                     user.courses = courses
