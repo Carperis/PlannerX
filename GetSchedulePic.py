@@ -4,7 +4,7 @@ import pdfscheduler
 from datetime import datetime
 # import pdf2image
 from reportlab.lib.colors import black
-import fitz  # PyMuPDF, imported as fitz for backward compatibility reasons
+import fitz
 
 
 def convertTime(time):
@@ -83,19 +83,17 @@ def GetSchedulePic(semesterNew, username, planName):
 
     c.setFillColor(black)
     c.save()
-    file_path = "./static/schedule.pdf"
-    doc = fitz.open(file_path)  # open document
+    doc = fitz.open("./static/schedule.pdf")
     for page in doc:
-        pix = page.get_pixmap(alpha=True)  # render page to an image
+        pix = page.get_pixmap(alpha=True)
         pix.save("./static/schedule.png")
-
     # image = pdf2image.convert_from_path(
     #     "./static/schedule.pdf", fmt='png', transparent=True)[0]
     # image.save("./static/schedule.png")
 
 
 if __name__ == "__main__":
-    semesterNew = "2022-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
-    username = "Sam"
+    semesterNew = "2022-SPRG"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
+    username = "Sam2"
     planName = "Plan 1"
     GetSchedulePic(semesterNew, username, planName)

@@ -1,4 +1,5 @@
 from datetime import datetime
+from email.policy import default
 from flask import Flask, redirect, render_template, request, flash, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 
@@ -51,13 +52,13 @@ def index():
             LateTime = request.form['LateTime']
             semester = request.form['years'] + '-' + request.form['term']
             if (username == ""):
-                msg.append("Your username is not complete")
+                msg.append("Missing Username")
             if (AvgScore == ""):
-                msg.append("Your average course score is not complete")
+                msg.append("Missing Average Professor Score")
             if (EarlyTime == ""):
-                msg.append("Your starting time is not complete")
+                msg.append("Missing Starting Time")
             if (LateTime == ""):
-                msg.append("Your finishing time is not complete")
+                msg.append("Missing Finishing Time")
             EarlyT = float(str(EarlyTime).split(
                 ":")[0])+(float(str(EarlyTime).split(":")[1]))/60
             LateT = float(str(LateTime).split(
@@ -79,6 +80,15 @@ def index():
                 msg.append("Your prefereces is saved!")
                 if (PlannerX.query.get(1)):
                     user = PlannerX.query.get(1)
+                    name = user.username
+                    if (name != username):
+                        try:
+                            path = "./User/"+name+"/"
+                            shutil.rmtree(path)
+                            os.remove("./static/schedule.pdf")
+                            os.remove("./static/schedule.png")
+                        except:
+                            pass
                     user.semester = semester
                     user.username = username
                     user.courses = courses
@@ -243,9 +253,9 @@ def delete(id):
         #     db.session.commit()
         user = PlannerX.query.get_or_404(id)
         username = user.username
-        path = "./User/"+username+"/"
         db.session.delete(user)
         db.session.commit()
+        path = "./User/"+username+"/"
         shutil.rmtree(path)
         os.remove("./static/schedule.pdf")
         os.remove("./static/schedule.png")
