@@ -90,7 +90,7 @@ def saveData(dataList, savePath, saveName, firstRow):
             # print("已保存到第%d条" % (i+1))
     savePath = savePath + saveName + ".xls"
     book.save(savePath)
-    print("Data Saved!")
+    print("Preferences Data Saved!")
     # 3.保存数据
 
 

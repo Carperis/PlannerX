@@ -82,10 +82,12 @@ def getPlanScore(allPlansInfoDetailDict, prefRank, prefDict):
             for prefKey in list(plan.keys()):
                 if (prefKey == keys[0]):
                     avgScore = plan[prefKey]
-                    planScore += checkAverageScore(avgScore) * prefRank[prefKey]
+                    planScore += checkAverageScore(avgScore) * \
+                        prefRank[prefKey]
                 elif (prefKey == keys[1]):
                     earlyTime = plan[prefKey]
-                    planScore += checkEarliestTime(earlyTime) * prefRank[prefKey]
+                    planScore += checkEarliestTime(earlyTime) * \
+                        prefRank[prefKey]
                 elif (prefKey == keys[2]):
                     lateTime = plan[prefKey]
                     planScore += checkLastestTime(lateTime) * prefRank[prefKey]

@@ -8,7 +8,8 @@ def autoMatchCourses(prepData, SameTeacherDict, limit):
     sectList = getSectList(prepData)  # ['CAS CH 131,LEC' ...]
     scheduleLayers = getScheduleLayers(sectList, prepData)
     numSect = len(sectList)
-    allPlans = getPlans(scheduleLayers, numSect, sectList, SameTeacherSect, limit)
+    allPlans = getPlans(scheduleLayers, numSect,
+                        sectList, SameTeacherSect, limit)
     return allPlans
 
 
@@ -267,6 +268,6 @@ def getOneSchedule(sections, sch):
             for day in oneNewtime[0]:
                 [srow, scol] = findIndex(day, startHr, startMin)
                 [erow, ecol] = findIndex(day, endHr, endMin)
-                for i in range(srow, erow+1):
+                for i in range(srow, erow):
                     sch[i][ecol].append(title)
     return sch

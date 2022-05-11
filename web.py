@@ -30,7 +30,7 @@ class PlannerX(db.Model):
     planNum = db.Column(db.Integer, default=-1)
 
     def __repr__(self):
-        return '<Task %r>' % self.id
+        return '<User %r>' % self.id
 
 
 @app.route('/', methods=['POST', 'GET'])

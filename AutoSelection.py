@@ -56,12 +56,12 @@ def AutoSelection(semesterNew, username):
     saveMultiData(allPlansInfo, allPlansInfoPath,
                   Info_bookName, "Plan", firstRow)  # Save Plans
 
-    schedules = []
-    for plan in allPlansInfo:
-        schedules.append(getAndCheckSchedule(plan, ""))
-    Schedules_bookName = semesterNew + " " + username + " " + "Schedules"
-    saveMultiData(schedules, schedulesPath,
-                  Schedules_bookName, "Schedule", [])  # Save Schedules
+    # schedules = []
+    # for plan in allPlansInfo:
+    #     schedules.append(getAndCheckSchedule(plan, ""))
+    # Schedules_bookName = semesterNew + " " + username + " " + "Schedules"
+    # saveMultiData(schedules, schedulesPath,
+    #               Schedules_bookName, "Schedule", [])  # Save Schedules
     return len(allPlansList)
 # Operate Data
 
@@ -226,7 +226,7 @@ def getAndCheckSchedule(sections, sch):
                     sch[srow][scol] = title
                     if(not sch[erow][ecol]):
                         sch[erow][ecol] = title
-                        for i in range(srow + 1, erow):
+                        for i in range(srow+1, erow):
                             if (not sch[i][ecol]):
                                 sch[i][ecol] = title
                             else:
@@ -299,7 +299,7 @@ def saveMultiData(multiData, savePath, bookName, sheetName, firstRow):
 
 if __name__ == "__main__":
     start_time = time.time()
-    semesterNew = "2022-SPRG"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
-    username = "Sam2"
+    semesterNew = "2022-SUMM_1"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
+    username = "sam"
     AutoSelection(semesterNew, username)
     print("--- %s seconds ---" % (time.time() - start_time))

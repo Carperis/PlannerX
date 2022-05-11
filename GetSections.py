@@ -183,10 +183,6 @@ def saveData(dataList, savePath, saveName, firstRow):
 
 
 if __name__ == "__main__":
-    semester = "2022-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
-    GetSections(0, 1, semester)
-    # semester = "2021-SUMM"
-    # secURL = "https://www.bu.edu/phpbin/course-search/section/?t=eopbs011&amp;semester=" + semester + \
-    #     "&amp;return=%2Fphpbin%2Fcourse-search%2Fsearch.php%3Fpage%3D0%26pagesize%3D100%26adv%3D1%26nolog%3D%26search_adv_all%3D%26yearsem_adv%3D2021-SUMM%26credits%3D%2A%26hub_match%3Dall%26pagesize%3D100%22"
-    # code = "EOP BS 011"
-    # getAndSaveSections(secURL, code, semester)
+    semester = "2022-SUMM"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
+    # (startIndex, endIndex, semester) index=-1 -> default
+    GetSections(-1, -1, semester)
