@@ -9,7 +9,7 @@
 <div class="py-2 bg-blue-500 text-white" style="display: flex; align-items: center; justify-content:center;">
     <div style="width: 80%; display: flex; align-items: center; justify-content:space-between;">
         <a href="/" style="text-decoration: none; padding-top: 3px">
-            <h1 class="text-white text-2xl mainfont-bold my-auto">BU PlannerX</h1>
+            <h1 class="text-white text-2xl mainfont-bold my-auto">BU PlannerX HIHI</h1>
         </a>
         <button id="btn2" class="bg-white text-blue-500 px-8 py-2 rounded-lg mainfont-bold"
             onclick="window.location.href='https://github.com/Carperis/PlannerX';"
@@ -129,7 +129,8 @@
                             <label for="content">
                                 Courses
                             </label>
-                            <input type="text" name="courses" id="courses" placeholder="CAS XX 101,ENG XX 101,QST XX 101"
+                            <input type="text" name="courses" id="courses"
+                                placeholder="CAS XX 101,ENG XX 101,QST XX 101"
                                 value="{% if (not (request.form['courses'])) %}{% for user in users %}{{ user.courses }}{% endfor %}{% else %}{{request.form['courses']}}{% endif %}"
                                 class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
                         </div>
@@ -224,7 +225,7 @@
                         <p>Please fill out ALL columns for an optimized schedule!</p>
                         <br>
                         <p>Classes Input Template: <br>
-                            CAS XX 101,ENG XX 101,QST XX 101 
+                            CAS XX 101,ENG XX 101,QST XX 101
                         </p><br>
                         <p>*** Make sure there's no space after the comma! ***</p>
                     </div>
