@@ -203,18 +203,17 @@ def plan(planID):
                         plan.LateTime = LateTime
                         plan.planNum = -1
                         db.session.commit()
-                        GetPreferenceWeb.GetPreference(
-                            str(user.id), str(plan.id), prefDict, semester)
                     else:
                         new_plan = Plan(user_id=user.id, semester=semester, planname=planname, courses=courses, AvgScore=float(
                             AvgScore), EarlyTime=EarlyTime, LateTime=LateTime)
                         db.session.add(new_plan)
                         db.session.commit()
                         plan = new_plan
-                        GetPreferenceWeb.GetPreference(
-                            str(user.id), str(new_plan.id), prefDict, semester)
                     msg.append("Your prefereces is saved!")
-                    return redirect("/plan/" + plan.id)
+                    session['messages'] = msg
+                    GetPreferenceWeb.GetPreference(
+                        str(user.id), str(plan.id), prefDict, semester)
+                    return redirect("/plan/" + str(plan.id))
             except:
                 if (msg == []):
                     msg.append("Something goes wrong.")
