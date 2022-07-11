@@ -316,7 +316,6 @@ def showSchedule(planID, n):
     msg = []
     user = User.query.get(current_user.get_id())
     plan = Plan.query.get(planID)
-    oldNum = plan.planNum
     planID = str(planID)
     userID = str(user.id)
     semester = plan.semester
@@ -338,12 +337,9 @@ def showSchedule(planID, n):
             planName = sheet.cell_value(newNum, 0)
         except:
             planName = "Plan " + str(newNum+1)
-        try:
-            GetSchedulePic.GetSchedulePic(semester, userID, planID, planName)
-            plan.planNum = newNum
-            db.session.commit()
-        except:
-            pass
+        GetSchedulePic.GetSchedulePic(semester, userID, planID, planName)
+        plan.planNum = newNum
+        db.session.commit()
         print("Plan " + str(plan.planNum + 1))
         # msg.append("See your schedules below")
     except:

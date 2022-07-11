@@ -89,11 +89,7 @@ def GetSchedulePic(semesterNew, userID, planID, planName):
                     "/" + planID + "/schedule.pdf")
     for page in doc:
         pix = page.get_pixmap(alpha=True)
-        pix.save("./static/schedule.png")
         pix.save("./static/Users/" + userID + "/" + planID + "/schedule.png")
-    # image = pdf2image.convert_from_path(
-    #     "./static/schedule.pdf", fmt='png', transparent=True)[0]
-    # image.save("./static/schedule.png")
 
 
 if __name__ == "__main__":
