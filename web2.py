@@ -1,7 +1,7 @@
 from datetime import datetime
 from email.policy import default
 from click import style
-from flask import Flask, redirect, render_template, request, flash, session, url_for
+from flask import Flask, redirect, render_template, request, flash, session, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -31,8 +31,8 @@ login_manager.login_view = 'login'
 
 
 @login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+def user_loader(id):
+    return User.query.get(id)
 
 
 class User(db.Model, UserMixin):
@@ -62,7 +62,7 @@ class RegisterForm(FlaskForm):
                            InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
 
     password = PasswordField(validators=[
-                             InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
+                             InputRequired(), Length(min=6, max=20)], render_kw={"placeholder": "Password"})
 
     submit = SubmitField('Register')
 
@@ -79,7 +79,7 @@ class LoginForm(FlaskForm):
                            InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
 
     password = PasswordField(validators=[
-                             InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
+                             InputRequired(), Length(min=6, max=20)], render_kw={"placeholder": "Password"})
 
     submit = SubmitField('Login')
 
@@ -149,10 +149,16 @@ def dashboard():
 @app.route('/plan/<int:planID>', methods=['POST', 'GET'])
 @login_required
 def plan(planID):
-    msg = []
+    try:
+        msg = session['messages']
+    except:
+        session['messages'] = []
+        msg = session['messages']
+    session['messages'] = []
     prefDict = {}
     user = User.query.get(current_user.get_id())
     plan = Plan.query.get(planID)
+
     if (allowAccess(user, plan)):
         if (request.method == 'POST'):
             try:
@@ -217,6 +223,165 @@ def plan(planID):
         return redirect(url_for('index'))
 
     return render_template('plan.html', msg=msg, plan=plan, user=user)
+
+
+@app.route('/deleteplan/<int:planID>', methods=['POST', 'GET'])
+@login_required
+def deletePlan(planID):
+    user = User.query.get(current_user.get_id())
+    plan = Plan.query.get(planID)
+    if (allowAccess(user, plan)):
+        try:
+            path1 = "./Users/"+str(user.id)+"/"+str(plan.id)+"/"
+            path2 = "./static/Users/"+str(user.id)+"/"+str(plan.id)+"/"
+            db.session.delete(plan)
+            db.session.commit()
+            shutil.rmtree(path1)
+            shutil.rmtree(path2)
+        except:
+            pass
+        return redirect(url_for('dashboard'))
+    else:
+        return redirect(url_for('index'))
+
+
+@app.route('/deleteuser', methods=['POST', 'GET'])
+@login_required
+def deleteUser():
+    user = User.query.get(current_user.get_id())
+    plans = Plan.query.filter_by(user_id=user.id)
+    logout_user()
+    try:
+        path1 = "./Users/"+str(user.id)+"/"
+        path2 = "./static/Users/"+str(user.id)+"/"
+        db.session.delete(user)
+        for plan in plans:
+            db.session.delete(plan)
+        db.session.commit()
+        shutil.rmtree(path1)
+        shutil.rmtree(path2)
+    except:
+        pass
+    return redirect(url_for('index'))
+
+
+@app.route('/getplans/<int:planID>')
+@login_required
+def getPlans(planID):
+    msg = []
+    user = User.query.get(current_user.get_id())
+    plan = Plan.query.get(planID)
+
+    userID = str(user.id)
+    planID = str(planID)
+    semester = plan.semester
+    result = AutoSelection.AutoSelection(semester, userID, planID)
+    if(result == 0):
+        msg.append("Can't find your plans")
+    else:
+        msg.append("Got your plans!")
+
+    session['messages'] = msg
+    return redirect('/plan/' + planID)
+
+
+@app.route('/rankplans/<int:planID>')
+@login_required
+def rankPlans(planID):
+    msg = []
+    user = User.query.get(current_user.get_id())
+    plan = Plan.query.get(planID)
+
+    userID = str(user.id)
+    planID = str(planID)
+    semester = plan.semester
+    try:
+        GetSeats.GetSeats(semester, userID, planID)
+        msg.append("Seats are checked.")
+        AddPlanDetails.AddPlanDetails(semester, userID, planID)
+        msg.append("Plan details are added.")
+        AutoRanking.AutoRanking(semester, userID, planID)
+        msg.append("Your plans are ranked!")
+    except:
+        msg.append("Fail to rank your plans")
+
+    session['messages'] = msg
+    return redirect('/plan/' + planID)
+
+
+@app.route('/plan/showschedule/<int:planID>/<int:n>', methods=['POST'])
+@login_required
+def showSchedule(planID, n):
+    msg = []
+    user = User.query.get(current_user.get_id())
+    plan = Plan.query.get(planID)
+    planID = str(planID)
+    userID = str(user.id)
+    semester = plan.semester
+    num = plan.planNum + (2-n)
+    try:
+        rankPath = "./Users/" + userID + "/" + planID + "/"
+        rankName = semester + " Ranking"
+        book = xlrd.open_workbook(rankPath + rankName + ".xls")
+        sheet = book.sheet_by_name(rankName)
+        maxNum = sheet.nrows - 1
+        if (num < 0):
+            num = 0
+        elif (num > maxNum):
+            num = maxNum
+        planName = sheet.cell_value(num, 0)
+        plan.planNum = num
+        db.session.commit()
+        print(planName)
+        try:
+            GetSchedulePic.GetSchedulePic(semester, userID, planID, planName)
+        except:
+            pass
+        # msg.append("See your schedules below")
+    except:
+        msg.append("Can't create your schedules")
+    session['messages'] = msg
+    return jsonify(num=num+1)
+
+
+@app.route('/plan/goto/<int:planID>/<string:num>', methods=['POST'])
+@login_required
+def goToSchedule(planID, num):
+    msg = []
+    user = User.query.get(current_user.get_id())
+    plan = Plan.query.get(planID)
+    planID = str(planID)
+    userID = str(user.id)
+    semester = plan.semester
+    try:
+        if (int(num) > 0):
+            num = int(num)-1
+        else:
+            num = 0
+    except:
+        num = 0
+    try:
+        rankPath = "./Users/" + userID + "/" + planID + "/"
+        rankName = semester + " Ranking"
+        book = xlrd.open_workbook(rankPath + rankName + ".xls")
+        sheet = book.sheet_by_name(rankName)
+        maxNum = sheet.nrows - 1
+        if (num > maxNum):
+            num = maxNum
+        print(num)
+        planName = sheet.cell_value(num, 0)
+        plan.planNum = num
+        db.session.commit()
+        print(planName)
+        try:
+            GetSchedulePic.GetSchedulePic(semester, userID, planID, planName)
+        except:
+            pass
+        # msg.append("See your schedules below")
+    except:
+        msg.append("Can't create your schedules")
+    session['messages'] = msg
+    return jsonify(num=num+1)
 
 
 if __name__ == "__main__":

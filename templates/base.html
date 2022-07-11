@@ -32,15 +32,6 @@
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/scripts.js"></script>
-    <script>
-        window.onload = function () {
-            function updateImage() {
-                var image = document.getElementById("img");
-                image.src = image.src.split("?")[0] + "?" + new Date().getTime();
-            }
-            setInterval(updateImage, 100);
-        }
-    </script>
     <style>
         .mainfont-light {
             font-family: 'Montserrat', sans-serif;
@@ -111,7 +102,6 @@
             {%endif%}
         </div>
     </div>
-
     {% block body %}{% endblock %}
 
     <footer class="py-1.5 bg-gray-800 text-white" style="display: flex; align-items: center; justify-content:center;">

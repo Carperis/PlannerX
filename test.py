@@ -327,3 +327,16 @@ from GetSeats import GetSeats
 # # os.rmdir(path)
 # shutil.rmtree(path)
 print(not bool(""))
+
+
+    window.onload = function () {
+        function updateImage() {
+            var image = document.getElementById("img");
+            image.src = image.src.split("?")[0] + "?" + new Date().getTime();
+        }
+        setInterval(updateImage, 100);
+    }
+    
+    onclick="window.location.href='/shownext/{{plan.id }}';" 
+    
+                    $("#img").attr('src', './Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime())

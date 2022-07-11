@@ -30,6 +30,15 @@ li {
   list-style-position: inside;
 }
 
+table {
+  border-collapse: collapse;
+  border: 3px solid #ffffff;
+}
+
+table td {
+  border: 3px solid #ffffff;
+}
+
 .container-fluid {
   height: 100%;
   padding: 15px;

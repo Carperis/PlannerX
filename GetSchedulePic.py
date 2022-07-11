@@ -5,6 +5,7 @@ from datetime import datetime
 # import pdf2image
 from reportlab.lib.colors import black
 import fitz
+import GetPreferenceWeb
 
 
 def convertTime(time):
@@ -40,8 +41,8 @@ def convertDays(days):
     return newDays
 
 
-def GetSchedulePic(semesterNew, username, planName):
-    path = "./User/" + username + "/" + semesterNew + " " + username + " Info.xls"
+def GetSchedulePic(semesterNew, userID, planID, planName):
+    path = "./Users/" + userID + "/" + planID + "/" + semesterNew + " Info.xls"
     book = xlrd.open_workbook(path)
     sheet = book.sheet_by_name(planName)
 
@@ -55,8 +56,9 @@ def GetSchedulePic(semesterNew, username, planName):
         schedu.add_event(pdfscheduler.Event(datetime.strptime(out[1] + out2[0], '%I:%M%p').time(), datetime.strptime(out2[1] + out[3], '%I:%M%p').time(), [sheet.cell_value(
             i, 9), sheet.cell_value(i, 3) + " " + convertTime(out[1] + out2[0]) + "-" + convertTime(out2[1] + out[3]), sheet.cell_value(i, 0)], colors[i], convertDays(out[0])))
 
-    # outfile = "./static/" + semesterNew + " " + username + " Schedule.pdf"
-    outfile = "./static/schedule.pdf"
+    path = "./static/Users/" + userID + "/" + planID + "/"
+    GetPreferenceWeb.checkFolder(path)
+    outfile = "./static/Users/" + userID + "/" + planID + "/schedule.pdf"
     c = pdfscheduler.Canvas(outfile, (800, 600))
     c.setFillColorRGB(1, 1, 1)
     c.setStrokeColorRGB(1, 1, 1)
@@ -76,24 +78,27 @@ def GetSchedulePic(semesterNew, username, planName):
     )
 
     try:
-        os.remove("./static/schedule.pdf")
-        os.remove("./static/schedule.png")
+        os.remove("./static/Users/" + userID + "/" + planID + "/schedule.pdf")
+        os.remove("./static/Users/" + userID + "/" + planID + "/schedule.png")
     except:
         pass
 
     c.setFillColor(black)
     c.save()
-    doc = fitz.open("./static/schedule.pdf")
+    doc = fitz.open("./static/Users/" + userID +
+                    "/" + planID + "/schedule.pdf")
     for page in doc:
         pix = page.get_pixmap(alpha=True)
         pix.save("./static/schedule.png")
+        pix.save("./static/Users/" + userID + "/" + planID + "/schedule.png")
     # image = pdf2image.convert_from_path(
     #     "./static/schedule.pdf", fmt='png', transparent=True)[0]
     # image.save("./static/schedule.png")
 
 
 if __name__ == "__main__":
-    semesterNew = "2022-SPRG"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
-    username = "Sam2"
-    planName = "Plan 1"
-    GetSchedulePic(semesterNew, username, planName)
+    # semesterNew = "2022-SPRG"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
+    # username = "Sam2"
+    # planName = "Plan 1"
+    # GetSchedulePic(semesterNew, username, planName)
+    pass

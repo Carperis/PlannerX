@@ -2,13 +2,13 @@ import xlwt
 import xlrd
 
 
-def AddPlanDetails(semesterNew, username):
-    Info_bookName = semesterNew + " " + username + " " + "Info"
-    allPlansInfoPath = "./User/" + username + "/"
+def AddPlanDetails(semesterNew, userID, planID):
+    Info_bookName = semesterNew + " Info"
+    allPlansInfoPath = "./Users/" + userID + "/" + planID + "/"
     allPlansInfoDict = readPlanData(allPlansInfoPath, Info_bookName)
 
-    seatName = semesterNew + " " + username + " Seats"
-    seatPath = "./User/" + username + "/"
+    seatName = semesterNew + " Seats"
+    seatPath = "./Users/" + userID + "/" + planID + "/"
     seatDict = readSeatData(seatPath, seatName)
 
     firstRow = ("Section", "Open Seats", "Instructor", "Type", "Location", "Schedule",
@@ -223,6 +223,7 @@ def savePlanData(allPlansInfoDict, allPlansInfoPath, Info_bookName, firstRow):
 
 
 if __name__ == "__main__":
-    semesterNew = "2022-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
-    username = "Sam"
-    AddPlanDetails(semesterNew, username)
+    # semesterNew = "2022-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
+    # username = "Sam"
+    # AddPlanDetails(semesterNew, username)
+    pass

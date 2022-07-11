@@ -7,15 +7,15 @@ import xlrd
 import xlwt
 
 
-def GetSeats(semesterNew, username):
+def GetSeats(semesterNew,  userID, planID):
     prefSheetName = "Preferences"
-    prefPath = "./User/" + username + "/" + \
-        semesterNew + " Preferences " + username + ".xls"
+    prefPath = "./Users/" + userID + "/" + planID + \
+        "/" + semesterNew + " Preferences" + ".xls"
     courseData = readPrefData(prefPath, prefSheetName)
     sectionData = getAllSections(semesterNew.split("_")[0], courseData)
     courseScoreList = findCourseScore(sectionData, semesterNew)
-    saveName = semesterNew + " " + username + " Seats"
-    savePath = "./User/" + username + "/"
+    saveName = semesterNew + " Seats"
+    savePath = "./Users/" + userID + "/" + planID + "/"
     saveSeatData(courseScoreList, savePath, saveName)
 
 
@@ -145,6 +145,7 @@ def askURL(url):  # 得到指定一个URL的网页内容
 
 
 if __name__ == "__main__":
-    semester = "2022-SPRG"
-    username = "Sam2"
-    GetSeats(semester, username)
+    # semester = "2022-SPRG"
+    # username = "Sam2"
+    # GetSeats(semester, username)
+    pass
