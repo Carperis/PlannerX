@@ -214,6 +214,7 @@ def plan(planID):
                         GetPreferenceWeb.GetPreference(
                             str(user.id), str(new_plan.id), prefDict, semester)
                     msg.append("Your prefereces is saved!")
+                    return redirect(url_for('plan' + plan.id))
             except:
                 if (msg == []):
                     msg.append("Something goes wrong.")
