@@ -309,79 +309,47 @@ def rankPlans(planID):
     return redirect('/plan/' + planID)
 
 
-@app.route('/plan/showschedule/<int:planID>/<int:n>', methods=['POST'])
+@app.route('/plan/showschedule/<int:planID>/<string:n>', methods=['POST'])
 @login_required
 def showSchedule(planID, n):
+    n = int(n)
     msg = []
     user = User.query.get(current_user.get_id())
     plan = Plan.query.get(planID)
+    oldNum = plan.planNum
     planID = str(planID)
     userID = str(user.id)
     semester = plan.semester
-    num = plan.planNum + (2-n)
+    if (n == -2 or n == -4):
+        newNum = plan.planNum + (3+n)
+    else:
+        newNum = n-1
     try:
-        rankPath = "./Users/" + userID + "/" + planID + "/"
-        rankName = semester + " Ranking"
-        book = xlrd.open_workbook(rankPath + rankName + ".xls")
-        sheet = book.sheet_by_name(rankName)
-        maxNum = sheet.nrows - 1
-        if (num < 0):
-            num = 0
-        elif (num > maxNum):
-            num = maxNum
-        planName = sheet.cell_value(num, 0)
-        plan.planNum = num
-        db.session.commit()
-        print(planName)
+        if (newNum < 0):
+            newNum = 0
+        try:
+            rankPath = "./Users/" + userID + "/" + planID + "/"
+            rankName = semester + " Ranking"
+            book = xlrd.open_workbook(rankPath + rankName + ".xls")
+            sheet = book.sheet_by_name(rankName)
+            maxNum = sheet.nrows
+            if (newNum > maxNum):
+                newNum = maxNum-1
+            planName = sheet.cell_value(newNum, 0)
+        except:
+            planName = "Plan " + str(newNum+1)
         try:
             GetSchedulePic.GetSchedulePic(semester, userID, planID, planName)
+            plan.planNum = newNum
+            db.session.commit()
         except:
             pass
+        print("Plan " + str(plan.planNum + 1))
         # msg.append("See your schedules below")
     except:
         msg.append("Can't create your schedules")
     session['messages'] = msg
-    return jsonify(num=num+1)
-
-
-@app.route('/plan/goto/<int:planID>/<string:num>', methods=['POST'])
-@login_required
-def goToSchedule(planID, num):
-    msg = []
-    user = User.query.get(current_user.get_id())
-    plan = Plan.query.get(planID)
-    planID = str(planID)
-    userID = str(user.id)
-    semester = plan.semester
-    try:
-        if (int(num) > 0):
-            num = int(num)-1
-        else:
-            num = 0
-    except:
-        num = 0
-    try:
-        rankPath = "./Users/" + userID + "/" + planID + "/"
-        rankName = semester + " Ranking"
-        book = xlrd.open_workbook(rankPath + rankName + ".xls")
-        sheet = book.sheet_by_name(rankName)
-        maxNum = sheet.nrows - 1
-        if (num > maxNum):
-            num = maxNum
-        print(num)
-        planName = sheet.cell_value(num, 0)
-        plan.planNum = num
-        db.session.commit()
-        print(planName)
-        try:
-            GetSchedulePic.GetSchedulePic(semester, userID, planID, planName)
-        except:
-            pass
-        # msg.append("See your schedules below")
-    except:
-        msg.append("Can't create your schedules")
-    session['messages'] = msg
-    return jsonify(num=num+1)
+    return jsonify(num=plan.planNum+1)
 
 
 if __name__ == "__main__":

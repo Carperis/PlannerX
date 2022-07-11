@@ -6,17 +6,20 @@
 <script>
     function shownext() {
         $.ajax({
-            url: "/plan/showschedule/{{plan.id}}/1",
+            url: "/plan/showschedule/{{plan.id}}/-2",
             type: "POST",
             success: function (data) {
                 $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
                 $("#num").prop('value', data.num);
+                {%if (plan.planNum == -1)%}
+                location.reload();
+                {% endif %}
             }
         });
     }
     function showprevious() {
         $.ajax({
-            url: "/plan/showschedule/{{plan.id}}/3",
+            url: "/plan/showschedule/{{plan.id}}/-4",
             type: "POST",
             success: function (data) {
                 $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
@@ -27,7 +30,7 @@
     function goto() {
         var n = $("#num").val();
         $.ajax({
-            url: "/plan/goto/{{plan.id}}/" + n,
+            url: "/plan/showschedule/{{plan.id}}/" + n,
             type: "POST",
             success: function (data) {
                 $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
