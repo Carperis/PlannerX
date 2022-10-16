@@ -197,7 +197,7 @@ def plan(planID):
                     if (plan):
                         plan.semester = semester
                         plan.planname = planname
-                        user.courses = courses
+                        plan.courses = courses
                         plan.AvgScore = float(AvgScore)
                         plan.EarlyTime = EarlyTime
                         plan.LateTime = LateTime

@@ -38,7 +38,28 @@
             }
         });
     }
+    function getYear(date) {
+        if (date.getMonth() >= 9) {
+            return date.getFullYear() + 1;
+        }
+        else {
+            return date.getFullYear();
+        }
+    }
     $(document).ready(function () {
+        var newDate = new Date();
+        {% if (not(request.form['years'])) %}
+        {% if plan %}
+        $('#years').html("{{ plan.semester.split('-')[0] }}");
+        $('#years').val("{{ plan.semester.split('-')[0] }}");
+        {% else %}
+        $('#years').html(getYear(newDate));
+        $('#years').val(getYear(newDate));
+        {% endif %}
+        {% else %}
+        $('#years').html("{{request.form['years']}}");
+        $('#years').val("{{request.form['years']}}");
+        {% endif %}
         $('#num').keypress(function (e) {
             if (e.keyCode == 13) {
                 if (isNaN($("#num").val()) || $('#num').val().length === 0) {
@@ -48,7 +69,6 @@
             }
         });
     });
-
 </script>
 {% endblock %}
 
@@ -88,10 +108,7 @@
                             <div style="display: flex;">
                                 <select class="bg-gray-800 text-gray-300 w-full p-2 rounded-lg mainfont-regular"
                                     name="years" id="" style="margin-right: 5px;">
-                                    <option value="2022">2022</option>
-                                    <option value="2023">2023</option>
-                                    <option value="2024">2024</option>
-                                    <option value="2025">2025</option>
+                                    <option id="years" value=""></option>
                                 </select>
                                 <select class="bg-gray-800 text-gray-300 w-full p-2 rounded-lg mainfont-regular"
                                     name="term" id="" style="margin-left: 5px;">

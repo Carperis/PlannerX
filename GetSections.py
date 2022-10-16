@@ -183,6 +183,6 @@ def saveData(dataList, savePath, saveName, firstRow):
 
 
 if __name__ == "__main__":
-    semester = "2022-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
+    semester = "2023-SPRG"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
     # (startIndex, endIndex, semester) index=-1 -> default
-    GetSections(1859, 1904, semester)
+    GetSections(-1, -1, semester)
