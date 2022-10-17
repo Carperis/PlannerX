@@ -131,7 +131,7 @@ def getPlans(scheduleLayers, numSect, sectList):
     planLimit = -1
 
     # see https://stackoverflow.com/questions/4138851/recursive-looping-function-in-python
-    def recurse(layers, depth):
+    def recursion(layers, depth):
         if (len(layers) <= 0 or depth <= 0):
             return
         topKey = list(layers.keys())[0]
@@ -145,7 +145,7 @@ def getPlans(scheduleLayers, numSect, sectList):
             length = len(layers)
             newlayers = removeEmptyLayers(newlayers)
 
-            if (len(layers) != length):
+            if (len(newlayers) != length): #change layers to newlayers for some reason
                 continue
             onePlan[section.split('-')[1]] = section
             if (checkFullDictionary(onePlan) and depth == 1):
@@ -155,9 +155,9 @@ def getPlans(scheduleLayers, numSect, sectList):
             print("\r", end="")
             print(alist, end="")
             print(" %d Zip Plans Done" % (numPlanDone[0]), end="")
-            recurse(copyLayers(newlayers), depth-1)
+            recursion(copyLayers(newlayers), depth-1)
 
-    recurse(copyLayers(scheduleLayers), depth)
+    recursion(copyLayers(scheduleLayers), depth)
 
     print("")
     return allPlans

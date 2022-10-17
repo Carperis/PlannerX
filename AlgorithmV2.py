@@ -63,9 +63,10 @@ def getRemoveList(layers, times, SameTeacherSect, section):
         for teacher, sectList in SameTeacherSect[course].items():
             if (section in sectList):
                 thisTeacher = teacher
-        for teacher, sectList in SameTeacherSect[course].items():
-            if (teacher != thisTeacher):
-                removeList += sectList
+        if (thisTeacher != ''): #add: check we cannot find thisTeacher, which means this section has no teacher.
+            for teacher, sectList in SameTeacherSect[course].items():
+                if (teacher != thisTeacher):
+                    removeList += sectList
 
     for sectName, layer in layers.items():
         for time in times:
@@ -137,12 +138,12 @@ def getPlans(scheduleLayers, numSect, sectList, SameTeacherSect, limit):
     planLimit = limit
 
     # see https://stackoverflow.com/questions/4138851/recursive-looping-function-in-python
-    def recurse(layers, depth):
+    def recursion(layers, depth):
         if (len(layers) <= 0 or depth <= 0):
             return
         topKey = list(layers.keys())[0]
         availableSect = getSectOfLayer(layers[topKey])
-        layers.pop(topKey)
+        layers.pop(topKey) #remove top layer since we have already chosen one, and we only care about layers (other sections) below it.
         for section, times in availableSect.items():
             if (planLimit != -1 and planLimit == len(allPlans)):
                 return
@@ -151,7 +152,7 @@ def getPlans(scheduleLayers, numSect, sectList, SameTeacherSect, limit):
             length = len(layers)
             newlayers = removeEmptyLayers(newlayers)
 
-            if (len(layers) != length):
+            if (len(newlayers) != length): #change layers to newlayers for some reason
                 continue
             onePlan[section.split('-')[1]] = section
             if (checkFullDictionary(onePlan) and depth == 1):
@@ -161,9 +162,9 @@ def getPlans(scheduleLayers, numSect, sectList, SameTeacherSect, limit):
             print("\r", end="")
             print(alist, end="")
             print(" %d Plans Done" % (numPlanDone[0]), end="")
-            recurse(copyLayers(newlayers), depth-1)
+            recursion(copyLayers(newlayers), depth-1)
 
-    recurse(copyLayers(scheduleLayers), depth)
+    recursion(copyLayers(scheduleLayers), depth)
 
     print("")
     return allPlans
