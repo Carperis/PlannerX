@@ -209,12 +209,12 @@ def plan(planID):
                         db.session.add(new_plan)
                         db.session.commit()
                         plan = new_plan
+                    path = "./Users/"+str(user.id)+"/"+str(plan.id)+"/"
+                    if (os.path.exists(path)):
+                        shutil.rmtree(path)    
+                    GetPreferenceWeb.GetPreference(str(user.id), str(plan.id), prefDict, semester)
                     msg.append("Your prefereces is saved!")
                     session['messages'] = msg
-                    path = "./Users/"+str(user.id)+"/"+str(plan.id)+"/"
-                    shutil.rmtree(path)    
-                    GetPreferenceWeb.GetPreference(
-                        str(user.id), str(plan.id), prefDict, semester)
                     return redirect("/plan/" + str(plan.id))
             except:
                 if (msg == []):

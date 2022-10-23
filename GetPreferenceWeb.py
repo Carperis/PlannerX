@@ -13,6 +13,7 @@ def GetPreference(userID, planID, prefDict, semesterNew):
     prefList = dict2List(prefDict)
 
     saveData(prefList, savePath, saveName, firstRow)
+    print("saved")
 
 
 def dict2List(prefDict):
