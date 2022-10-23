@@ -223,7 +223,5 @@ def savePlanData(allPlansInfoDict, allPlansInfoPath, Info_bookName, firstRow):
 
 
 if __name__ == "__main__":
-    # semesterNew = "2022-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
-    # username = "Sam"
-    # AddPlanDetails(semesterNew, username)
+    AddPlanDetails("2023-SPRG","1","1")
     pass

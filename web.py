@@ -211,6 +211,8 @@ def plan(planID):
                         plan = new_plan
                     msg.append("Your prefereces is saved!")
                     session['messages'] = msg
+                    path = "./Users/"+str(user.id)+"/"+str(plan.id)+"/"
+                    shutil.rmtree(path)    
                     GetPreferenceWeb.GetPreference(
                         str(user.id), str(plan.id), prefDict, semester)
                     return redirect("/plan/" + str(plan.id))
@@ -349,7 +351,8 @@ def showSchedule(planID, n):
 
 
 if __name__ == "__main__":
-    # from web2 import db
+    # from web import app, db
+    # app.app_context().push()
     # db.create_all()
     app.run(debug=True, port="1234")
     # app.run(debug=True, port="5000", host="0.0.0.0")

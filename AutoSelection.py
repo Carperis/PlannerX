@@ -59,7 +59,7 @@ def AutoSelection(semesterNew, userID, planID):
     schedules = []
     for plan in allPlansInfo:
         if (not getAndCheckSchedule(plan, "")):
-            print(getAndCheckSchedule(plan, ""))
+            print("Find one wrong plan!")
         # schedules.append(getAndCheckSchedule(plan, ""))
     # Schedules_bookName = semesterNew + " " + userID + " " + "Schedules"
     # saveMultiData(schedules, schedulesPath,

@@ -145,7 +145,5 @@ def askURL(url):  # 得到指定一个URL的网页内容
 
 
 if __name__ == "__main__":
-    # semester = "2022-SPRG"
-    # username = "Sam2"
-    # GetSeats(semester, username)
+    GetSeats("2023-SPRG","1","1")
     pass
