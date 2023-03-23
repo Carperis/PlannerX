@@ -170,6 +170,6 @@ def saveData(dataList, savePath, saveName, firstRow):
 
 
 if __name__ == "__main__":
-    semester = "2023-SPRG"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
+    semester = "2023-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
     GetCourses(semester)
     # getAndSaveSections("https://www.bu.edu/phpbin/course-search/section/?t=casaa103&amp;semester=2021-SUMM&amp;return=%2Fphpbin%2Fcourse-search%2Fsearch.php%3Fpage%3D0%26pagesize%3D100%26adv%3D1%26nolog%3D%26search_adv_all%3D%26yearsem_adv%3D2021-SUMM%26credits%3D%2A%26hub_match%3Dall%26pagesize%3D100", "CAS AA 103", "2021-SUMM")
