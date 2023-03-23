@@ -138,7 +138,7 @@ def askURL(url):  # 得到指定一个URL的网页内容
     request = urllib.request.Request(url, headers=head)
     html = ""
     try:
-        response = urllib.request.urlopen(request, timeout=5)
+        response = urllib.request.urlopen(request, timeout=10)
         html = response.read().decode("utf-8")
     # except urllib.error.URLError as e:
     #     if hasattr(e, "code"):
