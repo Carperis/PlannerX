@@ -73,10 +73,10 @@ def findCourseScore(sectionData, semesterNew):
                 str(year)+"&SearchOptionCd=S&SearchOptionDesc=Class+Number&MainCampusInd="
         html = askURL(url)
         soup = BeautifulSoup(html, "html.parser")
-        alltd = soup.find_all("td")  # 44,29
+        alltd = soup.find_all("td")  # 41,26
         result = 0
         try:
-            td29 = alltd[29].find_all("font")[0].contents[0]
+            td29 = alltd[26].find_all("font")[0].contents[0]
             try:
                 td29 = int(td29.strip())
             except:
@@ -84,7 +84,7 @@ def findCourseScore(sectionData, semesterNew):
         except:
             td29 = "can't find"
         try:
-            td44 = alltd[44].find_all("font")[0].contents[0]
+            td44 = alltd[41].find_all("font")[0].contents[0]
             try:
                 td44 = int(td44.strip())
             except:
