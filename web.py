@@ -349,10 +349,14 @@ def showSchedule(planID, n):
     session['messages'] = msg
     return jsonify(num=plan.planNum+1)
 
+@app.teardown_request
+def teardown_request(exception):
+    if exception:
+        db.session.rollback()
+    db.session.remove()
 
 if __name__ == "__main__":
     #from web import app, db
     #app.app_context().push()
     #db.create_all()
     app.run(debug=True, port="1234")
-    # app.run(debug=True, port="5000", host="0.0.0.0")
