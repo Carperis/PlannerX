@@ -1,44 +1,64 @@
-{% extends 'base.html' %}
+{% extends 'base_content.html' %}
 
 {% block head %}
 <title>BU PlannerX - Dashboard</title>
 {% endblock %}
 
-{% block body %}
+{% block content %}
+<div class="col-md-9 mx-auto">
+    <div style="height: 50px"></div>
+    <!-- Page Heading -->
+    <div class="d-flex align-items-center justify-content-center m-5">
+        <div class="h1 mb-0 text-white font-weight-bold">Dashboard</div>
+    </div>
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            <!-- Page Heading -->
+            <div class="row d-flex align-items-center justify-content-center mb-4">
+                <div class="h3 mb-0 text-white">Account Info</div>
+            </div>
+            <div class="row d-flex justify-content-center align-items-center mb-2">
+                <img src="/static/img/undraw_profile.svg" class="rounded-circle" style="width: 150px; height: 150px;">
+            </div>
+            <div class="row d-sm-flex align-items-center justify-content-center mb-4">
+                <div class="mb-0 text-white">{{current_user.username}}</div>
+            </div>
+            <div class="text-center">
+                <a class="btn" href="/logout" data-toggle="modal" data-target="#logoutModal">
+                    <div class="btn-warning btn-circle btn-sm">
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                    <span class="small text-warning pl-2">Logout</span>
+                </a>
+            </div>
+            <div class="text-center">
+                <a href="/deleteuser" class="btn" data-toggle="modal" data-target="#deleteAccountModal">
+                    <div class="btn-danger btn-circle btn-sm">
+                        <i class="fas fa-trash"></i>
+                    </div>
+                    <span class="small text-danger pl-2">Delete Account</span>
+                </a>
+            </div>
+        </div>
 
-<div class="container-fluid bg-gray-900" style="padding-top: 25px; padding-bottom: 40px">
-    <div class="row" style="display: flex; align-items: center; justify-content: center;">
-        <div class="col-md-12">
-            <h1 class="mainfont-bold text-white" style="margin-top: 10px;">Dashboard</h1>
-            <div class="row mainfont-regular text-white"
-                style="background-color:rgba(128, 128, 128, 0.3);  margin-top: 10px;">
-                <div class="col-md-8">
-                    Hello, {{current_user.username}}
-                </div>
-                <div class="col-md-4">
-                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
-                        onclick="window.location.href='/logout';" id="btn">
-                        Logout
-                    </button>
-                    <br>
-                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
-                        onclick="window.location.href='/deleteuser';" id="btn">
-                        Delete Account
-                    </button>
+        <div class="col-lg-9 mb-4">
+            <!-- Page Heading -->
+            <div class="row mb-2">
+                <div class="col-6 h3 text-info text-left">My Plans</div>
+                <div class="col-6 h3 text-right">
+                    <a href="/plan/0" class="btn btn-info btn-sm">
+                        <span class="icon text-white">
+                            +
+                        </span>
+                        <span class="text">Add Plan</span>
+                    </a>
                 </div>
             </div>
-            <div class="row mainfont-bold text-white"
-                style="display: grid; background-color:rgba(128, 128, 128, 0.3);  margin-top: 10px;">
-                <div style="display: flex; align-items: center; justify-content:space-between;">
-                    Your Plans:
-                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
-                        onclick="window.location.href='/plan/0';" id="btn">
-                        Add Plan
-                    </button>
-                </div>
-                <div>
-                    <table style="width: 100%; text-align: center">
-                        <tr>
+            <div class="card border-left-info hy-auto shadow py-2 bg-gray-900 border-0">
+                <div class="card-body">
+                    <table class="table text-center w-100 m-0 text-white border-0">
+                        <tr class="text-warning font-weight-bold">
                             <td>Plan Name</td>
                             <td>Semester</td>
                             <td>Actions</td>
@@ -48,18 +68,12 @@
                             <td>{{ plan.planname }}</td>
                             <td>{{ plan.semester }}</td>
                             <td>
-                                <br>
-                                <button
-                                    class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
-                                    onclick="window.location.href='/plan/{{plan.id}}';" id="btn">
-                                    View & Edit
-                                </button>
-                                <br>
-                                <button
-                                    class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
-                                    onclick="window.location.href='/deleteplan/{{plan.id}}';" id="btn">
-                                    Delete
-                                </button>
+                                <a href="/plan/{{plan.id}}" class="btn btn-info btn-sm m-1">
+                                    <span class="text">View & Edit</span>
+                                </a>
+                                <a href="/deleteplan/{{plan.id}}" class="btn btn-danger btn-sm m-1">
+                                    <span class="text">Delete</span>
+                                </a>
                             </td>
                         </tr>
                         {%endfor%}
@@ -68,5 +82,61 @@
             </div>
         </div>
     </div>
+
+    <div style="height: 50px"></div>
+    <!-- Page Heading -->
+    <div class="d-flex align-items-center justify-content-center m-4">
+        <div class="h3 mb-0 text-white font-weight-bold">Read Me</div>
+    </div>
+
+    <div class="row">
+        <!-- Content Column -->
+        <div class="col-lg-6 mb-4">
+
+            <!-- Illustrations -->
+            <div class="card shadow bg-gray-800 border-0 h-100">
+                <div class="card-header py-3  bg-gray-900 border-0">
+                    <h6 class="m-0 font-weight-bold text-info">Dashboard Notes</h6>
+                </div>
+                <div class="card-body text-white">
+                    <!-- <div class="text-center">
+                        <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;"
+                            src="/static/img/undraw_posting_photo.svg" alt="...">
+                    </div> -->
+                    <li class="mb-1">
+                        All saved plans will be shown in "My Plans" section.
+                    </li>
+                    <li class="mb-1">
+                        To delete a plan, click on the "Delete" button next to the plan you want to delete. Please note
+                        that once you click the button, the plan will be deleted immediately<span class="text-warning">
+                            there will be no prompts asking for confirmation.</span>
+                    </li>
+                    <li class="mb-1">
+                        If you are certain to delete your account, click on the "Delete account" button
+                        located under your "Account Info". A confirmation message will appear asking you to confirm
+                        your deletion.
+                    </li>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <!-- Illustrations -->
+            <div class="card shadow bg-gray-800 border-0 h-100">
+                <div class="card-header py-3  bg-gray-900 border-0">
+                    <h6 class="m-0 font-weight-bold text-info">Update Anoucement</h6>
+                </div>
+                <div class="card-body text-white">
+                    <!-- <div class="text-center">
+                        <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;"
+                            src="/static/img/undraw_posting_photo.svg" alt="...">
+                    </div> -->
+                    <li class="mb-1">Datebase is updated to semester Fall 2023</li>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
+<div style="height: 100px"></div>
+
 {% endblock %}

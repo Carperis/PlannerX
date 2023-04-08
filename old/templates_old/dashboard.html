@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>BU PlannerX - Dashboard</title>
+{% endblock %}
+
+{% block body %}
+
+<div class="container-fluid bg-gray-900" style="padding-top: 25px; padding-bottom: 40px">
+    <div class="row" style="display: flex; align-items: center; justify-content: center;">
+        <div class="col-md-12">
+            <h1 class="mainfont-bold text-white" style="margin-top: 10px;">Dashboard</h1>
+            <div class="row mainfont-regular text-white"
+                style="background-color:rgba(128, 128, 128, 0.3);  margin-top: 10px;">
+                <div class="col-md-8">
+                    Hello, {{current_user.username}}
+                </div>
+                <div class="col-md-4">
+                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
+                        onclick="window.location.href='/logout';" id="btn">
+                        Logout
+                    </button>
+                    <br>
+                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
+                        onclick="window.location.href='/deleteuser';" id="btn">
+                        Delete Account
+                    </button>
+                </div>
+            </div>
+            <div class="row mainfont-bold text-white"
+                style="display: grid; background-color:rgba(128, 128, 128, 0.3);  margin-top: 10px;">
+                <div style="display: flex; align-items: center; justify-content:space-between;">
+                    Your Plans:
+                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
+                        onclick="window.location.href='/plan/0';" id="btn">
+                        Add Plan
+                    </button>
+                </div>
+                <div>
+                    <table style="width: 100%; text-align: center">
+                        <tr>
+                            <td>Plan Name</td>
+                            <td>Semester</td>
+                            <td>Actions</td>
+                        </tr>
+                        {%for plan in plans%}
+                        <tr>
+                            <td>{{ plan.planname }}</td>
+                            <td>{{ plan.semester }}</td>
+                            <td>
+                                <br>
+                                <button
+                                    class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
+                                    onclick="window.location.href='/plan/{{plan.id}}';" id="btn">
+                                    View & Edit
+                                </button>
+                                <br>
+                                <button
+                                    class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
+                                    onclick="window.location.href='/deleteplan/{{plan.id}}';" id="btn">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                        {%endfor%}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

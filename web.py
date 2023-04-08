@@ -101,14 +101,16 @@ def login():
     msg = []
 
     form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user:
-            if bcrypt.check_password_hash(user.password, form.password.data):
-                login_user(user)
-                return redirect(url_for('dashboard'))
-    # else:
-    #     msg.append("Invalid login!")
+
+    if request.method == 'POST':
+        msg.append("Invalid login!")
+        if form.validate_on_submit():
+            user = User.query.filter_by(username=form.username.data).first()
+            if user:
+                if bcrypt.check_password_hash(user.password, form.password.data):
+                    login_user(user)
+                    return redirect(url_for('dashboard'))
+
     return render_template('login.html', form=form, msg=msg)
 
 
@@ -116,7 +118,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
+    return redirect(url_for('index'))
 
 
 @ app.route('/register', methods=['GET', 'POST'])
@@ -124,17 +126,20 @@ def register():
     msg = []
 
     form = RegisterForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(username=form.username.data, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-        userID = new_user.id
-        path = "./Users/" + str(userID) + "/"
-        GetPreferenceWeb.checkFolder(path)
-        return redirect(url_for('login'))
-    # else:
-    #     msg.append("Invalid registration!")
+
+    if request.method == 'POST':
+        msg.append("Invalid registration!")
+        if form.validate_on_submit():
+            hashed_password = bcrypt.generate_password_hash(form.password.data)
+            new_user = User(username=form.username.data,
+                            password=hashed_password)
+            db.session.add(new_user)
+            db.session.commit()
+            userID = new_user.id
+            path = "./Users/" + str(userID) + "/"
+            GetPreferenceWeb.checkFolder(path)
+            return redirect(url_for('login'))
+
     return render_template('register.html', form=form, msg=msg)
 
 
@@ -155,6 +160,7 @@ def plan(planID):
         session['messages'] = []
         msg = session['messages']
     session['messages'] = []
+
     prefDict = {}
     user = User.query.get(current_user.get_id())
     plan = Plan.query.get(planID)
@@ -211,8 +217,9 @@ def plan(planID):
                         plan = new_plan
                     path = "./Users/"+str(user.id)+"/"+str(plan.id)+"/"
                     if (os.path.exists(path)):
-                        shutil.rmtree(path)    
-                    GetPreferenceWeb.GetPreference(str(user.id), str(plan.id), prefDict, semester)
+                        shutil.rmtree(path)
+                    GetPreferenceWeb.GetPreference(
+                        str(user.id), str(plan.id), prefDict, semester)
                     msg.append("Your prefereces is saved!")
                     session['messages'] = msg
                     return redirect("/plan/" + str(plan.id))
@@ -349,14 +356,16 @@ def showSchedule(planID, n):
     session['messages'] = msg
     return jsonify(num=plan.planNum+1)
 
+
 @app.teardown_request
 def teardown_request(exception):
     if exception:
         db.session.rollback()
     db.session.remove()
 
+
 if __name__ == "__main__":
-    #from web import app, db
-    #app.app_context().push()
-    #db.create_all()
+    # from web import app, db
+    # app.app_context().push()
+    # db.create_all()
     app.run(debug=True, port="1234")

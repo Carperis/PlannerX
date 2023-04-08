@@ -1,17 +1,242 @@
-{% extends 'base.html' %}
+{% extends 'base_content.html' %}
 
 {% block head %}
-<title>BU PlannerX</title>
+<title>BU PlannerX - Ultimate Course Planning Tool</title>
 {% endblock %}
 
-{% block body %}
-<div class="container-fluid bg-gray-900" style="padding-top: 25px; padding-bottom: 40px">
-    <div class="row" style="display: flex; align-items: center; justify-content: center;">
-        <div class="col-md-12">
-            <div class="row mainfont-bold text-white">
-                <h1>Welcome to BU PlannerX! Please login.</h1>
+{% block content %}
+<div style="height: 50px"></div>
+<div class="mx-2 jumbotron bg-blue" style="background-image: url('/static/img/bluedark.jpg'); background-size: cover;">
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-md-9 mx-auto">
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="col-md-9 mb-4">
+                    <div class="h1 mb-0 font-weight-bold text-white">
+                        Welcome to BU PlannerX
+                    </div>
+                    <div class="h2 mb-0 font-weight-normal text-warning font-italic font">
+                        <br>
+                        Your ultimate course planning tool!
+                    </div>
+                </div>
+                <div class="col-md-3 align-items-center justify-content-center">
+                    <a href="/dashboard" class="btn">
+                        <span class="h5 text-info pr-2 font-weight-bold">Start My Plan</span>
+                        <div class="btn-info btn-circle btn-lg">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<div class="col-md-9 mx-auto">
+    <div style="height: 50px"></div>
+    <!-- Page Heading -->
+    <div class="d-flex align-items-center justify-content-center mb-4">
+        <div class="h3 mb-0 text-white font-weight-bold">Key Features</div>
+    </div>
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2 bg-gray-900 border-0">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-lg font-weight-bold text-info text-uppercase mb-1">
+                                Massive Data</div>
+                            <div class="h5 mb-0 text-white">
+                                <li class="mb-1">Over 4k courses recorded per semester</li>
+                                <li>Over 3k prof data from RateMyProfessor</li>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-database fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2 bg-gray-900 border-0">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-lg font-weight-bold text-info text-uppercase mb-1">
+                                Easy to Use</div>
+                            <div class="h5 mb-0 text-white">
+                                <li class="mb-1">Take 5 min to fill in a few blanks</li>
+                                <li>Get up to 1k schedules in 1 sec</li>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2 bg-gray-900 border-0">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-lg font-weight-bold text-info text-uppercase mb-1">
+                                Smart Algorithm</div>
+                            <div class="h5 mb-0 text-white">
+                                <li class="mb-1">Auto-schedule classes w/o time conflict</li>
+                                <li>Auto-rank schedules to find the best one</li>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-code fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2 bg-gray-900 border-0">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-lg font-weight-bold text-info text-uppercase mb-1">
+                                Visualization</div>
+                            <div class="h5 mb-0 text-white">
+                                <li class="mb-1">Intuitionistic time table for each schedule</li>
+                                <li>Easily save schedule images for sharing</li>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-days fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="height: 50px"></div>
+    <!-- Page Heading -->
+    <div class="d-flex align-items-center justify-content-center mb-4">
+        <div class="h3 mb-0 text-white font-weight-bold">How to Use?</div>
+    </div>
+
+    <div class="row">
+        <!-- Content Column -->
+        <div class="col-12 mb-4">
+            <!-- Illustrations -->
+            <div class="card shadow mb-4 bg-gray-800 border-0">
+                <div class="card-header py-3  bg-gray-900 border-0">
+                    <h6 class="m-0 font-weight-bold text-info">Step 1: Login your acount</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step1_1.png" alt="...">
+                        </div>
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step1_2.png" alt="...">
+                        </div>
+                    </div>
+                    <p class="text-white text-center">To access the login page, click on the "Login" button located in
+                        the top-right corner. Enter your username and password to log in. In case you do not have an
+                        account yet, click on the "Create an Account!" link to register for a new account. After
+                        registration, return to the login page to complete the login process.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mb-4">
+            <!-- Illustrations -->
+            <div class="card shadow mb-4 bg-gray-800 border-0">
+                <div class="card-header py-3  bg-gray-900 border-0">
+                    <h6 class="m-0 font-weight-bold text-info">Step 2: Create a plan in dashboard</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step2_1.png" alt="...">
+                        </div>
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step2_2.png" alt="...">
+                        </div>
+                    </div>
+                    <p class="text-white text-center">After logging in, click on the avatar in the top-right corner of
+                        the homepage, and select "Dashboard" to enter your backend. Click on "+ Add Plan" button to
+                        start planning your new semester classes.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mb-4">
+            <!-- Illustrations -->
+            <div class="card shadow mb-4 bg-gray-800 border-0">
+                <div class="card-header py-3  bg-gray-900 border-0">
+                    <h6 class="m-0 font-weight-bold text-info">Step 3: Enter your classes and preferences</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step3_1.png" alt="...">
+                        </div>
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step3_2.png" alt="...">
+                        </div>
+                    </div>
+                    <p class="text-white text-center">Using the course planning tool, follow the prompts and
+                        instructions to enter your plan name, semester, classes, and preferences. Once you have
+                        completed all the necessary fields, click on the "Submit / Update" button to save your plan.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mb-4">
+            <!-- Illustrations -->
+            <div class="card shadow mb-4 bg-gray-800 border-0">
+                <div class="card-header py-3  bg-gray-900 border-0">
+                    <h6 class="m-0 font-weight-bold text-info">Step 4: Get, rank, and show your schedules</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step4_1.png" alt="...">
+                        </div>
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step4_2.png" alt="...">
+                        </div>
+                    </div>
+                    <p class="text-white text-center">Once you have submitted your plan, click on "Get Plans" to
+                        calculate
+                        all possible schedules. Once the message "Got your plans!" appears, click on "Show Plans" to see
+                        your schedules displayed at the bottom of the page. If you wish to find a schedule that best
+                        suits your preferences, click on "Rank Plans" to rank your schedules based on your preferences.
+                        After ranking your schedules, click "Show Plans" again to view the updated schedules. The first
+                        schedule will be the one that best fits your preferences.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div style="height: 100px"></div>
+
 {% endblock %}
