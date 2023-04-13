@@ -1,0 +1,293 @@
+{% extends 'base_content.html' %}
+
+{% block head %}
+<title>BU PlannerX - Plan</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<script>
+    function shownext() {
+        $.ajax({
+            url: "/plan/showschedule/{{plan.id}}/-2",
+            type: "POST",
+            success: function (data) {
+                $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
+                $("#num").prop('value', data.num);
+                {%if (plan.planNum == -1)%}
+                location.reload();
+                {% endif %}
+            }
+        });
+    }
+    function showprevious() {
+        $.ajax({
+            url: "/plan/showschedule/{{plan.id}}/-4",
+            type: "POST",
+            success: function (data) {
+                $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
+                $("#num").prop('value', data.num);
+            }
+        });
+    }
+    function goto() {
+        var n = $("#num").val();
+        $.ajax({
+            url: "/plan/showschedule/{{plan.id}}/" + n,
+            type: "POST",
+            success: function (data) {
+                $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
+                $("#num").prop('value', data.num);
+            }
+        });
+    }
+    function getYear(date) {
+        if (date.getMonth() >= 9) {
+            return date.getFullYear() + 1;
+        }
+        else {
+            return date.getFullYear();
+        }
+    }
+    $(document).ready(function () {
+        var newDate = new Date();
+        {% if (not(request.form['years'])) %}
+        {% if plan %}
+        $('#years').html("{{ plan.semester.split('-')[0] }}");
+        $('#years').val("{{ plan.semester.split('-')[0] }}");
+        {% else %}
+        $('#years').html(getYear(newDate));
+        $('#years').val(getYear(newDate));
+        {% endif %}
+        {% else %}
+        $('#years').html("{{request.form['years']}}");
+        $('#years').val("{{request.form['years']}}");
+        {% endif %}
+        $('#num').keypress(function (e) {
+            if (e.keyCode == 13) {
+                if (isNaN($("#num").val()) || $('#num').val().length === 0) {
+                    $("#num").prop('value', "1");
+                }
+                $("#goto").click();
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="col-md-9 mx-auto">
+    <div style="height: 50px"></div>
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-center m-5">
+        <div class="h1 mb-0 text-white font-weight-bold">Course Planning Tool</div>
+    </div>
+    {% if msg != [] %}
+    <div class="alert alert-success alert-dismissable">
+        <button data-dismiss="alert" aria-label="close" class="close" aria-hidden="true"
+            style="position: relative; z-index: 1;">
+            &times;
+        </button>
+        {% for message in msg%}
+        <div class="alert font-weight-bold m-0 p-0">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="row text-white">
+
+        <div class="col-lg-8 p-4">
+            <form class="user" role="form" action="/plan/{%if plan.id%}{{plan.id}}{%else%}0{%endif%}" method="POST">
+                <div class="form-group">
+                    <i class="fa-solid fa-user fa-inverse"></i>
+                    <label for="content">
+                        Plan Name
+                    </label>
+                    <input class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4" , type="text"
+                        name="planname" id="planname" placeholder="Plan Name"
+                        value="{% if (not (request.form['planname'])) %}{% if plan %}{{ plan.planname }}{% endif %}{% else %}{{request.form['planname']}}{% endif %}">
+                </div>
+                <div class="form-group">
+                    <i class="fa-solid fa-calendar-days fa-inverse"></i>
+                    <label for="content">
+                        Semester
+                    </label>
+                    <div class="d-flex">
+                        <select class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 w-50 mr-1"
+                            name="years" id="">
+                            <option id="years" value=""></option>
+                        </select>
+                        <select class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 w-50 ml-1"
+                            name="term" id="">
+                            <option value="SPRG" {% if (not (request.form['term'])) %}{%if plan%}{% if
+                                (plan.semester.split("-")[1]=="SPRG" ) %}selected="selected" {% endif %}{% endif %}{%
+                                else %}{% if ( request.form['term']=="SPRG" ) %}selected="selected" {% endif %}{% endif
+                                %}>Spring
+                            </option>
+                            <option value="FALL" {% if (not (request.form['term'])) %}{%if plan%}{% if
+                                (plan.semester.split("-")[1]=="FALL" ) %}selected="selected" {% endif %}{% endif %}{%
+                                else %}{% if ( request.form['term']=="FALL" ) %}selected="selected" {% endif %}{% endif
+                                %}>Fall
+                            </option>
+                            <option value="SUMM_1" {% if (not (request.form['term'])) %}{%if plan%}{% if
+                                (plan.semester.split("-")[1]=="SUMM_1" ) %}selected="selected" {% endif %}{% endif %}{%
+                                else %}{% if ( request.form['term']=="SUMM_1" ) %}selected="selected" {% endif %}{%
+                                endif %}>Summer 1
+                            </option>
+                            <option value="SUMM_2" {% if (not (request.form['term'])) %}{%if plan%}{% if
+                                (plan.semester.split("-")[1]=="SUMM_2" ) %}selected="selected" {% endif %}{% endif %}{%
+                                else %}{% if ( request.form['term']=="SUMM_2" ) %}selected="selected" {% endif %}{%
+                                endif %}>Summer 2</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <i class="fa-solid fa-book-open-reader fa-inverse"></i>
+                    <label for="content">
+                        Courses
+                    </label>
+                    <input type="text" name="courses" id="courses" placeholder="CAS XX 101,ENG XX 101,QST XX 101"
+                        value="{% if (not (request.form['courses'])) %}{% if plan %}{{ plan.courses }}{% endif %}{% else %}{{request.form['courses']}}{% endif %}"
+                        class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4">
+                </div>
+
+                <div class="form-group">
+                    <i class="fa-solid fa-chalkboard-user fa-inverse"></i>
+                    <label for="content">
+                        Average Professors Score
+                    </label>
+                    <input type="number" step="0.01" name="AvgScore" id="AvgScore" placeholder="Rate Your Professors!"
+                        value="{% if (not (request.form['AvgScore'])) %}{% if plan %}{{ plan.AvgScore }}{% else %}3{% endif %}{% else %}{{request.form['AvgScore']}}{% endif %}"
+                        class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4">
+                </div>
+
+                <div class="form-group">
+                    <i class="fa-solid fa-person-running fa-inverse fa-lg"></i>
+                    <label for="content">
+                        Prefer Starting Time
+                    </label>
+                    <input type="time" name="EarlyTime" id="EarlyTime"
+                        value="{% if (not (request.form['EarlyTime'])) %}{% if plan %}{{ plan.EarlyTime }}{% else %}08:00{% endif %}{% else %}{{request.form['EarlyTime']}}{% endif %}"
+                        class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4">
+                </div>
+
+                <div class="form-group">
+                    <i class="fa-solid fa-person-running fa-inverse fa-flip-horizontal fa-lg"></i>
+                    <label for="content">
+                        Prefer Ending Time
+                    </label>
+                    <input type="time" name="LateTime" id="LateTime"
+                        value="{% if (not (request.form['LateTime'])) %}{% if plan %}{{ plan.LateTime }}{% else %}21:00{% endif %}{% else %}{{request.form['LateTime']}}{% endif %}"
+                        class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4">
+                </div>
+
+                <div class="text-lg-left text-center">
+                    <button id="btn" type="submit" class="btn btn-success btn-lg mt-2 mb-3">
+                        Submit / Update
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-4 p-4 d-flex flex-column align-items-center text-center">
+            {% if(plan) %}
+
+            <div class="mt-1">
+                <div class="h3 mb-0 text-info mb-2">{{ plan.semester }} Classes:</div>
+
+                <div class="text-white mb-3">
+                    {% for cls in plan.courses.split(",") %}
+                    <li>
+                        {{cls}}
+                    </li>
+                    {% endfor %}
+                </div>
+
+                <div class="h3 mb-0 text-info mb-2">Prefer Avergae Score:</div>
+                <div class="text-white text-lg mb-3">{{ plan.AvgScore }}</div>
+
+                <div class="h3 mb-0 text-info mb-2">Prefer Starting Time:</div>
+                <div class="text-white text-lg mb-3">{{ plan.EarlyTime }}</div>
+
+                <div class="h3 mb-0 text-info mb-2">Prefer Finishing Time:</div>
+                <div class="text-white text-lg mb-3">{{ plan.LateTime }}</div>
+
+            </div>
+
+            <div class="row flex-grow-1">
+            </div>
+
+            <div class="row">
+                <div class="col-6 p-3">
+                    <a href="/getplans/{{ plan.id }}" class="btn btn-info w-100">
+                        <span class="text">Get Plans</span>
+                    </a>
+                </div>
+                <div class="col-6  p-3">
+                    <a href="/rankplans/{{ plan.id }}" class="btn btn-info w-100">
+                        <span class="text">Rank Plans</span>
+                    </a>
+                </div>
+                <div class="col-6  p-3">
+                    <a onclick="shownext()" class="btn btn-info w-100">
+                        <span class="text">Show Plans</span>
+                    </a>
+                </div>
+                <div class="col-6  p-3">
+                    <a href="/deleteplan/{{ plan.id }}" class="btn btn-danger w-100">
+                        <span class="text">Delete</span>
+                    </a>
+                </div>
+            </div>
+
+            {% else %}
+
+            <div class="h3 mb-0 text-white mt-1">Quick Tips</div>
+            <br>
+            <div class="text-white">
+                <p>Please fill out ALL columns for an optimized schedule!</p>
+                <br>
+                <p>Classes Input Template: <br>
+                    CAS XX 101,ENG XX 101,QST XX 101
+                </p><br>
+                <p>*** Make sure all letters are uppercases, and there's no spacen after the comma! ***</p>
+            </div>
+
+            {% endif %}
+        </div>
+    </div>
+
+    {% if plan %}
+    {% if (plan.planNum != -1) %}
+    <div style="height: 50px"></div>
+    <div class="row d-flex align-items-center justify-content-center m-4">
+        <div class="h3 mb-0 text-white font-weight-bold">Schedule</div>
+    </div>
+    <div class="row d-flex align-content-center justify-content-center mt-4 mb-4">
+        <div class="row">
+            <img src="/static/Users/{{user.id}}/{{plan.id}}/schedule.png" id="img" style="width: 100%; height: 600;" />
+        </div>
+        <div class="row w-lg-50">
+            <div class="col-3 text-left my-auto">
+                <a onclick=" showprevious()" class="btn">
+                    <i class="fa-solid fa-angle-left fa-inverse fa-2xl"></i>
+                </a>
+            </div>
+            <div class="col-6 text-white d-flex align-content-center justify-content-center">
+                <p style="margin: 10px">Plan</p>
+                <input type="number" min="0" name="num" id="num" value="{{plan.planNum+1}}"
+                    class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4">
+                <button onclick="goto()" id="goto" class="btn p-0">
+                    <i class="fa-solid fa-angles-right fa-inverse fa-xl " style="margin: 10px;"></i>
+                </button>
+            </div>
+            <div class="col-3 text-right my-auto">
+                <a onclick="shownext()" class="btn">
+                    <i class="fa-solid fa-angle-right fa-inverse fa-2xl"></i>
+                </a>
+            </div>
+
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+<div style="height: 100px"></div>
+
+{% endblock %}

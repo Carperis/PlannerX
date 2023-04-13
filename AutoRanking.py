@@ -3,10 +3,10 @@ import xlrd
 import xlwt
 
 
-def AutoRanking(semesterNew, username):
+def AutoRanking(semesterNew, userID, planID):
     prefSheetName = "Preferences"
-    prefPath = "./User/" + username + "/" + \
-        semesterNew + " Preferences " + username + ".xls"
+    prefPath = "./Users/" + userID + "/" + planID + \
+        "/" + semesterNew + " Preferences" + ".xls"
     prefDict = readPrefData(prefPath, prefSheetName)
 
     prefRank = {  # key: a certain preference, value: weight(importance) of this preference (1 is lowest)
@@ -15,14 +15,14 @@ def AutoRanking(semesterNew, username):
         "Latest Time": 1
     }
     keys = list(prefRank.keys())
-    InfoDetail_bookName = semesterNew + " " + username + " " + "InfoDetails"
-    allPlansInfoDetailPath = "./User/" + username + "/"
+    InfoDetail_bookName = semesterNew + " InfoDetails"
+    allPlansInfoDetailPath = "./Users/" + userID + "/" + planID + "/"
     allPlansInfoDetailDict = readPlanDetailData(
         allPlansInfoDetailPath, InfoDetail_bookName, keys)
     planScoreDict = getPlanScore(allPlansInfoDetailDict, prefRank, prefDict)
 
-    rankPath = "./User/" + username + "/"
-    rankName = semesterNew + " " + username + " Ranking"
+    rankPath = "./Users/" + userID + "/" + planID + "/"
+    rankName = semesterNew + " Ranking"
     # planRankList = getRankList(planScoreDict)
     rankDict = {k: v for k, v in sorted(
         planScoreDict.items(), key=lambda item: item[1], reverse=True)}
@@ -149,6 +149,7 @@ def readPlanDetailData(path, bookName, keys):
 
 
 if __name__ == "__main__":
-    semesterNew = "2022-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
-    username = "Sam"
-    AutoRanking(semesterNew, username)
+    # semesterNew = "2022-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
+    # username = "Sam"
+    # AutoRanking(semesterNew, username)
+    pass

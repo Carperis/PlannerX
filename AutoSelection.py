@@ -7,13 +7,13 @@ import AlgorithmV2
 import AlgorithmV2_1
 
 
-def AutoSelection(semesterNew, username):
+def AutoSelection(semesterNew, userID, planID):
     semester = semesterNew.split("_")[0]
     prefSheetName = "Preferences"
-    prefPath = "./User/" + username + "/" + \
-        semesterNew + " Preferences " + username + ".xls"
-    schedulesPath = "./User/" + username + "/"
-    allPlansInfoPath = "./User/" + username + "/"
+    prefPath = "./Users/" + userID + "/" + planID + \
+        "/" + semesterNew + " Preferences" + ".xls"
+    schedulesPath = "./Users/" + userID + "/" + planID + "/"
+    allPlansInfoPath = "./Users/" + userID + "/" + planID + "/"
 
     prefData = readPrefData(prefPath, prefSheetName)
     print("Got preference data!")
@@ -52,14 +52,16 @@ def AutoSelection(semesterNew, username):
 
     firstRow = ("Section", "Open Seats", "Instructor", "Type",
                 "Location", "Schedule", "Dates", "Notes", "Semester", "Code")
-    Info_bookName = semesterNew + " " + username + " " + "Info"
+    Info_bookName = semesterNew + " Info"
     saveMultiData(allPlansInfo, allPlansInfoPath,
                   Info_bookName, "Plan", firstRow)  # Save Plans
 
-    # schedules = []
-    # for plan in allPlansInfo:
-    #     schedules.append(getAndCheckSchedule(plan, ""))
-    # Schedules_bookName = semesterNew + " " + username + " " + "Schedules"
+    schedules = []
+    for plan in allPlansInfo:
+        if (not getAndCheckSchedule(plan, "")):
+            print("Find one wrong plan!")
+        # schedules.append(getAndCheckSchedule(plan, ""))
+    # Schedules_bookName = semesterNew + " " + userID + " " + "Schedules"
     # saveMultiData(schedules, schedulesPath,
     #               Schedules_bookName, "Schedule", [])  # Save Schedules
     return len(allPlansList)
@@ -299,7 +301,6 @@ def saveMultiData(multiData, savePath, bookName, sheetName, firstRow):
 
 if __name__ == "__main__":
     start_time = time.time()
-    semesterNew = "2022-SUMM_1"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
-    username = "sam"
-    AutoSelection(semesterNew, username)
+    AutoSelection("2023-SPRG","1","2")
+    # AutoSelection("2023-SPRG","1","1")
     print("--- %s seconds ---" % (time.time() - start_time))

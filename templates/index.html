@@ -1,256 +1,242 @@
-{% extends 'base.html' %}
+{% extends 'base_content.html' %}
 
 {% block head %}
-
+<title>BU PlannerX - Ultimate Course Planning Tool</title>
 {% endblock %}
 
-{% block body %}
-
-<div class="py-2 bg-blue-500 text-white" style="display: flex; align-items: center; justify-content:center;">
-    <div style="width: 80%; display: flex; align-items: center; justify-content:space-between;">
-        <a href="/" style="text-decoration: none; padding-top: 3px">
-            <h1 class="text-white text-2xl mainfont-bold my-auto">BU PlannerX</h1>
-        </a>
-        <button id="btn2" class="bg-white text-blue-500 px-8 py-2 rounded-lg mainfont-bold"
-            onclick="window.location.href='https://github.com/Carperis/PlannerX';"
-            style="display: flex; align-items: center; justify-content: center; padding: 10px">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <path
-                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-            </svg>
-            <p style="margin-left: 5px;">Github</p>
-        </button>
-    </div>
-</div>
-
-<div class="container-fluid bg-gray-900" style="padding-top: 25px; padding-bottom: 40px">
-    <div class="row" style="display: flex; align-items: center; justify-content: center;">
-        <div class="col-md-12">
-            {% if msg != [] %}
-            <div class="alert alert-success alert-dismissable">
-
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-                    <i class="fa-solid fa-circle-xmark fa-xs"></i>
-                </button>
-                {% for message in msg%}
-                <div class="alert mainfont-bold" style="margin-bottom: 0; padding-top: 0; padding-bottom: 0; ">{{
-                    message }}</div>
-                {% endfor %}
-            </div>
-            {% endif %}
-            <div class="row" style="margin-bottom: 20px;">
-                {% for user in users%}
-                {% if (user.planNum != -1) %}
-                <div class="col-md-2" style="display: flex; align-items: center; justify-content: center;">
-                    <button onclick="window.location.href='/showprevious/{{
-                            user.id }}';">
-                        <i class="fa-solid fa-angle-left fa-inverse fa-2xl"></i>
-                    </button>
-                </div>
-                <div class="col-md-8 mainfont-bold text-white" style="margin-top: 20px;">
-                    <form role="form" action="/goto" method="POST"
-                        style="display: flex; align-items: center; justify-content: center;">
-                        <div style="display: flex; align-items: center; justify-content: center;">
-                            <p style="margin: 10px">Plan</p>
-                            <input type="number" name="num" id="num" value="{{user.planNum+1}}"
-                                class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300 w-16">
-                            <button type="submit" style="margin: 0;">
-                                <i class="fa-solid fa-angles-right fa-inverse fa-xl" style="margin: 10px"></i>
-                            </button>
-                        </div>
-                    </form>
-                    <br>
-                    <img src="./static/schedule.png" id="img" style="width: 100%; height: 600;" />
-                </div>
-                <div class="col-md-2" style="display: flex; align-items: center; justify-content: center;">
-                    <div class="col-md-2" style="display: flex; align-items: center; justify-content: center;">
-                        <button onclick="window.location.href='/shownext/{{
-                                user.id }}';">
-                            <i class="fa-solid fa-angle-right fa-inverse fa-2xl"></i>
-                        </button>
+{% block content %}
+<div style="height: 50px"></div>
+<div class="mx-2 jumbotron bg-blue" style="background-image: url('/static/img/bluedark.jpg'); background-size: cover;">
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-md-9 mx-auto">
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="col-md-9 mb-4">
+                    <div class="h1 mb-0 font-weight-bold text-white">
+                        Welcome to BU PlannerX
                     </div>
-                </div>
-                {% endif %}
-                {% endfor %}
-            </div>
-            <div class="row mainfont-bold text-white">
-                <div class="col-md-8">
-                    <form role="form" action="/" method="POST">
-                        <div class="form-group">
-                            <i class="fa-solid fa-user fa-inverse"></i>
-                            <label for="username">
-                                Username
-                            </label>
-                            <input type="text" name="username" id="username" placeholder="Name"
-                                value="{% if (not (request.form['username'])) %}{% for user in users %}{{ user.username }}{% endfor %}{% else %}{{request.form['username']}}{% endif %}"
-                                class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
-                        </div>
-
-                        <div class="form-group">
-                            <i class="fa-solid fa-calendar-days fa-inverse"></i>
-                            <label for="content">
-                                Semester
-                            </label>
-                            <div style="display: flex;">
-                                <select class="bg-gray-800 text-gray-300 w-full p-2 rounded-lg mainfont-regular"
-                                    name="years" id="" style="margin-right: 5px;">
-                                    <option value="2022">2022</option>
-                                    <option value="2023">2023</option>
-                                    <option value="2024">2024</option>
-                                    <option value="2025">2025</option>
-                                </select>
-                                <select class="bg-gray-800 text-gray-300 w-full p-2 rounded-lg mainfont-regular"
-                                    name="term" id="" style="margin-left: 5px;">
-                                    <option value="SPRG" {% if (not (request.form['term'])) %}{% for user in users %}{%
-                                        if (user.semester.split("-")[1]=="SPRG" ) %}selected="selected" {% endif %}{%
-                                        endfor %}{% else %}{% if ( request.form['term']=="SPRG" ) %}selected="selected"
-                                        {% endif %}{% endif %}>Spring
-                                    </option>
-                                    <option value="FALL" {% if (not (request.form['term'])) %}{% for user in users %}{%
-                                        if (user.semester.split("-")[1]=="FALL" ) %}selected="selected" {% endif %}{%
-                                        endfor %}{% else %}{% if ( request.form['term']=="FALL" ) %}selected="selected"
-                                        {% endif %}{% endif %}>Fall
-                                    </option>
-                                    <option value="SUMM_1" {% if (not (request.form['term'])) %}{% for user in users
-                                        %}{% if (user.semester.split("-")[1]=="SUMM_1" ) %}selected="selected" {% endif
-                                        %}{% endfor %}{% else %}{% if ( request.form['term']=="SUMM_1" )
-                                        %}selected="selected" {% endif %}{% endif %}>Summer 1
-                                    </option>
-                                    <option value="SUMM_2" {% if (not (request.form['term'])) %}{% for user in users
-                                        %}{% if (user.semester.split("-")[1]=="SUMM_2" ) %}selected="selected" {% endif
-                                        %}{% endfor %}{% else %}{% if ( request.form['term']=="SUMM_2" )
-                                        %}selected="selected" {% endif %}{% endif %}>Summer 2</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <i class="fa-solid fa-book-open-reader fa-inverse"></i>
-                            <label for="content">
-                                Courses
-                            </label>
-                            <input type="text" name="courses" id="courses"
-                                placeholder="CAS XX 101,ENG XX 101,QST XX 101"
-                                value="{% if (not (request.form['courses'])) %}{% for user in users %}{{ user.courses }}{% endfor %}{% else %}{{request.form['courses']}}{% endif %}"
-                                class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
-                        </div>
-
-
-                        <div class="form-group">
-                            <i class="fa-solid fa-chalkboard-user fa-inverse"></i>
-                            <label for="content">
-                                Average Professors Score
-                            </label>
-                            <input type="number" step="0.01" name="AvgScore" id="AvgScore"
-                                placeholder="Rate Your Professors!"
-                                value="{% if (not (request.form['AvgScore'])) %}{% for user in users %}{{ user.AvgScore }}{% endfor %}{% else %}{{request.form['AvgScore']}}{% endif %}"
-                                class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
-                        </div>
-
-                        <div class="form-group">
-                            <i class="fa-solid fa-person-running fa-inverse fa-lg"></i>
-                            <label for="content">
-                                Prefer Starting Time
-                            </label>
-                            <input type="time" name="EarlyTime" id="EarlyTime"
-                                value="{% if (not (request.form['EarlyTime'])) %}{% for user in users %}{{ user.EarlyTime }}{% endfor %}{% else %}{{request.form['EarlyTime']}}{% endif %}"
-                                class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
-                        </div>
-
-
-                        <div class="form-group">
-                            <i class="fa-solid fa-person-running fa-inverse fa-flip-horizontal fa-lg"></i>
-                            <label for="content">
-                                Prefer Ending Time
-                            </label>
-                            <input type="time" name="LateTime" id="LateTime"
-                                value="{% if (not (request.form['LateTime'])) %}{% for user in users %}{{ user.LateTime }}{% endfor %}{% else %}{{request.form['LateTime']}}{% endif %}"
-                                class="mainfont-regular rounded-lg form-control bg-gray-800 text-gray-300">
-                        </div>
-                        <button id="btn" type="submit"
-                            class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg">
-                            Submit / Update
-                        </button>
-                    </form>
-                </div>
-                <div class="col-md-4">
-                    <br>
-                    {% if(users) %}
-                    {% for user in users %}
-                    <h2>Hi {{ user.username }}:</h2><br>
-                    <div>
-                        <h3>Your {{ user.semester }} classes:</h3>
-                        <ol>
-                            <div class="mainfont-regular">
-                                {% for cls in user.courses.split(",") %}
-                                <li class="list-item">
-                                    {{cls}}
-                                </li>
-                                {% endfor %}
-                            </div>
-                        </ol><br>
-                        <h3>Your prefer avergae score:</h3>
-                        <div class="mainfont-regular">{{ user.AvgScore }}</div>
-                        <h3>Your prefer starting time:</h3>
-                        <div class="mainfont-regular">{{ user.EarlyTime }}</div>
-                        <h3>Your prefer finishing time:</h3>
-                        <div class="mainfont-regular">{{ user.LateTime }}</div>
-                    </div>
-                    <br>
-                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
-                        onclick="window.location.href='/getplans/{{
-                                    user.id }}';" id="btn">
-                        Get Plans
-                    </button><br>
-                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
-                        onclick="window.location.href='/rankplans/{{
-                                user.id }}';" id="btn">
-                        Rank Plans
-                    </button><br>
-                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
-                        onclick="window.location.href='/shownext/{{
-                                user.id }}';" id="btn">
-                        Show Plans
-                    </button><br>
-                    <button class="ml-auto mt-2 bg-blue-500 py-2 px-6 text-white mainfont-bold text-base rounded-lg"
-                        onclick="window.location.href='/delete/{{
-                                user.id }}';" id="btn">
-                        Delete
-                    </button>
-                    {% endfor %}
-                    {% else %}
-                    <h3>Welcome to BU PlannerX</h3>
-                    <br>
-                    <div class="mainfont-regular">
-                        <p>Please fill out ALL columns for an optimized schedule!</p>
+                    <div class="h2 mb-0 font-weight-normal text-warning font-italic font">
                         <br>
-                        <p>Classes Input Template: <br>
-                            CAS XX 101,ENG XX 101,QST XX 101
-                        </p><br>
-                        <p>*** Make sure there's no space after the comma! ***</p>
+                        Your ultimate course planning tool!
                     </div>
-                    {% endif %}
-
+                </div>
+                <div class="col-md-3 align-items-center justify-content-center">
+                    <a href="/dashboard" class="btn">
+                        <span class="h5 text-info pr-2 font-weight-bold">Start My Plan</span>
+                        <div class="btn-info btn-circle btn-lg">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<footer class="py-1.5 bg-gray-800 text-white" style="display: flex; align-items: center; justify-content:center;">
-    <div style="width: 80%; display: flex; align-items: center; justify-content:space-between;">
-        <p class="text-gray-300 xl mainfont-regular my-auto" style="padding-right: 20px;">
-            CREATED BY SAM, VIVIAN, TREVOR, YUNTING, KEN, YURI
-        </p>
-        <button id="btn2" class="bg-gray-800 text-gray-500 px-8 py-1 rounded-lg mainfont-bold"
-            onclick="window.location.href='https://github.com/Carperis/PlannerX';"
-            style="display: flex; align-items: center; justify-content: center; padding: 10px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <path
-                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-            </svg>
-            <p style="margin-left: 5px;">Github</p>
-        </button>
+<div class="col-md-9 mx-auto">
+    <div style="height: 50px"></div>
+    <!-- Page Heading -->
+    <div class="d-flex align-items-center justify-content-center mb-4">
+        <div class="h3 mb-0 text-white font-weight-bold">Key Features</div>
     </div>
-</footer>
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2 bg-gray-900 border-0">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-lg font-weight-bold text-info text-uppercase mb-1">
+                                Massive Data</div>
+                            <div class="h5 mb-0 text-white">
+                                <li class="mb-1">Over 4k courses recorded per semester</li>
+                                <li>Over 3k prof data from RateMyProfessor</li>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-database fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2 bg-gray-900 border-0">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-lg font-weight-bold text-info text-uppercase mb-1">
+                                Easy to Use</div>
+                            <div class="h5 mb-0 text-white">
+                                <li class="mb-1">Take 5 min to fill in a few blanks</li>
+                                <li>Get up to 1k schedules in 1 sec</li>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2 bg-gray-900 border-0">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-lg font-weight-bold text-info text-uppercase mb-1">
+                                Smart Algorithm</div>
+                            <div class="h5 mb-0 text-white">
+                                <li class="mb-1">Auto-schedule classes w/o time conflict</li>
+                                <li>Auto-rank schedules to find the best one</li>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-code fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2 bg-gray-900 border-0">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-lg font-weight-bold text-info text-uppercase mb-1">
+                                Visualization</div>
+                            <div class="h5 mb-0 text-white">
+                                <li class="mb-1">Intuitionistic time table for each schedule</li>
+                                <li>Easily save schedule images for sharing</li>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-days fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="height: 50px"></div>
+    <!-- Page Heading -->
+    <div class="d-flex align-items-center justify-content-center mb-4">
+        <div class="h3 mb-0 text-white font-weight-bold">How to Use?</div>
+    </div>
+
+    <div class="row">
+        <!-- Content Column -->
+        <div class="col-12 mb-4">
+            <!-- Illustrations -->
+            <div class="card shadow mb-4 bg-gray-800 border-0">
+                <div class="card-header py-3  bg-gray-900 border-0">
+                    <h6 class="m-0 font-weight-bold text-info">Step 1: Login your acount</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step1_1.png" alt="...">
+                        </div>
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step1_2.png" alt="...">
+                        </div>
+                    </div>
+                    <p class="text-white text-center">To access the login page, click on the "Login" button located in
+                        the top-right corner. Enter your username and password to log in. In case you do not have an
+                        account yet, click on the "Create an Account!" link to register for a new account. After
+                        registration, return to the login page to complete the login process.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mb-4">
+            <!-- Illustrations -->
+            <div class="card shadow mb-4 bg-gray-800 border-0">
+                <div class="card-header py-3  bg-gray-900 border-0">
+                    <h6 class="m-0 font-weight-bold text-info">Step 2: Create a plan in dashboard</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step2_1.png" alt="...">
+                        </div>
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step2_2.png" alt="...">
+                        </div>
+                    </div>
+                    <p class="text-white text-center">After logging in, click on the avatar in the top-right corner of
+                        the homepage, and select "Dashboard" to enter your backend. Click on "+ Add Plan" button to
+                        start planning your new semester classes.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mb-4">
+            <!-- Illustrations -->
+            <div class="card shadow mb-4 bg-gray-800 border-0">
+                <div class="card-header py-3  bg-gray-900 border-0">
+                    <h6 class="m-0 font-weight-bold text-info">Step 3: Enter your classes and preferences</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step3_1.png" alt="...">
+                        </div>
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step3_2.png" alt="...">
+                        </div>
+                    </div>
+                    <p class="text-white text-center">Using the course planning tool, follow the prompts and
+                        instructions to enter your plan name, semester, classes, and preferences. Once you have
+                        completed all the necessary fields, click on the "Submit / Update" button to save your plan.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mb-4">
+            <!-- Illustrations -->
+            <div class="card shadow mb-4 bg-gray-800 border-0">
+                <div class="card-header py-3  bg-gray-900 border-0">
+                    <h6 class="m-0 font-weight-bold text-info">Step 4: Get, rank, and show your schedules</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step4_1.png" alt="...">
+                        </div>
+                        <div class="col-sm-6 text-center">
+                            <img class="img-fluid mt-3 mb-4 shadow" style="width: 30rem; border-radius: 5px;"
+                                src="/static/img/step4_2.png" alt="...">
+                        </div>
+                    </div>
+                    <p class="text-white text-center">Once you have submitted your plan, click on "Get Plans" to
+                        calculate
+                        all possible schedules. Once the message "Got your plans!" appears, click on "Show Plans" to see
+                        your schedules displayed at the bottom of the page. If you wish to find a schedule that best
+                        suits your preferences, click on "Rank Plans" to rank your schedules based on your preferences.
+                        After ranking your schedules, click "Show Plans" again to view the updated schedules. The first
+                        schedule will be the one that best fits your preferences.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div style="height: 100px"></div>
+
 {% endblock %}

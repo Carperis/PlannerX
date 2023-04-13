@@ -4,19 +4,16 @@ import xlwt
 import xlrd
 
 
-def GetPreference(username, prefDict, semesterNew):
-    check = checkCourses(prefDict["Courses"], semesterNew.split("_")[0])
-    if (check == False):
-        return False
-    savePath = "./User/" + username + "/"
+def GetPreference(userID, planID, prefDict, semesterNew):
+    savePath = "./Users/" + userID + "/" + planID + "/"
     checkFolder(savePath)
-    saveName = semesterNew + " Preferences " + username
+    saveName = semesterNew + " Preferences"
     firstRow = list(prefDict.keys())
 
     prefList = dict2List(prefDict)
 
     saveData(prefList, savePath, saveName, firstRow)
-    return True
+    print("saved")
 
 
 def dict2List(prefDict):
@@ -95,11 +92,11 @@ def saveData(dataList, savePath, saveName, firstRow):
 
 
 if __name__ == "__main__":
-    username = "Any"
+    planname = "Any"
     semester = "2022-FALL"
     prefDict = {}
     prefDict["Courses"] = ['ENG EC 327', 'ENG EC 311', 'ENG ME 305']
     prefDict["AvgScore"] = [3.5]
     prefDict["EarlyTime"] = [8]
     prefDict["LateTime"] = [18]
-    GetPreference(username, prefDict, semester)
+    GetPreference(planname, prefDict, semester)
