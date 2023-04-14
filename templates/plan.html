@@ -161,7 +161,7 @@
                 <div class="form-group">
                     <i class="fa-solid fa-person-running fa-inverse fa-lg"></i>
                     <label for="content">
-                        Prefer Starting Time
+                        Preferred Starting Time
                     </label>
                     <input type="time" name="EarlyTime" id="EarlyTime"
                         value="{% if (not (request.form['EarlyTime'])) %}{% if plan %}{{ plan.EarlyTime }}{% else %}08:00{% endif %}{% else %}{{request.form['EarlyTime']}}{% endif %}"
@@ -171,7 +171,7 @@
                 <div class="form-group">
                     <i class="fa-solid fa-person-running fa-inverse fa-flip-horizontal fa-lg"></i>
                     <label for="content">
-                        Prefer Ending Time
+                        Preferred Ending Time
                     </label>
                     <input type="time" name="LateTime" id="LateTime"
                         value="{% if (not (request.form['LateTime'])) %}{% if plan %}{{ plan.LateTime }}{% else %}21:00{% endif %}{% else %}{{request.form['LateTime']}}{% endif %}"
@@ -199,13 +199,13 @@
                     {% endfor %}
                 </div>
 
-                <div class="h3 mb-0 text-info mb-2">Prefer Avergae Score:</div>
+                <div class="h3 mb-0 text-info mb-2">Preferred Avergae Score:</div>
                 <div class="text-white text-lg mb-3">{{ plan.AvgScore }}</div>
 
-                <div class="h3 mb-0 text-info mb-2">Prefer Starting Time:</div>
+                <div class="h3 mb-0 text-info mb-2">Preferred Starting Time:</div>
                 <div class="text-white text-lg mb-3">{{ plan.EarlyTime }}</div>
 
-                <div class="h3 mb-0 text-info mb-2">Prefer Finishing Time:</div>
+                <div class="h3 mb-0 text-info mb-2">Preferred Finishing Time:</div>
                 <div class="text-white text-lg mb-3">{{ plan.LateTime }}</div>
 
             </div>
