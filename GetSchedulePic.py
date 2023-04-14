@@ -51,10 +51,12 @@ def GetSchedulePic(semesterNew, userID, planID, planName):
     colors = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [0, 1, 1], [1, 0, 1], [1, 0.5, 0.5], [1, 0.5, 0], [0.5, 1, 0], [0.5, 0.5, 1], [
         0.5, 0, 1], [0.5, 1, 0.5], [0, 1, 0.5], [0, 0.5, 1], [1, 0.5, 1], [1, 0, 0.5], [0, 0.5, 0], [0.5, 0, 0], [0, 0, 0.5], [0.5, 0.5, 0.5]]
     for i in range(1, sheet.nrows):
-        out = sheet.cell_value(i, 5).split()
-        out2 = out[2].split('-')
-        schedu.add_event(pdfscheduler.Event(datetime.strptime(out[1] + out2[0], '%I:%M%p').time(), datetime.strptime(out2[1] + out[3], '%I:%M%p').time(), [sheet.cell_value(
-            i, 9), sheet.cell_value(i, 3) + " " + convertTime(out[1] + out2[0]) + "-" + convertTime(out2[1] + out[3]), sheet.cell_value(i, 0)], colors[i], convertDays(out[0])))
+        times = sheet.cell_value(i, 5).split(",")
+        for time in times:
+            out = time.split()
+            out2 = out[2].split('-')
+            schedu.add_event(pdfscheduler.Event(datetime.strptime(out[1] + out2[0], '%I:%M%p').time(), datetime.strptime(out2[1] + out[3], '%I:%M%p').time(), [sheet.cell_value(
+                i, 9), sheet.cell_value(i, 3) + " " + convertTime(out[1] + out2[0]) + "-" + convertTime(out2[1] + out[3]), sheet.cell_value(i, 0)], colors[i], convertDays(out[0])))
 
     path = "./static/Users/" + userID + "/" + planID + "/"
     GetPreferenceWeb.checkFolder(path)
@@ -97,4 +99,9 @@ if __name__ == "__main__":
     # username = "Sam2"
     # planName = "Plan 1"
     # GetSchedulePic(semesterNew, username, planName)
-    pass
+    userID = '1'
+    planID = '1'
+    planName = 'Plan 1'
+    semester = '2023-FALL'
+    GetSchedulePic(semester, userID, planID, planName)
+    # pass
