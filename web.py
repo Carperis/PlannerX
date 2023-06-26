@@ -93,7 +93,8 @@ def allowAccess(user, other):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    msg = ["WARNING:", "The current version of the website is for TEST ONLY!", "Any of your data might be DELETED at any time!", "Our team is not responsible for any loss of your data!"]
+    return render_template('index.html', msg=msg)
 
 
 @app.route('/login', methods=['GET', 'POST'])
