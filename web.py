@@ -1,7 +1,13 @@
+import requests
+import pathlib
+import google.auth.transport.requests
+from pip._vendor import cachecontrol
+from google_auth_oauthlib.flow import Flow
+from google.oauth2 import id_token
 from datetime import datetime
 from email.policy import default
 from click import style
-from flask import Flask, redirect, render_template, request, flash, session, url_for, jsonify
+from flask import Flask, redirect, render_template, request, flash, session, url_for, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -23,22 +29,14 @@ app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///web.db'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
+
 db = SQLAlchemy(app)
-
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
-
-
-@login_manager.user_loader
-def user_loader(id):
-    return User.query.get(id)
 
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
-    password = db.Column(db.String(80), nullable=False)
+    # password = db.Column(db.String(80), nullable=False)
     # def __repr__(self):
     #     return '<User %r>' % self.id
 
@@ -57,35 +55,164 @@ class Plan(db.Model):
     #     return '<Plan %r>' % self.id
 
 
-class RegisterForm(FlaskForm):
-    username = StringField(validators=[
-                           InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+# make sure this matches with that's in client_secret.json
+app.secret_key = "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"
+# to allow Http traffic for local dev
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+GOOGLE_CLIENT_ID = "697687543481-stsr0foi21nlt6abfc2cvls4266ofskv.apps.googleusercontent.com"
+client_secrets_file = os.path.join(
+    pathlib.Path(__file__).parent, "client_secret.json")
 
-    password = PasswordField(validators=[
-                             InputRequired(), Length(min=6, max=20)], render_kw={"placeholder": "Password"})
+flow = Flow.from_client_secrets_file(
+    client_secrets_file=client_secrets_file,
+    scopes=["https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/userinfo.email", "openid"],
+    # redirect_uri="http://buplannerx.my.to/google_callback"
+    redirect_uri="http://localhost:1234/google_callback"
+)
 
-    submit = SubmitField('Register')
+# def goologin_is_required(function):
+#     def wrapper(*args, **kwargs):
+#         if "google_id" not in session:
+#             return abort(401)  # Authorization required
+#         else:
+#             return function()
+#     return wrapper
 
-    def validate_username(self, username):
-        existing_user_username = User.query.filter_by(
-            username=username.data).first()
-        if existing_user_username:
-            raise ValidationError(
-                'That username already exists. Please choose a different one.')
+
+@app.route("/google_login")
+def google_login():
+    authorization_url, state = flow.authorization_url()
+    session["state"] = state
+    return redirect(authorization_url)
 
 
-class LoginForm(FlaskForm):
-    username = StringField(validators=[
-                           InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+@app.route("/google_callback")
+def google_callback():
+    flow.fetch_token(authorization_response=request.url)
 
-    password = PasswordField(validators=[
-                             InputRequired(), Length(min=6, max=20)], render_kw={"placeholder": "Password"})
+    # if not session["state"] == request.args["state"]:
+    #     abort(500)  # State does not match!
 
-    submit = SubmitField('Login')
+    credentials = flow.credentials
+    request_session = requests.session()
+    cached_session = cachecontrol.CacheControl(request_session)
+    token_request = google.auth.transport.requests.Request(
+        session=cached_session)
 
+    id_info = id_token.verify_oauth2_token(
+        id_token=credentials._id_token,
+        request=token_request,
+        audience=GOOGLE_CLIENT_ID
+    )
+
+    sub = id_info.get("sub")
+    username = id_info.get("name")
+    email = id_info.get("email")
+    session["google_id"] = sub
+    session["name"] = username
+
+    if (User.query.filter_by(username=email).first()):
+        user = User.query.filter_by(username=email).first()
+        login_user(user)
+    else:
+        # hashed_password = bcrypt.generate_password_hash(form.password.data)
+        # new_user = User(username=form.username.data, password=hashed_password)
+        new_user = User(username=email)
+        db.session.add(new_user)
+        db.session.commit()
+        userID = new_user.id
+        path = "./Users/" + str(userID) + "/"
+        GetPreferenceWeb.checkFolder(path)
+        login_user(new_user)
+
+    return redirect(url_for('dashboard'))
+
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+
+@login_manager.user_loader
+def user_loader(id):
+    return User.query.get(id)
+
+# class RegisterForm(FlaskForm):
+#     username = StringField(validators=[
+#                            InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+
+#     password = PasswordField(validators=[
+#                              InputRequired(), Length(min=6, max=20)], render_kw={"placeholder": "Password"})
+
+#     submit = SubmitField('Register')
+
+#     def validate_username(self, username):
+#         existing_user_username = User.query.filter_by(
+#             username=username.data).first()
+#         if existing_user_username:
+#             raise ValidationError(
+#                 'That username already exists. Please choose a different one.')
+
+# class LoginForm(FlaskForm):
+#     username = StringField(validators=[
+#                            InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+
+#     password = PasswordField(validators=[
+#                              InputRequired(), Length(min=6, max=20)], render_kw={"placeholder": "Password"})
+
+#     submit = SubmitField('Login')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    msg = []
+
+    # form = LoginForm()
+    # if request.method == 'POST':
+    #     msg.append("Invalid login!")
+    #     if form.validate_on_submit():
+    #         user = User.query.filter_by(username=form.username.data).first()
+    #         if user:
+    #             if bcrypt.check_password_hash(user.password, form.password.data):
+    #                 login_user(user)
+    #                 return redirect(url_for('dashboard'))
+    # return render_template('login.html', form=form, msg=msg)
+
+    return render_template('login.html', msg=msg)
+
+
+@app.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    session.clear()
+    logout_user()
+    return redirect(url_for('index'))
+
+
+# @ app.route('/register', methods=['GET', 'POST'])
+# def register():
+#     msg = []
+
+#     form = RegisterForm()
+
+#     if request.method == 'POST':
+#         msg.append("Invalid registration!")
+#         if form.validate_on_submit():
+#             hashed_password = bcrypt.generate_password_hash(form.password.data)
+#             new_user = User(username=form.username.data,
+#                             password=hashed_password)
+#             db.session.add(new_user)
+#             db.session.commit()
+#             userID = new_user.id
+#             path = "./Users/" + str(userID) + "/"
+#             GetPreferenceWeb.checkFolder(path)
+#             return redirect(url_for('login'))
+
+#     return render_template('register.html', form=form, msg=msg)
 
 def allowAccess(user, other):
-    if(hasattr(other, "user_id") and user.id != other.user_id):
+    if (hasattr(other, "user_id") and user.id != other.user_id):
         return False
     else:
         return True
@@ -93,55 +220,9 @@ def allowAccess(user, other):
 
 @app.route('/')
 def index():
-    msg = ["WARNING:", "The current version of the website is for TEST ONLY!", "Any of your data might be DELETED at any time!", "Our team is not responsible for any loss of your data!"]
+    msg = ["WARNING:", "The current version of the website is for TEST ONLY!",
+           "Any of your data might be DELETED at any time!", "Our team is not responsible for any loss of your data!"]
     return render_template('index.html', msg=msg)
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    msg = []
-
-    form = LoginForm()
-
-    if request.method == 'POST':
-        msg.append("Invalid login!")
-        if form.validate_on_submit():
-            user = User.query.filter_by(username=form.username.data).first()
-            if user:
-                if bcrypt.check_password_hash(user.password, form.password.data):
-                    login_user(user)
-                    return redirect(url_for('dashboard'))
-
-    return render_template('login.html', form=form, msg=msg)
-
-
-@app.route('/logout', methods=['GET', 'POST'])
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
-
-
-@ app.route('/register', methods=['GET', 'POST'])
-def register():
-    msg = []
-
-    form = RegisterForm()
-
-    if request.method == 'POST':
-        msg.append("Invalid registration!")
-        if form.validate_on_submit():
-            hashed_password = bcrypt.generate_password_hash(form.password.data)
-            new_user = User(username=form.username.data,
-                            password=hashed_password)
-            db.session.add(new_user)
-            db.session.commit()
-            userID = new_user.id
-            path = "./Users/" + str(userID) + "/"
-            GetPreferenceWeb.checkFolder(path)
-            return redirect(url_for('login'))
-
-    return render_template('register.html', form=form, msg=msg)
 
 
 @app.route('/dashboard', methods=['GET', 'POST'])
@@ -260,7 +341,8 @@ def deletePlan(planID):
 def deleteUser():
     user = User.query.get(current_user.get_id())
     plans = Plan.query.filter_by(user_id=user.id)
-    logout_user()
+    # logout_user()
+    session.clear()
     try:
         path1 = "./Users/"+str(user.id)+"/"
         path2 = "./static/Users/"+str(user.id)+"/"
@@ -286,7 +368,7 @@ def getPlans(planID):
     planID = str(planID)
     semester = plan.semester
     result = AutoSelection.AutoSelection(semester, userID, planID)
-    if(result == 0):
+    if (result == 0):
         msg.append("Can't find your plans")
     else:
         msg.append("Got your plans!")
