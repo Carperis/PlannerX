@@ -5,14 +5,9 @@ from pip._vendor import cachecontrol
 from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
 from datetime import datetime
-from email.policy import default
-from click import style
 from flask import Flask, redirect, render_template, request, flash, session, url_for, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 
 import GetPreferenceWeb
@@ -90,9 +85,9 @@ def google_login():
 @app.route("/google_callback")
 def google_callback():
     flow.fetch_token(authorization_response=request.url)
-
-    # if not session["state"] == request.args["state"]:
-    #     abort(500)  # State does not match!
+    
+    if not session["state"] == request.args["state"]:
+        abort(500)  # State does not match!
 
     credentials = flow.credentials
     request_session = requests.session()
@@ -451,4 +446,4 @@ if __name__ == "__main__":
     # from web import app, db
     # app.app_context().push()
     # db.create_all()
-    app.run(debug=True, port="1234")
+   app.run(debug=True, port="1234")

@@ -28,15 +28,15 @@ def convertTime(time):
 def convertDays(days):
     newDays = []
     for i in range(0, len(days)):
-        if(days[i] == "M"):
+        if (days[i] == "M"):
             newDays.append("Monday")
-        elif(days[i] == "T"):
+        elif (days[i] == "T"):
             newDays.append("Tuesday")
-        elif(days[i] == "W"):
+        elif (days[i] == "W"):
             newDays.append("Wednesday")
-        elif(days[i] == "R"):
+        elif (days[i] == "R"):
             newDays.append("Thursday")
-        elif(days[i] == "F"):
+        elif (days[i] == "F"):
             newDays.append("Friday")
     return newDays
 
@@ -59,9 +59,10 @@ def GetSchedulePic(semesterNew, userID, planID, planName):
                 i, 9), sheet.cell_value(i, 3) + " " + convertTime(out[1] + out2[0]) + "-" + convertTime(out2[1] + out[3]), sheet.cell_value(i, 0)], colors[i], convertDays(out[0])))
 
     path = "./static/Users/" + userID + "/" + planID + "/"
+    outfile_pdf = "./static/Users/" + userID + "/" + planID + "/schedule.pdf"
+    outfile_img = "./static/Users/" + userID + "/" + planID + "/schedule.png"
     GetPreferenceWeb.checkFolder(path)
-    outfile = "./static/Users/" + userID + "/" + planID + "/schedule.pdf"
-    c = pdfscheduler.Canvas(outfile, (800, 600))
+    c = pdfscheduler.Canvas(outfile_pdf, (800, 600))
     c.setFillColorRGB(1, 1, 1)
     c.setStrokeColorRGB(1, 1, 1)
     c.setFont("Helvetica", 20)
@@ -80,18 +81,17 @@ def GetSchedulePic(semesterNew, userID, planID, planName):
     )
 
     try:
-        os.remove("./static/Users/" + userID + "/" + planID + "/schedule.pdf")
-        os.remove("./static/Users/" + userID + "/" + planID + "/schedule.png")
+        os.remove(outfile_pdf)
+        os.remove(outfile_img)
     except:
         pass
 
     c.setFillColor(black)
     c.save()
-    doc = fitz.open("./static/Users/" + userID +
-                    "/" + planID + "/schedule.pdf")
+    doc = fitz.open(outfile_pdf)
     for page in doc:
         pix = page.get_pixmap(alpha=True)
-        pix.save("./static/Users/" + userID + "/" + planID + "/schedule.png")
+        pix.save(outfile_img)
 
 
 if __name__ == "__main__":
