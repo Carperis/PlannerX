@@ -1,7 +1,0 @@
-Test Entries:
-Name: Sam
-Semester: 2022 Spring
-Courses: ENG EC 327, ENG EC 311, ENG ME 303, ENG EK 210, ENG EK 301
-Score: 3
-Starting Time: 9:00AM
-Ending Time: 6:00PM
