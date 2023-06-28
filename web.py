@@ -64,8 +64,8 @@ flow = Flow.from_client_secrets_file(
             "https://www.googleapis.com/auth/userinfo.email", "openid"],
 
     # go https://console.cloud.google.com to set up redirect_uri
-    # redirect_uri="https://buplannerx.my.to/google_callback"
-    redirect_uri="http://localhost:5000/google_callback"
+    redirect_uri="http://buplannerx.my.to/google_callback"
+    # redirect_uri="http://localhost:5000/google_callback"
 )
 
 
