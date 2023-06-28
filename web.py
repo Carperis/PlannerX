@@ -66,15 +66,6 @@ flow = Flow.from_client_secrets_file(
     redirect_uri="http://localhost:1234/google_callback"
 )
 
-# def goologin_is_required(function):
-#     def wrapper(*args, **kwargs):
-#         if "google_id" not in session:
-#             return abort(401)  # Authorization required
-#         else:
-#             return function()
-#     return wrapper
-
-
 @app.route("/google_login")
 def google_login():
     authorization_url, state = flow.authorization_url()
@@ -86,8 +77,8 @@ def google_login():
 def google_callback():
     flow.fetch_token(authorization_response=request.url)
     
-    if not session["state"] == request.args["state"]:
-        abort(500)  # State does not match!
+    # if not session["state"] == request.args["state"]:
+    #     abort(500)  # State does not match!
 
     credentials = flow.credentials
     request_session = requests.session()
@@ -446,4 +437,4 @@ if __name__ == "__main__":
     # from web import app, db
     # app.app_context().push()
     # db.create_all()
-   app.run(debug=True, port="1234")
+    app.run(debug=True, port="1234")
