@@ -62,11 +62,12 @@ flow = Flow.from_client_secrets_file(
     client_secrets_file=client_secrets_file,
     scopes=["https://www.googleapis.com/auth/userinfo.profile",
             "https://www.googleapis.com/auth/userinfo.email", "openid"],
-    
+
     # go https://console.cloud.google.com to set up redirect_uri
-    redirect_uri="https://buplannerx.my.to/google_callback"
-    # redirect_uri="http://localhost:1234/google_callback"
+    # redirect_uri="https://buplannerx.my.to/google_callback"
+    redirect_uri="http://localhost:5000/google_callback"
 )
+
 
 @app.route("/google_login")
 def google_login():
@@ -78,7 +79,7 @@ def google_login():
 @app.route("/google_callback")
 def google_callback():
     flow.fetch_token(authorization_response=request.url)
-    
+
     # if not session["state"] == request.args["state"]:
     #     abort(500)  # State does not match!
 
@@ -439,4 +440,4 @@ if __name__ == "__main__":
     # from web import app, db
     # app.app_context().push()
     # db.create_all()
-    app.run(debug=True, port="1234")
+    app.run(debug=True, port="5000")
