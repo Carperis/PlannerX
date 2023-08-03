@@ -1,8 +1,0 @@
-pip install flask
-pip install flask_sqlalchemy
-pip install xlwt
-pip install xlrd
-pip install pdf2image
-pip install pdfschedule
-pip install beautifulsoup4
-conda install -c conda-forge poppler
