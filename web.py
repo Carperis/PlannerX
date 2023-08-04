@@ -64,8 +64,9 @@ flow = Flow.from_client_secrets_file(
             "https://www.googleapis.com/auth/userinfo.email", "openid"],
 
     # go https://console.cloud.google.com to set up redirect_uri
-    redirect_uri="http://buplannerx.my.to/google_callback"
+    # redirect_uri="http://buplannerx.my.to/google_callback"
     # redirect_uri="http://localhost:5000/google_callback"
+    redirect_uri="http://127.0.0.1:5000/google_callback"
 )
 
 
@@ -437,7 +438,4 @@ def teardown_request(exception):
 
 
 if __name__ == "__main__":
-    # from web import app, db
-    # app.app_context().push()
-    # db.create_all()
     app.run(debug=True, port="5000")
