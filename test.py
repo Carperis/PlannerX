@@ -326,17 +326,40 @@ from GetSeats import GetSeats
 # # os.chmod(path, num)
 # # os.rmdir(path)
 # shutil.rmtree(path)
-print(not bool(""))
+# print(not bool(""))
 
 
-    window.onload = function () {
-        function updateImage() {
-            var image = document.getElementById("img");
-            image.src = image.src.split("?")[0] + "?" + new Date().getTime();
-        }
-        setInterval(updateImage, 100);
-    }
+#     window.onload = function () {
+#         function updateImage() {
+#             var image = document.getElementById("img");
+#             image.src = image.src.split("?")[0] + "?" + new Date().getTime();
+#         }
+#         setInterval(updateImage, 100);
+#     }
     
-    onclick="window.location.href='/shownext/{{plan.id }}';" 
+#     onclick="window.location.href='/shownext/{{plan.id }}';" 
     
-                    $("#img").attr('src', './Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime())
+#                     $("#img").attr('src', './Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime())
+
+import xlrd
+
+def get_first_column(file_path):
+    workbook = xlrd.open_workbook(file_path)
+    worksheet = workbook.sheet_by_index(0)  # Assuming you want to read the first sheet
+    first_column = worksheet.col_values(0)  # 0 indicates the first column index
+    return first_column[1:-1]
+
+def save_list_to_txt(file_path, data_list):
+    with open(file_path, 'w') as file:
+        for item in data_list:
+            file.write(str(item) + '\n')
+
+# Replace 'file_path' with the path to your Excel file (.xls format)
+file_path = 'C:/Users/Sam/Desktop/PlannerX/Semesters/2023-FALL/BU Courses 2023-FALL.xls'
+first_column_list = get_first_column(file_path)
+
+# Replace 'output_file.txt' with the desired path and filename for the TXT file
+output_file_path = 'course_names.txt'
+save_list_to_txt(output_file_path, first_column_list)
+
+
