@@ -23,11 +23,16 @@ To correctly setup the program, please go over the following steps in your termi
    ```
    pip3 install -r requirements.txt --user
    ```
-4. If there is nothing wrong with your libraries, then you are good to run the program!
+4. If you first run the app, you have to initialize the database.
+
+   ```
+   python3 InitDatabase.py
+   ```
+5. If there is nothing wrong with your libraries, then you are good to run the program!
 
    ```
    python3 web.py
    ```
-5. If it runs successfully, you should be able to open the website using this link: [http://127.0.0.1:5000/](http://127.0.0.1:5000/). In your browser, you should see the website looks like this:
+6. If it runs successfully, you should be able to open the website using this link: [http://127.0.0.1:5000/](http://127.0.0.1:5000/). In your browser, you should see the website looks like this:
 
 ![schedule](./webpage.png)
