@@ -342,24 +342,28 @@ from GetSeats import GetSeats
 #                     $("#img").attr('src', './Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime())
 
 import xlrd
+import json
 
 def get_first_column(file_path):
     workbook = xlrd.open_workbook(file_path)
     worksheet = workbook.sheet_by_index(0)  # Assuming you want to read the first sheet
     first_column = worksheet.col_values(0)  # 0 indicates the first column index
-    return first_column[1:-1]
+    second_column = worksheet.col_values(1)
+    combined_string = []
+    for i in range(1, len(first_column)):
+        combined_string.append(first_column[i] + ": " + second_column[i])
+    return combined_string
 
-def save_list_to_txt(file_path, data_list):
-    with open(file_path, 'w') as file:
-        for item in data_list:
-            file.write(str(item) + '\n')
+def save_list_to_json(file_path, data_list):
+    with open(file_path, 'w') as filehandle:
+        json.dump(data_list, filehandle)
 
 # Replace 'file_path' with the path to your Excel file (.xls format)
 file_path = 'C:/Users/Sam/Desktop/PlannerX/Semesters/2023-FALL/BU Courses 2023-FALL.xls'
-first_column_list = get_first_column(file_path)
+combined_string = get_first_column(file_path)
 
 # Replace 'output_file.txt' with the desired path and filename for the TXT file
-output_file_path = 'course_names.txt'
-save_list_to_txt(output_file_path, first_column_list)
+output_file_path = 'course_names.json'
+save_list_to_json(output_file_path, combined_string)
 
 
