@@ -11,7 +11,7 @@ To correctly setup the program, please go over the following steps in your termi
 1. Check your python version before setup the program. Make sure the version is above 3.6.
 
    ```
-   python3 --version
+   python --version
    ```
 2. In the terminal, switch to the current PlannerX folder.
 
@@ -21,17 +21,17 @@ To correctly setup the program, please go over the following steps in your termi
 3. Install all required libraries.
 
    ```
-   pip3 install -r requirements.txt --user
+   pip install -r requirements.txt --user
    ```
 4. If you first run the app, you have to initialize the database.
 
    ```
-   python3 InitDatabase.py
+   python InitDatabase.py
    ```
 5. If there is nothing wrong with your libraries, then you are good to run the program!
 
    ```
-   python3 web.py
+   python web.py
    ```
 6. If it runs successfully, you should be able to open the website using this link: [http://127.0.0.1:5000/](http://127.0.0.1:5000/). In your browser, you should see the website looks like this:
 
