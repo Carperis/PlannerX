@@ -19,6 +19,7 @@ import GetSchedulePic
 import xlrd
 import shutil
 import os
+import json
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -236,11 +237,22 @@ def plan(planID):
     prefDict = {}
     user = User.query.get(current_user.get_id())
     plan = Plan.query.get(planID)
+    
+    classFullCodes =[]
+    try:
+        courses = plan.courses
+        classFullNames = courses.split("||")
+        for name in classFullNames:
+            classFullCodes.append(name.split(":")[0])
+    except:
+        classFullNames = []
+
+    with open('course_names.json') as json_file:
+        course_names = json.load(json_file)
 
     if (allowAccess(user, plan)):
         if (request.method == 'POST'):
             try:
-                courses = (request.form['courses']).strip()
                 planname = request.form['planname']
                 AvgScore = request.form['AvgScore']
                 EarlyTime = request.form['EarlyTime']
@@ -258,9 +270,17 @@ def plan(planID):
                     ":")[0])+(float(str(EarlyTime).split(":")[1]))/60
                 LateT = float(str(LateTime).split(
                     ":")[0])+(float(str(LateTime).split(":")[1]))/60
-                classes = str(courses).split(",")
-                for i in range(len(classes)):
-                    classes[i] = classes[i].strip()
+                classFullNames = request.form.getlist('courses')
+                courses = ""
+                classes = []
+                for i in range(len(classFullNames)):
+                    oneClass = classFullNames[i]
+                    if (i == len(classFullNames)-1):
+                        courses += oneClass
+                    else:
+                        courses += oneClass + "||"
+                    classes.append(oneClass.split(":")[0].strip())
+                print(courses)
                 prefDict["Courses"] = classes
                 prefDict["Average Score"] = [float(AvgScore)]
                 prefDict["Earliest Time"] = [EarlyT]
@@ -303,7 +323,7 @@ def plan(planID):
     else:
         return redirect(url_for('index'))
 
-    return render_template('plan.html', msg=msg, plan=plan, user=user)
+    return render_template('plan.html', msg=msg, plan=plan, user=user, course_names=course_names, classFullNames=classFullNames, classFullCodes=classFullCodes)
 
 
 @app.route('/deleteplan/<int:planID>', methods=['POST', 'GET'])

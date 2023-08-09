@@ -2,8 +2,12 @@
 
 {% block head %}
 <title>BU PlannerX - Plan</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<link rel="stylesheet" href="/static/css/chosen.min.css">
+<!-- https://harvesthq.github.io/chosen/ -->
+<script src="/static/js/chosen.jquery.min.js"></script>
 <script>
+    $('#courses').chosen();
     function shownext() {
         $.ajax({
             url: "/plan/showschedule/{{plan.id}}/-2",
@@ -47,6 +51,7 @@
         }
     }
     $(document).ready(function () {
+        $('#courses').chosen();
         var newDate = new Date();
         {% if (not(request.form['years'])) %}
         {% if plan %}
@@ -146,6 +151,15 @@
                     <!-- <input type="text" name="courses" id="courses" placeholder="CAS XX 101,ENG XX 101,QST XX 101"
                         value="{% if (not (request.form['courses'])) %}{% if plan %}{{ plan.courses }}{% endif %}{% else %}{{request.form['courses']}}{% endif %}"
                         class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4"> -->
+
+                    <select name="courses" id="courses" data-placeholder="   CAS XX 101,ENG XX 101,QST XX 101"
+                        class="form-control chosen" multiple>
+                        {% for course in course_names %}
+                        <option value="{{ course }}" {% if course in classFullNames %}selected{% endif %}>
+                            {{ course }}
+                        </option>
+                        {% endfor %}
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -192,7 +206,7 @@
                 <div class="h3 mb-0 text-info mb-2">{{ plan.semester }} Classes:</div>
 
                 <div class="text-white mb-3">
-                    {% for cls in plan.courses.split(",") %}
+                    {% for cls in classFullCodes %}
                     <li>
                         {{cls}}
                     </li>
@@ -261,7 +275,8 @@
     </div>
     <div class="row d-flex align-content-center justify-content-center mt-4 mb-4">
         <div class="row w-100 d-flex justify-content-center">
-            <img src="/static/Users/{{user.id}}/{{plan.id}}/schedule.png" id="img" class="col-xl-8 col-md-10 col-sm-12" />
+            <img src="/static/Users/{{user.id}}/{{plan.id}}/schedule.png" id="img"
+                class="col-xl-8 col-md-10 col-sm-12" />
         </div>
         <div class="row w-lg-50">
             <div class="col-3 text-left my-auto">
