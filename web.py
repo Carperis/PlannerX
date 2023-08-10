@@ -75,11 +75,12 @@ def get_public_ip():
         print("Error:", e)
         return None
 
+
 if (get_public_ip() == "158.101.17.48"):
-    google_redirect_uri="https://buplannerx.my.to/google_callback"
+    google_redirect_uri = "https://buplannerx.my.to/google_callback"
 else:
     # google_redirect_uri="http://localhost:5000/google_callback"
-    google_redirect_uri="http://127.0.0.1:5000/google_callback"
+    google_redirect_uri = "http://127.0.0.1:5000/google_callback"
 
 flow = Flow.from_client_secrets_file(
     client_secrets_file=client_secrets_file,
@@ -243,6 +244,7 @@ def dashboard():
     plans = Plan.query.filter_by(user_id=user.id)
     return render_template('dashboard.html', user=user, plans=plans)
 
+
 @app.route('/plan/fetch_course_names/<semester>', methods=['POST', 'GET'])
 def fetch_course_names(semester):
     courses = GetPreferenceWeb.getAllCourseNames(semester.split("_")[0])
@@ -252,11 +254,13 @@ def fetch_course_names(semester):
     print("Success!")
     return jsonify(name_list)
 
+
 @app.route('/plan/fetch_term_names/<year>', methods=['POST', 'GET'])
 def fetch_term_names(year):
     semesters = GetPreferenceWeb.getAllTermNames(year)
     print("Success!")
     return jsonify(semesters)
+
 
 @app.route('/plan/<int:planID>', methods=['POST', 'GET'])
 @login_required
@@ -271,8 +275,8 @@ def plan(planID):
     prefDict = {}
     user = User.query.get(current_user.get_id())
     plan = Plan.query.get(planID)
-    
-    classFullCodes =[]
+
+    classFullCodes = []
     try:
         courses = plan.courses
         classFullNames = courses.split("||")
@@ -280,8 +284,9 @@ def plan(planID):
             classFullCodes.append(name.split(":")[0])
     except:
         classFullNames = []
-        
+
     years = GetPreferenceWeb.getYears()
+    years = sorted(years, reverse=True)
 
     if (allowAccess(user, plan)):
         if (request.method == 'POST'):
