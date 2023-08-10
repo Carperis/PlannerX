@@ -34,11 +34,22 @@ select {
   border-radius: 25px !important;
   border: 0 !important;
   color: white !important;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 .active-result {
+  height: 2rem;
+  line-height: 1.3rem !important;
   color: white !important;
   margin-left: 1.5rem !important;
+  margin-right: 1.5rem !important;
+}
+
+li.highlighted {
+  border-radius: 5px;
+  background-color: #4e80ee !important;
+  background-image: none !important;
 }
 
 .result-selected {
