@@ -101,10 +101,14 @@
                         if ($(this).is(':selected')) {
                             $('#term').val('');
                         }
-                        $(this).hide();
+                        //$(this).hide();
+                        $(this).wrap('<span>'); // alternative solution due to safari limitations
                     }
                     else {
-                        $(this).show();
+                        //$(this).show();
+                        if ($(this).parent().is('span')) { // alternative solution due to safari limitations
+                            $(this).unwrap();
+                        }
                     }
                 });
             }
