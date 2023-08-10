@@ -291,13 +291,16 @@ def plan(planID):
     if (allowAccess(user, plan)):
         if (request.method == 'POST'):
             try:
+                classFullNames = request.form.getlist('courses')
                 planname = request.form['planname']
                 AvgScore = request.form['AvgScore']
                 EarlyTime = request.form['EarlyTime']
                 LateTime = request.form['LateTime']
                 semester = request.form['years'] + '-' + request.form['term']
+                if classFullNames == []:
+                    msg.append("Missing Courses")
                 if (planname == ""):
-                    msg.append("Missing Username")
+                    msg.append("Missing Plan Name")
                 if (AvgScore == ""):
                     msg.append("Missing Average Professor Score")
                 if (EarlyTime == ""):
@@ -308,7 +311,6 @@ def plan(planID):
                     ":")[0])+(float(str(EarlyTime).split(":")[1]))/60
                 LateT = float(str(LateTime).split(
                     ":")[0])+(float(str(LateTime).split(":")[1]))/60
-                classFullNames = request.form.getlist('courses')
                 courses = ""
                 classes = []
                 for i in range(len(classFullNames)):

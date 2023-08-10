@@ -67,9 +67,15 @@
             success: function (data) {
                 var selectedCourses = [];
                 {% if plan %}
-                var selectedCourses = "{{ plan.courses }}";
-                var selectedCourses = selectedCourses.split("||");
-                console.log(selectedCourses);
+                    var selectedCourses = "{{ plan.courses }}";
+                    var selectedCourses = selectedCourses.split("||");
+                    console.log(selectedCourses);
+                {% else %}
+                    {% if (request.form['courses']) %}
+                        var selectedCourses = "{{ request.form['courses'] }}";
+                        var selectedCourses = selectedCourses.split("||");
+                        console.log(selectedCourses);
+                    {% endif %}
                 {% endif %}
 
                 console.log(data);
