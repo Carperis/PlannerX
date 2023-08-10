@@ -265,9 +265,6 @@ def plan(planID):
         
     years = GetPreferenceWeb.getYears()
 
-    with open('course_names.json') as json_file:
-        course_names = json.load(json_file)
-
     if (allowAccess(user, plan)):
         if (request.method == 'POST'):
             try:

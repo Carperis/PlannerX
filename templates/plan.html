@@ -139,10 +139,6 @@
         $('#year').on('change', updateTermOptions);
         $('#year, #term').on('change', updateCourseOptions);
 
-
-
-
-
     });
 </script>
 {% endblock %}
@@ -223,15 +219,6 @@
                     <label for="content">
                         Courses
                     </label>
-
-                    <!-- <select name="courses" id="courses" data-placeholder="   CAS XX 101,ENG XX 101,QST XX 101"
-                        class="form-control chosen" multiple>
-                        {% for course in course_names %}
-                        <option value="{{ course }}" {% if course in classFullNames %}selected{% endif %}>
-                            {{ course }}
-                        </option>
-                        {% endfor %}
-                    </select> -->
 
                     <select name="courses" id="courses" data-placeholder="   CAS XX 101,ENG XX 101,QST XX 101"
                         class="form-control chosen" multiple>
