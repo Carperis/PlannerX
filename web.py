@@ -9,17 +9,19 @@ from flask import Flask, redirect, render_template, request, flash, session, url
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
+import xlrd
+import shutil
+import os
+import json
 
+# The following are custom modules
 import GetPreferenceWeb
 import AutoSelection
 import AddPlanDetails
 import AutoRanking
 import GetSeats
 import GetSchedulePic
-import xlrd
-import shutil
-import os
-import json
+
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -223,6 +225,20 @@ def dashboard():
     plans = Plan.query.filter_by(user_id=user.id)
     return render_template('dashboard.html', user=user, plans=plans)
 
+@app.route('/plan/fetch_course_names/<semester>', methods=['POST', 'GET'])
+def fetch_course_names(semester):
+    courses = GetPreferenceWeb.getAllCourseNames(semester.split("_")[0])
+    name_list = []
+    for course in courses:
+        name_list.append(course["code"] + ": " + course["name"])
+    print("Success!")
+    return jsonify(name_list)
+
+@app.route('/plan/fetch_term_names/<year>', methods=['POST', 'GET'])
+def fetch_term_names(year):
+    semesters = GetPreferenceWeb.getAllTermNames(year)
+    print("Success!")
+    return jsonify(semesters)
 
 @app.route('/plan/<int:planID>', methods=['POST', 'GET'])
 @login_required
@@ -246,6 +262,8 @@ def plan(planID):
             classFullCodes.append(name.split(":")[0])
     except:
         classFullNames = []
+        
+    years = GetPreferenceWeb.getYears()
 
     with open('course_names.json') as json_file:
         course_names = json.load(json_file)
@@ -323,7 +341,7 @@ def plan(planID):
     else:
         return redirect(url_for('index'))
 
-    return render_template('plan.html', msg=msg, plan=plan, user=user, course_names=course_names, classFullNames=classFullNames, classFullCodes=classFullCodes)
+    return render_template('plan.html', msg=msg, plan=plan, user=user, classFullCodes=classFullCodes, years=years)
 
 
 @app.route('/deleteplan/<int:planID>', methods=['POST', 'GET'])

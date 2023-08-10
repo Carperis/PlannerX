@@ -90,6 +90,51 @@ def saveData(dataList, savePath, saveName, firstRow):
     print("Preferences Data Saved!")
     # 3.保存数据
 
+def getAllCourseNames(semester):
+    filePath = "./Semesters/" + semester + "/BU Courses " + semester + ".xls"
+    dataList = []
+    sheetName = "BU Courses " + semester
+    book = xlrd.open_workbook(filePath)
+    sheet = book.sheet_by_name(sheetName)
+    rows = sheet.nrows
+    cols = sheet.ncols
+    codeIndex = None
+    nameIndex = None
+    for c in range(cols):
+        if str(sheet.cell_value(0, c)) == "Code":
+            codeIndex = c
+        elif str(sheet.cell_value(0, c)) == "Name":  # 假设课程名称在名为"Name"的列中
+            nameIndex = c
+
+    if codeIndex is None or nameIndex is None:
+        return []  # 如果找不到代码或名称列，则返回空列表
+
+    for r in range(1, rows):
+        code = sheet.cell_value(r, codeIndex)
+        name = sheet.cell_value(r, nameIndex)
+        dataList.append({"code": code, "name": name})  # 以字典格式存储代码和名称
+
+    return dataList
+
+def getYears():
+    years = []
+    for year in os.listdir("./Semesters"):
+        if year.startswith("20"):
+            y = year.split("-")[0]
+            if y is not None and y not in years:
+                years.append(y)
+    return years
+
+def getAllTermNames(year):
+    semesters = []
+    for semester in os.listdir("./Semesters"):
+        if semester.startswith(year):
+            if (semester.split("-")[1] == "SUMM"):
+                semesters.append("SUMM_1")
+                semesters.append("SUMM_2")
+            else:
+                semesters.append(semester.split("-")[1])
+    return semesters
 
 if __name__ == "__main__":
     planname = "Any"

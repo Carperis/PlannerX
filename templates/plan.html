@@ -8,6 +8,7 @@
 <script src="/static/js/chosen.jquery.min.js"></script>
 <script>
     $('#courses').chosen();
+
     function shownext() {
         $.ajax({
             url: "/plan/showschedule/{{plan.id}}/-2",
@@ -21,6 +22,7 @@
             }
         });
     }
+
     function showprevious() {
         $.ajax({
             url: "/plan/showschedule/{{plan.id}}/-4",
@@ -31,6 +33,7 @@
             }
         });
     }
+
     function goto() {
         var n = $("#num").val();
         $.ajax({
@@ -42,29 +45,88 @@
             }
         });
     }
+
     function getYear(date) {
-        if (date.getMonth() >= 9) {
+        if (date.getMonth() >= 10) {
             return date.getFullYear() + 1;
         }
         else {
             return date.getFullYear();
         }
     }
+
+    function updateCourseOptions() {
+        var selectedValue1 = $('#year').val();
+        var selectedValue2 = $('#term').val();
+        var semester = selectedValue1 + "-" + selectedValue2;
+        console.log('Semester:', semester);
+
+        $.ajax({
+            url: "/plan/fetch_course_names/" + semester,
+            type: "GET",
+            success: function (data) {
+                var selectedCourses = [];
+                {% if plan %}
+                var selectedCourses = "{{ plan.courses }}";
+                var selectedCourses = selectedCourses.split("||");
+                console.log(selectedCourses);
+                {% endif %}
+
+                console.log(data);
+                $("#courses").empty();
+                data.forEach(function (course_name) {
+                    const option = $('<option>', { value: course_name, text: course_name });
+                    $("#courses").append(option);
+                    if (selectedCourses.includes(course_name)) {
+                        option.prop('selected', true);
+                    }
+                });
+                $("#courses").trigger("chosen:updated");
+            }
+        });
+    }
+
+    function updateTermOptions() {
+        var yearSelect = $('#year').val();
+        console.log('Year:', yearSelect);
+
+        $.ajax({
+            url: "/plan/fetch_term_names/" + yearSelect,
+            type: "GET",
+            success: function (data) {
+                console.log(data);
+                $('#term option').each(function () {
+                    const optionValue = $(this).val();
+                    if (!data.includes(optionValue)) {
+                        if ($(this).is(':selected')) {
+                            $('#term').val('');
+                        }
+                        $(this).hide();
+                    }
+                    else {
+                        $(this).show();
+                    }
+                });
+            }
+        });
+    }
+
+    var firstLoad = true;
+
     $(document).ready(function () {
+        {% if not plan %}
+        const currentYear = getYear(new Date());
+        $('#year').val(currentYear);
+        {% endif %}
+
+        if (firstLoad) {
+            firstLoad = false;
+            updateTermOptions();
+            updateCourseOptions();
+        }
+
         $('#courses').chosen();
-        var newDate = new Date();
-        {% if (not(request.form['years'])) %}
-        {% if plan %}
-        $('#years').html("{{ plan.semester.split('-')[0] }}");
-        $('#years').val("{{ plan.semester.split('-')[0] }}");
-        {% else %}
-        $('#years').html(getYear(newDate));
-        $('#years').val(getYear(newDate));
-        {% endif %}
-        {% else %}
-        $('#years').html("{{request.form['years']}}");
-        $('#years').val("{{request.form['years']}}");
-        {% endif %}
+
         $('#num').keypress(function (e) {
             if (e.keyCode == 13) {
                 if (isNaN($("#num").val()) || $('#num').val().length === 0) {
@@ -73,6 +135,14 @@
                 $("#goto").click();
             }
         });
+
+        $('#year').on('change', updateTermOptions);
+        $('#year, #term').on('change', updateCourseOptions);
+
+
+
+
+
     });
 </script>
 {% endblock %}
@@ -115,11 +185,16 @@
                     </label>
                     <div class="d-flex">
                         <select class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 w-50 mr-1"
-                            name="years" id="">
-                            <option id="years" value=""></option>
+                            name="years" id="year">
+                            {% for year in years %}
+                            <option id="years" value="{{ year }}" {% if (not (request.form['years'])) %}{%if plan%}{% if
+                                (plan.semester.split("-")[0]==year ) %}selected="selected" {% endif %}{% endif %}{% else
+                                %}{% if ( request.form['years']==year ) %}selected="selected" {% endif %}{% endif %}>{{
+                                year }}</option>
+                            {% endfor %}
                         </select>
                         <select class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 w-50 ml-1"
-                            name="term" id="">
+                            name="term" id="term">
                             <option value="SPRG" {% if (not (request.form['term'])) %}{%if plan%}{% if
                                 (plan.semester.split("-")[1]=="SPRG" ) %}selected="selected" {% endif %}{% endif %}{%
                                 else %}{% if ( request.form['term']=="SPRG" ) %}selected="selected" {% endif %}{% endif
@@ -148,21 +223,22 @@
                     <label for="content">
                         Courses
                     </label>
-                    <!-- <input type="text" name="courses" id="courses" placeholder="CAS XX 101,ENG XX 101,QST XX 101"
-                        value="{% if (not (request.form['courses'])) %}{% if plan %}{{ plan.courses }}{% endif %}{% else %}{{request.form['courses']}}{% endif %}"
-                        class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4"> -->
 
-                    <select name="courses" id="courses" data-placeholder="   CAS XX 101,ENG XX 101,QST XX 101"
+                    <!-- <select name="courses" id="courses" data-placeholder="   CAS XX 101,ENG XX 101,QST XX 101"
                         class="form-control chosen" multiple>
                         {% for course in course_names %}
                         <option value="{{ course }}" {% if course in classFullNames %}selected{% endif %}>
                             {{ course }}
                         </option>
                         {% endfor %}
+                    </select> -->
+
+                    <select name="courses" id="courses" data-placeholder="   CAS XX 101,ENG XX 101,QST XX 101"
+                        class="form-control chosen" multiple>
                     </select>
                 </div>
 
-                <div class="form-group">
+                <div class=" form-group">
                     <i class="fa-solid fa-chalkboard-user fa-inverse"></i>
                     <label for="content">
                         Average Professors Score
