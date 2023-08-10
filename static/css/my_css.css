@@ -39,8 +39,7 @@ select {
 }
 
 .active-result {
-  height: 2rem;
-  line-height: 1.3rem !important;
+  line-height: 1.5rem !important;
   color: white !important;
   margin-left: 1.5rem !important;
   margin-right: 1.5rem !important;
