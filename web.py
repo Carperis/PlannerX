@@ -9,16 +9,19 @@ from flask import Flask, redirect, render_template, request, flash, session, url
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
+import xlrd
+import shutil
+import os
+import json
 
+# The following are custom modules
 import GetPreferenceWeb
 import AutoSelection
 import AddPlanDetails
 import AutoRanking
 import GetSeats
 import GetSchedulePic
-import xlrd
-import shutil
-import os
+
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -222,6 +225,20 @@ def dashboard():
     plans = Plan.query.filter_by(user_id=user.id)
     return render_template('dashboard.html', user=user, plans=plans)
 
+@app.route('/plan/fetch_course_names/<semester>', methods=['POST', 'GET'])
+def fetch_course_names(semester):
+    courses = GetPreferenceWeb.getAllCourseNames(semester.split("_")[0])
+    name_list = []
+    for course in courses:
+        name_list.append(course["code"] + ": " + course["name"])
+    print("Success!")
+    return jsonify(name_list)
+
+@app.route('/plan/fetch_term_names/<year>', methods=['POST', 'GET'])
+def fetch_term_names(year):
+    semesters = GetPreferenceWeb.getAllTermNames(year)
+    print("Success!")
+    return jsonify(semesters)
 
 @app.route('/plan/<int:planID>', methods=['POST', 'GET'])
 @login_required
@@ -236,11 +253,21 @@ def plan(planID):
     prefDict = {}
     user = User.query.get(current_user.get_id())
     plan = Plan.query.get(planID)
+    
+    classFullCodes =[]
+    try:
+        courses = plan.courses
+        classFullNames = courses.split("||")
+        for name in classFullNames:
+            classFullCodes.append(name.split(":")[0])
+    except:
+        classFullNames = []
+        
+    years = GetPreferenceWeb.getYears()
 
     if (allowAccess(user, plan)):
         if (request.method == 'POST'):
             try:
-                courses = (request.form['courses']).strip()
                 planname = request.form['planname']
                 AvgScore = request.form['AvgScore']
                 EarlyTime = request.form['EarlyTime']
@@ -258,9 +285,17 @@ def plan(planID):
                     ":")[0])+(float(str(EarlyTime).split(":")[1]))/60
                 LateT = float(str(LateTime).split(
                     ":")[0])+(float(str(LateTime).split(":")[1]))/60
-                classes = str(courses).split(",")
-                for i in range(len(classes)):
-                    classes[i] = classes[i].strip()
+                classFullNames = request.form.getlist('courses')
+                courses = ""
+                classes = []
+                for i in range(len(classFullNames)):
+                    oneClass = classFullNames[i]
+                    if (i == len(classFullNames)-1):
+                        courses += oneClass
+                    else:
+                        courses += oneClass + "||"
+                    classes.append(oneClass.split(":")[0].strip())
+                print(courses)
                 prefDict["Courses"] = classes
                 prefDict["Average Score"] = [float(AvgScore)]
                 prefDict["Earliest Time"] = [EarlyT]
@@ -303,7 +338,7 @@ def plan(planID):
     else:
         return redirect(url_for('index'))
 
-    return render_template('plan.html', msg=msg, plan=plan, user=user)
+    return render_template('plan.html', msg=msg, plan=plan, user=user, classFullCodes=classFullCodes, years=years)
 
 
 @app.route('/deleteplan/<int:planID>', methods=['POST', 'GET'])
