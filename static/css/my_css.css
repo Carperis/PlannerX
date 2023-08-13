@@ -1,3 +1,34 @@
+.float_content {
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+  z-index: -123456;
+}
+
+.float_content_active {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  background: #eee;
+  transform: translateY(-30px);
+  opacity: 1;
+  z-index: 123456;
+  box-shadow: 0px 5px 20px 1px black !important;
+}
+
+.float_btn {
+  pointer-events: auto;
+  text-align: right;
+  z-index: 123456;
+}
+
+.float_box {
+  pointer-events: none;
+  position: fixed;
+  right: 1rem;
+  bottom: 5rem;
+  display: inline;
+}
+
 select {
   -webkit-appearance: none;
   -moz-appearance: none;
