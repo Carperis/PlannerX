@@ -24,9 +24,12 @@
 .float_box {
   pointer-events: none;
   position: fixed;
-  right: 1rem;
+  right: 0rem;
   bottom: 5rem;
   display: inline;
+  z-index: 1;
+  padding-right: 1rem;
+  padding-left: 1rem;
 }
 
 select {

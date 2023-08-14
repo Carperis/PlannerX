@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    adjustDivWidth()
 
     $("#report_form").hide();
     $("#survey_form").hide();
@@ -29,4 +30,18 @@ $(document).ready(function () {
     $("#survey_form").hide();
   });
 
+  $(window).on("resize", function() {
+    adjustDivWidth();
+  });
+
+
+
 });
+
+
+function adjustDivWidth() {
+    var ideaWidth = 500
+    var windowWidth = $(window).width();
+    var divWidth = windowWidth < ideaWidth ? windowWidth : ideaWidth;
+    $("#feedback_box").css("width", divWidth + "px");
+}
