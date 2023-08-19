@@ -63,8 +63,8 @@ def GetSchedulePic(semesterNew, userID, planID, planName):
     outfile_img = "./static/Users/" + userID + "/" + planID + "/schedule.png"
     GetPreferenceWeb.checkFolder(path)
     c = pdfscheduler.Canvas(outfile_pdf, (800, 600))
-    c.setFillColorRGB(1, 1, 1)
-    c.setStrokeColorRGB(1, 1, 1)
+    # c.setFillColorRGB(1, 1, 1) # set background color to white
+    # c.setStrokeColorRGB(1, 1, 1) # set border color to white
     c.setFont("Helvetica", 20)
 
     pwidth = 800

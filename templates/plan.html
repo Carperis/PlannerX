@@ -67,27 +67,27 @@
             success: function (data) {
                 var selectedCourses = [];
                 {% if plan %}
-                    var selectedCourses = "{{ plan.courses }}";
-                    var selectedCourses = selectedCourses.split("||");
-                    console.log(selectedCourses);
+                var selectedCourses = "{{ plan.courses }}";
+                var selectedCourses = selectedCourses.split("||");
+                console.log(selectedCourses);
                 {% else %}
                     {% if (request.form['courses']) %}
-                        var selectedCourses = "{{ request.form['courses'] }}";
-                        var selectedCourses = selectedCourses.split("||");
-                        console.log(selectedCourses);
-                    {% endif %}
-                {% endif %}
+    var selectedCourses = "{{ request.form['courses'] }}";
+    var selectedCourses = selectedCourses.split("||");
+    console.log(selectedCourses);
+    {% endif %}
+    {% endif %}
 
-                console.log(data);
-                $("#courses").empty();
-                data.forEach(function (course_name) {
-                    const option = $('<option>', { value: course_name, text: course_name });
-                    $("#courses").append(option);
-                    if (selectedCourses.includes(course_name)) {
-                        option.prop('selected', true);
-                    }
-                });
-                $("#courses").trigger("chosen:updated");
+    console.log(data);
+    $("#courses").empty();
+    data.forEach(function (course_name) {
+        const option = $('<option>', { value: course_name, text: course_name });
+        $("#courses").append(option);
+        if (selectedCourses.includes(course_name)) {
+            option.prop('selected', true);
+        }
+    });
+    $("#courses").trigger("chosen:updated");
             }
         });
     }
@@ -347,9 +347,9 @@
         <div class="h3 mb-0 text-white font-weight-bold">Schedule</div>
     </div>
     <div class="row d-flex align-content-center justify-content-center mt-4 mb-4">
-        <div class="row w-100 d-flex justify-content-center">
+        <div class="row w-100 d-flex justify-content-center mb-4">
             <img src="/static/Users/{{user.id}}/{{plan.id}}/schedule.png" id="img"
-                class="col-xl-8 col-md-10 col-sm-12" />
+                class="col-xl-8 col-md-10 col-sm-12 bg-gray-100 rounded-lg" />
         </div>
         <div class="row w-lg-50">
             <div class="col-3 text-left my-auto">
