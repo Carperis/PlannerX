@@ -179,6 +179,9 @@
                     <i class="fa-solid fa-user fa-inverse"></i>
                     <label for="content">
                         Plan Name
+                        <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
+                        data-title="{{ guidance["planName"][0] }}" data-content="{{ guidance["planName"][1] }}"><i
+                                class="fa fa-question-circle" aria-hidden="true"></i></a>
                     </label>
                     <input class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4" , type="text"
                         name="planname" id="planname" placeholder="Plan Name"
@@ -188,6 +191,9 @@
                     <i class="fa-solid fa-calendar-days fa-inverse"></i>
                     <label for="content">
                         Semester
+                        <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
+                            data-title="{{ guidance["semester"][0] }}" data-content="{{ guidance["semester"][1] }}"><i
+                                class="fa fa-question-circle" aria-hidden="true"></i></a>
                     </label>
                     <div class="d-flex">
                         <select class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 w-50 mr-1"
@@ -228,6 +234,9 @@
                     <i class="fa-solid fa-book-open-reader fa-inverse"></i>
                     <label for="content">
                         Courses
+                        <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
+                        data-title="{{ guidance["courses"][0] }}" data-content="{{ guidance["courses"][1] }}"><i
+                                class="fa fa-question-circle" aria-hidden="true"></i></a>
                     </label>
 
                     <select name="courses" id="courses" data-placeholder="   CAS XX 101,ENG XX 101,QST XX 101"
@@ -239,6 +248,9 @@
                     <i class="fa-solid fa-chalkboard-user fa-inverse"></i>
                     <label for="content">
                         Average Professors Score
+                        <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
+                        data-title="{{ guidance["AvgScore"][0] }}" data-content="{{ guidance["AvgScore"][1] }}"><i
+                                class="fa fa-question-circle" aria-hidden="true"></i></a>
                     </label>
                     <input type="number" step="0.01" name="AvgScore" id="AvgScore" placeholder="Rate Your Professors!"
                         value="{% if (not (request.form['AvgScore'])) %}{% if plan %}{{ plan.AvgScore }}{% else %}3{% endif %}{% else %}{{request.form['AvgScore']}}{% endif %}"
@@ -249,6 +261,9 @@
                     <i class="fa-solid fa-person-running fa-inverse fa-lg"></i>
                     <label for="content">
                         Preferred Starting Time
+                        <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
+                        data-title="{{ guidance["EarlyTime"][0] }}" data-content="{{ guidance["EarlyTime"][1] }}"><i
+                                class="fa fa-question-circle" aria-hidden="true"></i></a>
                     </label>
                     <input type="time" name="EarlyTime" id="EarlyTime"
                         value="{% if (not (request.form['EarlyTime'])) %}{% if plan %}{{ plan.EarlyTime }}{% else %}08:00{% endif %}{% else %}{{request.form['EarlyTime']}}{% endif %}"
@@ -259,6 +274,9 @@
                     <i class="fa-solid fa-person-running fa-inverse fa-flip-horizontal fa-lg"></i>
                     <label for="content">
                         Preferred Ending Time
+                        <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus" data-custom-class="custom-popover"
+                        data-title="{{ guidance["LateTime"][0] }}" data-content="{{ guidance["LateTime"][1] }}"><i
+                                class="fa fa-question-circle" aria-hidden="true"></i></a>
                     </label>
                     <input type="time" name="LateTime" id="LateTime"
                         value="{% if (not (request.form['LateTime'])) %}{% if plan %}{{ plan.LateTime }}{% else %}21:00{% endif %}{% else %}{{request.form['LateTime']}}{% endif %}"
@@ -276,7 +294,7 @@
             {% if(plan) %}
 
             <div class="mt-1">
-                <div class="h3 mb-0 text-info mb-2">{{ plan.semester }} Classes:</div>
+                <div class="h5 mb-0 text-info mb-2">{{ plan.semester }} Classes:</div>
 
                 <div class="text-white mb-3">
                     {% for cls in classFullCodes %}
@@ -286,54 +304,55 @@
                     {% endfor %}
                 </div>
 
-                <div class="h3 mb-0 text-info mb-2">Preferred Average Score:</div>
+                <div class="h5 mb-0 text-info mb-2">Preferred Average Score:</div>
                 <div class="text-white text-lg mb-3">{{ plan.AvgScore }}</div>
 
-                <div class="h3 mb-0 text-info mb-2">Preferred Starting Time:</div>
+                <div class="h5 mb-0 text-info mb-2">Preferred Starting Time:</div>
                 <div class="text-white text-lg mb-3">{{ plan.EarlyTime }}</div>
 
-                <div class="h3 mb-0 text-info mb-2">Preferred Finishing Time:</div>
+                <div class="h5 mb-0 text-info mb-2">Preferred Finishing Time:</div>
                 <div class="text-white text-lg mb-3">{{ plan.LateTime }}</div>
 
             </div>
 
             <div class="row flex-grow-1">
             </div>
-
-            <div class="row">
+            {% if (controls[0] == True) %}
+            <div class="row w-100">
                 <div class="col-6 p-3">
-                    <a href="/getplans/{{ plan.id }}" class="btn btn-info w-100">
+                    <a href="/getplans/{{ plan.id }}" class="btn btn-warning w-100 h-100">
                         <span class="text">Get Plans</span>
                     </a>
                 </div>
+                {% if (controls[1] == True) %}
                 <div class="col-6  p-3">
-                    <a href="/rankplans/{{ plan.id }}" class="btn btn-info w-100">
+                    <a href="/rankplans/{{ plan.id }}" class="btn btn-info w-100 h-100">
                         <span class="text">Rank Plans</span>
                     </a>
                 </div>
                 <div class="col-6  p-3">
-                    <a onclick="shownext()" class="btn btn-info w-100">
+                    <a onclick="shownext()" class="btn btn-info w-100 h-100">
                         <span class="text">Show Plans</span>
                     </a>
                 </div>
+                {% endif %}
                 <div class="col-6  p-3">
-                    <a href="/deleteplan/{{ plan.id }}" class="btn btn-danger w-100">
+                    <a href="/deleteplan/{{ plan.id }}" class="btn btn-danger w-100 h-100">
                         <span class="text">Delete</span>
                     </a>
                 </div>
             </div>
-
+            {% endif %}
             {% else %}
 
             <div class="h3 mb-0 text-white mt-1">Quick Tips</div>
             <br>
             <div class="text-white">
-                <p>Please fill out ALL columns for an optimized schedule!</p>
-                <br>
-                <p>Classes Input Template: <br>
-                    CAS XX 101,ENG XX 101,QST XX 101
-                </p><br>
-                <p>*** Make sure all letters are uppercases, and there's no spacen after the comma! ***</p>
+                {% for item in guidance %}
+                <span class=" text-info">{{ guidance[item][0] }}</span><br>
+                <span>{{ guidance[item][1] }}</span>
+                <br><br>
+                {% endfor %}
             </div>
 
             {% endif %}

@@ -261,10 +261,11 @@ def fetch_term_names(year):
     print("Success!")
     return jsonify(semesters)
 
-
+controls = [False, False]
 @app.route('/plan/<int:planID>', methods=['POST', 'GET'])
 @login_required
 def plan(planID):
+    global controls
     try:
         msg = session['messages']
     except:
@@ -353,6 +354,8 @@ def plan(planID):
                     GetPreferenceWeb.GetPreference(
                         str(user.id), str(plan.id), prefDict, semester)
                     msg.append("Your prefereces is saved!")
+                    controls = [True, False]
+                    print(controls)
                     session['messages'] = msg
                     return redirect("/plan/" + str(plan.id))
             except:
@@ -363,7 +366,15 @@ def plan(planID):
     else:
         return redirect(url_for('index'))
 
-    return render_template('plan.html', msg=msg, plan=plan, user=user, classFullCodes=classFullCodes, years=years)
+    guidance = {
+        "planName": ["Plan Name", "Give a name for your course plan."],
+        "AvgScore": ["Average Professor Score", "Enter a average RateMyProfessor score (0~5) of all your professors. When you rank your plans, the plans with higher average score will be ranked higher."],
+        "EarlyTime": ["Preferred Starting Time", "Enter a time you prefer to start your first class in a day. When you rank your plans, the plans with later starting time will be ranked higher."],
+        "LateTime": ["Preferred Ending Time", "Enter a time you prefer to end your last class in a day. When you rank your plans, the plans with earlier finishing time will be ranked higher."],
+        "courses": ["Courses", "Select courses you want to take. You can type the course code or the course name to search for the course. Multiple courses selection is available."],
+        "semester": ["Semester", "Choose a school year and a term of the semester you want to take courses in."]
+    }
+    return render_template('plan.html', msg=msg, plan=plan, user=user, classFullCodes=classFullCodes, years=years, guidance=guidance, controls=controls)
 
 
 @app.route('/deleteplan/<int:planID>', methods=['POST', 'GET'])
@@ -422,6 +433,8 @@ def getPlans(planID):
         msg.append("Can't find your plans")
     else:
         msg.append("Got your plans!")
+        global controls
+        controls = [True, True]
 
     session['messages'] = msg
     return redirect('/plan/' + planID)
@@ -447,6 +460,7 @@ def rankPlans(planID):
     except:
         msg.append("Fail to rank your plans")
 
+    showSchedule(planID, 1)
     session['messages'] = msg
     return redirect('/plan/' + planID)
 
@@ -461,7 +475,7 @@ def showSchedule(planID, n):
     planID = str(planID)
     userID = str(user.id)
     semester = plan.semester
-    if (n == -2 or n == -4):
+    if (n == -2 or n == -4):  # -2: previous plan; -4: next plan
         newNum = plan.planNum + (3+n)
     else:
         newNum = n-1
