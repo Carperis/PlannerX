@@ -261,11 +261,9 @@ def fetch_term_names(year):
     print("Success!")
     return jsonify(semesters)
 
-controls = [False, False]
 @app.route('/plan/<int:planID>', methods=['POST', 'GET'])
 @login_required
 def plan(planID):
-    global controls
     try:
         msg = session['messages']
     except:
@@ -288,6 +286,8 @@ def plan(planID):
 
     years = GetPreferenceWeb.getYears()
     years = sorted(years, reverse=True)
+    
+    controls = [False, False]
 
     if (allowAccess(user, plan)):
         if (request.method == 'POST'):
@@ -354,8 +354,7 @@ def plan(planID):
                     GetPreferenceWeb.GetPreference(
                         str(user.id), str(plan.id), prefDict, semester)
                     msg.append("Your prefereces is saved!")
-                    controls = [True, False]
-                    print(controls)
+                    
                     session['messages'] = msg
                     return redirect("/plan/" + str(plan.id))
             except:
@@ -363,16 +362,23 @@ def plan(planID):
                     msg.append("Something goes wrong.")
         else:
             pass
+        if (plan):
+            check1 = GetPreferenceWeb.checkSubmitSuccess(user.id, plan.id, plan.semester)
+            check2 = GetPreferenceWeb.checkPlanSuccess(user.id, plan.id, plan.semester)
+            controls = [check1, check2]
     else:
         return redirect(url_for('index'))
 
     guidance = {
-        "planName": ["Plan Name", "Give a name for your course plan."],
+        "planname": ["Plan Name", "Give a name for your course plan."],
         "AvgScore": ["Average Professor Score", "Enter a average RateMyProfessor score (0~5) of your professors. When you rank your plans, the plans with higher average score will be ranked higher."],
         "EarlyTime": ["Preferred Starting Time", "Enter a time you prefer to start your first class in a day. When you rank your plans, the plans with later starting time will be ranked higher."],
         "LateTime": ["Preferred Ending Time", "Enter a time you prefer to end your last class in a day. When you rank your plans, the plans with earlier finishing time will be ranked higher."],
         "courses": ["Courses", "Select courses you want to take. You can type the course code or the course name to search for the course. Multiple courses selection is available."],
-        "semester": ["Semester", "Choose a school year and a term of the semester you want to take courses in."]
+        "semester": ["Semester", "Choose a school year and a term of the semester you want to take courses in."],
+        "getschedules": ["Get Schedules", "Click this button to get your schedules. You can get your schedules only after you submit your preferences. The schedules below are shown in default order."],
+        "rankschedules": ["Rank Schedules", "Click this button to rank your schedules. You can rank your schedules only after you get your schedules. The schedules below are shown in ranked order. The first one should be your best schedule."],
+        "deleteplan": ["Delete Plan", "Click this button to delete this plan. WARNING: This action cannot be undone!"]
     }
     return render_template('plan.html', msg=msg, plan=plan, user=user, classFullCodes=classFullCodes, years=years, guidance=guidance, controls=controls)
 
@@ -433,9 +439,8 @@ def getPlans(planID):
         msg.append("Can't find your plans")
     else:
         msg.append("Got your plans!")
-        global controls
-        controls = [True, True]
 
+    showSchedule(planID, 1)
     session['messages'] = msg
     return redirect('/plan/' + planID)
 

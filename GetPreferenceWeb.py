@@ -136,6 +136,21 @@ def getAllTermNames(year):
                 semesters.append(semester.split("-")[1])
     return semesters
 
+def checkSubmitSuccess(userID, planID, semester):
+    path = "./Users/" + str(userID) + "/" + str(planID) + "/" + semester + " Preferences.xls"
+    if (os.path.exists(path)):
+        return True
+    else:
+        return False
+
+def checkPlanSuccess(userID, planID, semester):
+    path = "./Users/" + str(userID) + "/" + str(planID) + "/" + semester + " Info.xls"
+    if (os.path.exists(path)):
+        return True
+    else:
+        return False
+
+
 if __name__ == "__main__":
     planname = "Any"
     semester = "2022-FALL"

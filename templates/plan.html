@@ -180,7 +180,7 @@
                     <label for="content">
                         Plan Name
                         <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
-                        data-title="{{ guidance["planName"][0] }}" data-content="{{ guidance["planName"][1] }}"><i
+                        data-title="{{ guidance["planname"][0] }}" data-content="{{ guidance["planname"][1] }}"><i
                                 class="fa fa-question-circle" aria-hidden="true"></i></a>
                     </label>
                     <input class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4" , type="text"
@@ -319,26 +319,24 @@
             </div>
             {% if (controls[0] == True) %}
             <div class="row w-100">
-                <div class="col-6 p-3">
-                    <a href="/getplans/{{ plan.id }}" class="btn btn-warning w-100 h-100">
-                        <span class="text">Get Plans</span>
+                <div class="col-12 p-3">
+                    <a href="/getplans/{{ plan.id }}" class="btn btn-info w-100 h-100" data-toggle="popover" data-trigger="hover"
+                    data-title="{{ guidance["getschedules"][0] }}" data-content="{{ guidance["getschedules"][1] }}" data-placement="top">
+                        <span class="text">Get Schedules</span>
                     </a>
                 </div>
                 {% if (controls[1] == True) %}
-                <div class="col-6  p-3">
-                    <a href="/rankplans/{{ plan.id }}" class="btn btn-info w-100 h-100">
-                        <span class="text">Rank Plans</span>
-                    </a>
-                </div>
-                <div class="col-6  p-3">
-                    <a onclick="shownext()" class="btn btn-info w-100 h-100">
-                        <span class="text">Show Plans</span>
+                <div class="col-12  p-3">
+                    <a href="/rankplans/{{ plan.id }}" class="btn btn-warning w-100 h-100" data-toggle="popover" data-trigger="hover"
+                    data-title="{{ guidance["rankschedules"][0] }}" data-content="{{ guidance["rankschedules"][1] }}" data-placement="top">
+                        <span class="text">Rank Schedules</span>
                     </a>
                 </div>
                 {% endif %}
-                <div class="col-6  p-3">
-                    <a href="/deleteplan/{{ plan.id }}" class="btn btn-danger w-100 h-100">
-                        <span class="text">Delete</span>
+                <div class="col-12  p-3">
+                    <a href="/deleteplan/{{ plan.id }}" class="text-danger w-100 h-100" data-toggle="popover" data-trigger="hover"
+                    data-title="{{ guidance["deleteplan"][0] }}" data-content="{{ guidance["deleteplan"][1] }}" data-placement="top">
+                        <span class="text">Delete Plan</span>
                     </a>
                 </div>
             </div>
@@ -368,7 +366,7 @@
     <div class="row d-flex align-content-center justify-content-center mt-4 mb-4">
         <div class="row w-100 d-flex justify-content-center mb-4">
             <img src="/static/Users/{{user.id}}/{{plan.id}}/schedule.png" id="img"
-                class="col-xl-8 col-md-10 col-sm-12 bg-gray-100 rounded-lg" />
+                class="col-xl-8 col-md-10 col-sm-12 bg-gray-200 rounded-lg" />
         </div>
         <div class="row w-lg-50">
             <div class="col-3 text-left my-auto">
