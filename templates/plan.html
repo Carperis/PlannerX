@@ -9,39 +9,74 @@
 <script>
     $('#courses').chosen();
 
-    function shownext() {
-        $.ajax({
-            url: "/plan/showschedule/{{plan.id}}/-2",
-            type: "POST",
-            success: function (data) {
-                $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
-                $("#num").prop('value', data.num);
-                {%if (plan.planNum == -1)%}
-                location.reload();
-                {% endif %}
+    function displayDetails(data, divId) {
+        var detailsContainer= $("#" + divId);
+
+        detailsContainer.empty();
+      
+        $.each(data, function(key, value) {
+            var formattedValue = value.value.toFixed(2);
+            var minValue = value.min_value;
+            var maxValue = value.max_value;
+            if (key == 'Earliest Time' || key == 'Latest Time') {
+                var hours = Math.floor(formattedValue);
+                var minutes = Math.round((formattedValue - hours) * 60);
+                formattedValue = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
             }
+            
+            var formattedRow =
+            "<div class='row m-3 mt-0 w-100 d-flex justify-content-center'>" +
+                "<span class='text-info text-lg mb-1'><strong>" + value.name + "</strong>: " + formattedValue + "</span>" +
+                "<div class='row w-100'>" +
+                    "<div class='col-1 text-center'>" + minValue + "</div>" +
+                    "<div class='col-10 align-self-center'>" + generateProgressBar(value.value, minValue, maxValue) + "</div>" +
+                    "<div class='col-1 text-center'>" + maxValue + "</div>" +
+                    "</div>" +
+              "</div>";
+            detailsContainer.append(formattedRow);
         });
     }
 
-    function showprevious() {
-        $.ajax({
-            url: "/plan/showschedule/{{plan.id}}/-4",
-            type: "POST",
-            success: function (data) {
-                $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
-                $("#num").prop('value', data.num);
-            }
-        });
+
+    function generateProgressBar(value, min, max) {
+        var percentage = ((value - min) / (max - min)) * 100;
+        var progressBar =
+            "<div class='progress'>" +
+                "<div class='progress-bar' role='progressbar' style='width: " + percentage + "%' aria-valuenow='" + value + "' aria-valuemin='" + min + "' aria-valuemax='" + max + "'></div>" +
+            "</div>";
+        return progressBar;
     }
 
-    function goto() {
-        var n = $("#num").val();
+    function showSchedule(n) {
         $.ajax({
             url: "/plan/showschedule/{{plan.id}}/" + n,
             type: "POST",
             success: function (data) {
                 $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
                 $("#num").prop('value', data.num);
+
+                if (!jQuery.isEmptyObject(data.details)) {
+                    displayDetails(data.details, "schedule_details");
+                }
+            }
+        });
+    }
+
+    function goto() {
+        var n = $("#num").val();
+        if (isNaN(n) || n.length === 0) {
+            n = "{{plan.planNum+1}}";
+        }
+        console.log(n);
+        $.ajax({
+            url: "/plan/showschedule/{{plan.id}}/" + n,
+            type: "POST",
+            success: function (data) {
+                $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
+                $("#num").prop('value', data.num);
+                if (!jQuery.isEmptyObject(data.details)) {
+                    displayDetails(data.details, "schedule_details");
+                }
             }
         });
     }
@@ -69,38 +104,33 @@
                 {% if plan %}
                 var selectedCourses = "{{ plan.courses }}";
                 var selectedCourses = selectedCourses.split("||");
-                console.log(selectedCourses);
                 {% else %}
                     {% if (request.form['courses']) %}
-    var selectedCourses = "{{ request.form['courses'] }}";
-    var selectedCourses = selectedCourses.split("||");
-    console.log(selectedCourses);
-    {% endif %}
-    {% endif %}
+                    var selectedCourses = "{{ request.form['courses'] }}";
+                    var selectedCourses = selectedCourses.split("||");
+                    {% endif %}
+                {% endif %}
 
-    console.log(data);
-    $("#courses").empty();
-    data.forEach(function (course_name) {
-        const option = $('<option>', { value: course_name, text: course_name });
-        $("#courses").append(option);
-        if (selectedCourses.includes(course_name)) {
-            option.prop('selected', true);
-        }
-    });
-    $("#courses").trigger("chosen:updated");
+                $("#courses").empty();
+                data.forEach(function (course_name) {
+                    const option = $('<option>', { value: course_name, text: course_name });
+                    $("#courses").append(option);
+                    if (selectedCourses.includes(course_name)) {
+                        option.prop('selected', true);
+                    }
+                });
+        $("#courses").trigger("chosen:updated");
             }
         });
     }
 
     function updateTermOptions() {
         var yearSelect = $('#year').val();
-        console.log('Year:', yearSelect);
 
         $.ajax({
             url: "/plan/fetch_term_names/" + yearSelect,
             type: "GET",
             success: function (data) {
-                console.log(data);
                 $('#term option').each(function () {
                     const optionValue = $(this).val();
                     if (!data.includes(optionValue)) {
@@ -133,6 +163,7 @@
             firstLoad = false;
             updateTermOptions();
             updateCourseOptions();
+            goto();
         }
 
         $('#courses').chosen();
@@ -177,8 +208,11 @@
             <form class="user" role="form" action="/plan/{%if plan.id%}{{plan.id}}{%else%}0{%endif%}" method="POST">
                 <div class="form-group">
                     <i class="fa-solid fa-user fa-inverse"></i>
-                    <label for="content">
+                    <label>
                         Plan Name
+                        <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
+                        data-title="{{ guidance["planname"][0] }}" data-content="{{ guidance["planname"][1] }}"><i
+                                class="fa fa-question-circle" aria-hidden="true"></i></a>
                     </label>
                     <input class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4" , type="text"
                         name="planname" id="planname" placeholder="Plan Name"
@@ -186,8 +220,11 @@
                 </div>
                 <div class="form-group">
                     <i class="fa-solid fa-calendar-days fa-inverse"></i>
-                    <label for="content">
+                    <label>
                         Semester
+                        <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
+                            data-title="{{ guidance["semester"][0] }}" data-content="{{ guidance["semester"][1] }}"><i
+                                class="fa fa-question-circle" aria-hidden="true"></i></a>
                     </label>
                     <div class="d-flex">
                         <select class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 w-50 mr-1"
@@ -226,8 +263,11 @@
 
                 <div class="form-group">
                     <i class="fa-solid fa-book-open-reader fa-inverse"></i>
-                    <label for="content">
+                    <label>
                         Courses
+                        <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
+                        data-title="{{ guidance["courses"][0] }}" data-content="{{ guidance["courses"][1] }}"><i
+                                class="fa fa-question-circle" aria-hidden="true"></i></a>
                     </label>
 
                     <select name="courses" id="courses" data-placeholder="   CAS XX 101,ENG XX 101,QST XX 101"
@@ -237,8 +277,11 @@
 
                 <div class=" form-group">
                     <i class="fa-solid fa-chalkboard-user fa-inverse"></i>
-                    <label for="content">
+                    <label>
                         Average Professors Score
+                        <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
+                        data-title="{{ guidance["AvgScore"][0] }}" data-content="{{ guidance["AvgScore"][1] }}"><i
+                                class="fa fa-question-circle" aria-hidden="true"></i></a>
                     </label>
                     <input type="number" step="0.01" name="AvgScore" id="AvgScore" placeholder="Rate Your Professors!"
                         value="{% if (not (request.form['AvgScore'])) %}{% if plan %}{{ plan.AvgScore }}{% else %}3{% endif %}{% else %}{{request.form['AvgScore']}}{% endif %}"
@@ -247,8 +290,11 @@
 
                 <div class="form-group">
                     <i class="fa-solid fa-person-running fa-inverse fa-lg"></i>
-                    <label for="content">
+                    <label>
                         Preferred Starting Time
+                        <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
+                        data-title="{{ guidance["EarlyTime"][0] }}" data-content="{{ guidance["EarlyTime"][1] }}"><i
+                                class="fa fa-question-circle" aria-hidden="true"></i></a>
                     </label>
                     <input type="time" name="EarlyTime" id="EarlyTime"
                         value="{% if (not (request.form['EarlyTime'])) %}{% if plan %}{{ plan.EarlyTime }}{% else %}08:00{% endif %}{% else %}{{request.form['EarlyTime']}}{% endif %}"
@@ -257,18 +303,26 @@
 
                 <div class="form-group">
                     <i class="fa-solid fa-person-running fa-inverse fa-flip-horizontal fa-lg"></i>
-                    <label for="content">
+                    <label>
                         Preferred Ending Time
+                        <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus" data-custom-class="custom-popover"
+                        data-title="{{ guidance["LateTime"][0] }}" data-content="{{ guidance["LateTime"][1] }}"><i
+                                class="fa fa-question-circle" aria-hidden="true"></i></a>
                     </label>
                     <input type="time" name="LateTime" id="LateTime"
                         value="{% if (not (request.form['LateTime'])) %}{% if plan %}{{ plan.LateTime }}{% else %}21:00{% endif %}{% else %}{{request.form['LateTime']}}{% endif %}"
                         class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4">
                 </div>
-
-                <div class="text-lg-left text-center">
+                
+                <div class="d-flex justify-content-between">
                     <button id="btn" type="submit" class="btn btn-success btn-lg mt-2 mb-3">
                         Submit / Update
                     </button>
+                    <span class="text-white text-right align-self-center">
+                        {% for date in editDate %}
+                        {{ date }}: {{ editDate[date] }}<br/>
+                        {% endfor %}
+                    </span>
                 </div>
             </form>
         </div>
@@ -276,7 +330,7 @@
             {% if(plan) %}
 
             <div class="mt-1">
-                <div class="h3 mb-0 text-info mb-2">{{ plan.semester }} Classes:</div>
+                <div class="h5 mb-0 text-info mb-2">{{ plan.semester }} Classes:</div>
 
                 <div class="text-white mb-3">
                     {% for cls in classFullCodes %}
@@ -286,54 +340,53 @@
                     {% endfor %}
                 </div>
 
-                <div class="h3 mb-0 text-info mb-2">Preferred Average Score:</div>
+                <div class="h5 mb-0 text-info mb-2">Preferred Average Score:</div>
                 <div class="text-white text-lg mb-3">{{ plan.AvgScore }}</div>
 
-                <div class="h3 mb-0 text-info mb-2">Preferred Starting Time:</div>
+                <div class="h5 mb-0 text-info mb-2">Preferred Starting Time:</div>
                 <div class="text-white text-lg mb-3">{{ plan.EarlyTime }}</div>
 
-                <div class="h3 mb-0 text-info mb-2">Preferred Finishing Time:</div>
+                <div class="h5 mb-0 text-info mb-2">Preferred Ending Time:</div>
                 <div class="text-white text-lg mb-3">{{ plan.LateTime }}</div>
 
             </div>
 
             <div class="row flex-grow-1">
             </div>
-
-            <div class="row">
-                <div class="col-6 p-3">
-                    <a href="/getplans/{{ plan.id }}" class="btn btn-info w-100">
-                        <span class="text">Get Plans</span>
+            {% if (controls[0] == True) %}
+            <div class="row w-100">
+                <div class="col-12 p-3">
+                    <a href="/getplans/{{ plan.id }}" class="btn btn-info w-100 h-100" data-toggle="popover" data-trigger="hover"
+                    data-title="{{ guidance["getschedules"][0] }}" data-content="{{ guidance["getschedules"][1] }}" data-placement="top">
+                        <span class="text">Plan Schedules</span>
                     </a>
                 </div>
-                <div class="col-6  p-3">
-                    <a href="/rankplans/{{ plan.id }}" class="btn btn-info w-100">
-                        <span class="text">Rank Plans</span>
+                {% if (controls[1] == True) %}
+                <div class="col-12  p-3">
+                    <a href="/rankplans/{{ plan.id }}" class="btn btn-warning w-100 h-100" data-toggle="popover" data-trigger="hover"
+                    data-title="{{ guidance["rankschedules"][0] }}" data-content="{{ guidance["rankschedules"][1] }}" data-placement="top">
+                        <span class="text">Rank Schedules</span>
                     </a>
                 </div>
-                <div class="col-6  p-3">
-                    <a onclick="shownext()" class="btn btn-info w-100">
-                        <span class="text">Show Plans</span>
-                    </a>
-                </div>
-                <div class="col-6  p-3">
-                    <a href="/deleteplan/{{ plan.id }}" class="btn btn-danger w-100">
-                        <span class="text">Delete</span>
+                {% endif %}
+                <div class="col-12  p-3">
+                    <a href="/deleteplan/{{ plan.id }}" class="text-danger w-100 h-100" data-toggle="popover" data-trigger="hover"
+                    data-title="{{ guidance["deleteplan"][0] }}" data-content="{{ guidance["deleteplan"][1] }}" data-placement="top">
+                        <span class="text">Delete Plan</span>
                     </a>
                 </div>
             </div>
-
+            {% endif %}
             {% else %}
 
             <div class="h3 mb-0 text-white mt-1">Quick Tips</div>
             <br>
             <div class="text-white">
-                <p>Please fill out ALL columns for an optimized schedule!</p>
-                <br>
-                <p>Classes Input Template: <br>
-                    CAS XX 101,ENG XX 101,QST XX 101
-                </p><br>
-                <p>*** Make sure all letters are uppercases, and there's no spacen after the comma! ***</p>
+                {% for item in guidance %}
+                <span class=" text-info">{{ guidance[item][0] }}</span><br>
+                <span>{{ guidance[item][1] }}</span>
+                <br><br>
+                {% endfor %}
             </div>
 
             {% endif %}
@@ -346,32 +399,64 @@
     <div class="row d-flex align-items-center justify-content-center m-4">
         <div class="h3 mb-0 text-white font-weight-bold">Schedule</div>
     </div>
-    <div class="row d-flex align-content-center justify-content-center mt-4 mb-4">
+    <div class="row d-flex align-content-center justify-content-center m-4">
+        {% if (controls[2] == True) %}
+        <div class="col-xl-8 mb-4 d-flex justify-content-center">
+            <img src="/static/Users/{{user.id}}/{{plan.id}}/schedule.png" id="img"
+            class="bg-gray-200 rounded-lg w-100" />
+        </div>
+        <div class="col-xl-4 pb-4 d-flex flex-column justify-content-center">
+            <div class="row" id="schedule_details">
+            </div>
+            <div class="row flex-grow-1"> </div>
+            <div class="row mt-3 mx-auto">
+                <div class="col-2 text-left my-auto">
+                    <a onclick=" showSchedule(-4)" class="btn">
+                        <i class="fa-solid fa-angle-left fa-inverse fa-2xl"></i>
+                    </a>
+                </div>
+                <div class="col-8 text-white d-flex align-content-center justify-content-center">
+                    <p style="margin: 10px">Plan</p>
+                    <input type="number" min="0" name="num" id="num" value="{{plan.planNum+1}}"
+                        class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4" style="width: 100px">
+                    <button onclick="goto()" id="goto" class="btn p-0">
+                        <i class="fa-solid fa-angles-right fa-inverse fa-xl " style="margin: 10px;"></i>
+                    </button>
+                </div>
+                <div class="col-2 text-right my-auto">
+                    <a onclick="showSchedule(-2)" class="btn">
+                        <i class="fa-solid fa-angle-right fa-inverse fa-2xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
         <div class="row w-100 d-flex justify-content-center mb-4">
             <img src="/static/Users/{{user.id}}/{{plan.id}}/schedule.png" id="img"
-                class="col-xl-8 col-md-10 col-sm-12 bg-gray-100 rounded-lg" />
+                class="col-xl-8 col-md-10 col-sm-12 bg-gray-200 rounded-lg" />
         </div>
-        <div class="row w-lg-50">
+        <div class="row">
             <div class="col-3 text-left my-auto">
-                <a onclick=" showprevious()" class="btn">
+                <a onclick=" showSchedule(-4)" class="btn">
                     <i class="fa-solid fa-angle-left fa-inverse fa-2xl"></i>
                 </a>
             </div>
             <div class="col-6 text-white d-flex align-content-center justify-content-center">
                 <p style="margin: 10px">Plan</p>
                 <input type="number" min="0" name="num" id="num" value="{{plan.planNum+1}}"
-                    class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4">
+                    class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4" style="width: 100px">
                 <button onclick="goto()" id="goto" class="btn p-0">
-                    <i class="fa-solid fa-angles-right fa-inverse fa-xl " style="margin: 10px;"></i>
+                    <i class="fa-solid fa-angles-right fa-inverse fa-xl" style="margin: 10px;"></i>
                 </button>
             </div>
             <div class="col-3 text-right my-auto">
-                <a onclick="shownext()" class="btn">
+                <a onclick="showSchedule(-2)" class="btn">
                     <i class="fa-solid fa-angle-right fa-inverse fa-2xl"></i>
                 </a>
             </div>
 
         </div>
+        {% endif %}
     </div>
     {% endif %}
     {% endif %}

@@ -16,7 +16,7 @@ def AutoSelection(semesterNew, userID, planID):
     allPlansInfoPath = "./Users/" + userID + "/" + planID + "/"
 
     prefData = readPrefData(prefPath, prefSheetName)
-    print("Got preference data!")
+    # print("Got preference data!")
     sectData = []
     typeList = []
     SameTeacherDict = {}
@@ -35,7 +35,7 @@ def AutoSelection(semesterNew, userID, planID):
         SameTeacherTypes = getSameTeacherTypes(types, sections)
         SameTeacherDict[courCode] = SameTeacherTypes
 
-    print("Got sections data!\n")
+    # print("Got sections data!\n")
 
     prepData = data2Dict(sectData, typeList, prefData)
 

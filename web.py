@@ -251,14 +251,14 @@ def fetch_course_names(semester):
     name_list = []
     for course in courses:
         name_list.append(course["code"] + ": " + course["name"])
-    print("Success!")
+    print("fetch course names success!")
     return jsonify(name_list)
 
 
 @app.route('/plan/fetch_term_names/<year>', methods=['POST', 'GET'])
 def fetch_term_names(year):
     semesters = GetPreferenceWeb.getAllTermNames(year)
-    print("Success!")
+    print("fetch term names success!")
     return jsonify(semesters)
 
 
@@ -287,6 +287,9 @@ def plan(planID):
 
     years = GetPreferenceWeb.getYears()
     years = sorted(years, reverse=True)
+
+    controls = [False, False, False]
+    editDate = {}
 
     if (allowAccess(user, plan)):
         if (request.method == 'POST'):
@@ -353,17 +356,43 @@ def plan(planID):
                     GetPreferenceWeb.GetPreference(
                         str(user.id), str(plan.id), prefDict, semester)
                     msg.append("Your prefereces is saved!")
+
                     session['messages'] = msg
                     return redirect("/plan/" + str(plan.id))
-            except:
+            except Exception as e:
                 if (msg == []):
-                    msg.append("Something goes wrong.")
+                    print("Error in submittion: " + str(e))
+                    msg.append("Error in submittion: " + str(e))
         else:
             pass
+        if (plan):
+            check1 = GetPreferenceWeb.checkSubmitSuccess(
+                user.id, plan.id, plan.semester)
+            check2 = GetPreferenceWeb.checkPlanSuccess(
+                user.id, plan.id, plan.semester)
+            check3 = GetPreferenceWeb.checkRankSuccess(
+                user.id, plan.id, plan.semester)
+            controls = [check1, check2, check3]
+            editDate = GetPreferenceWeb.getEditDate(user.id, plan.id, plan.semester)
+
     else:
         return redirect(url_for('index'))
 
-    return render_template('plan.html', msg=msg, plan=plan, user=user, classFullCodes=classFullCodes, years=years)
+    guidance = {
+        "planname": ["Plan Name", "Give a name for your course plan."],
+        "AvgScore": ["Average Professor Score", "Enter a average RateMyProfessor score (0~5) of your professors. When you rank your plans, the plans with higher average score will be ranked higher."],
+        "EarlyTime": ["Preferred Starting Time", "Enter a time you prefer to start your first class in a day. When you rank your plans, the plans with later starting time will be ranked higher."],
+        "LateTime": ["Preferred Ending Time", "Enter a time you prefer to end your last class in a day. When you rank your plans, the plans with earlier finishing time will be ranked higher."],
+        "courses": ["Courses", "Select courses you want to take. You can type the course code or the course name to search for the course. Multiple courses selection is available."],
+        "semester": ["Semester", "Choose a school year and a term of the semester you want to take courses in."],
+        "getschedules": ["Get Schedules", "Click this button to get your schedules. You can get your schedules only after you submit your preferences. The schedules below are shown in default order."],
+        "rankschedules": ["Rank Schedules", "Click this button to rank your schedules. You can rank your schedules only after you get your schedules. The schedules below are shown in ranked order. The first one should be your best schedule."],
+        "deleteplan": ["Delete Plan", "Click this button to delete this plan. WARNING: This action cannot be undone!"]
+    }
+    
+    
+    
+    return render_template('plan.html', msg=msg, plan=plan, user=user, classFullCodes=classFullCodes, years=years, guidance=guidance, controls=controls, editDate=editDate)
 
 
 @app.route('/deleteplan/<int:planID>', methods=['POST', 'GET'])
@@ -413,16 +442,23 @@ def getPlans(planID):
     msg = []
     user = User.query.get(current_user.get_id())
     plan = Plan.query.get(planID)
-
     userID = str(user.id)
     planID = str(planID)
     semester = plan.semester
+
+    xlsNames = ["InfoDetails", "Ranking", "Seats"]
+    for name in xlsNames:
+        path = "./Users/" + userID + "/" + planID + "/" + semester + " " + name + ".xls"
+        if (os.path.exists(path)):
+            os.remove(path)
+
     result = AutoSelection.AutoSelection(semester, userID, planID)
     if (result == 0):
         msg.append("Can't find your plans")
     else:
         msg.append("Got your plans!")
 
+    showSchedule(planID, 1)
     session['messages'] = msg
     return redirect('/plan/' + planID)
 
@@ -444,9 +480,11 @@ def rankPlans(planID):
         msg.append("Plan details are added.")
         AutoRanking.AutoRanking(semester, userID, planID)
         msg.append("Your plans are ranked!")
-    except:
-        msg.append("Fail to rank your plans")
+    except Exception as e:
+        print("Error in ranking plans: " + str(e))
+        msg.append("Error in ranking plans: " + str(e))
 
+    showSchedule(planID, 1)
     session['messages'] = msg
     return redirect('/plan/' + planID)
 
@@ -456,12 +494,13 @@ def rankPlans(planID):
 def showSchedule(planID, n):
     n = int(n)
     msg = []
+    details = {}
     user = User.query.get(current_user.get_id())
     plan = Plan.query.get(planID)
     planID = str(planID)
     userID = str(user.id)
     semester = plan.semester
-    if (n == -2 or n == -4):
+    if (n == -2 or n == -4):  # -2: previous plan; -4: next plan
         newNum = plan.planNum + (3+n)
     else:
         newNum = n-1
@@ -479,15 +518,22 @@ def showSchedule(planID, n):
             planName = sheet.cell_value(newNum, 0)
         except:
             planName = "Plan " + str(newNum+1)
-        GetSchedulePic.GetSchedulePic(semester, userID, planID, planName)
+            
+        validSche = GetSchedulePic.GetSchedulePic(semester, userID, planID, planName)
+        if (not validSche):
+            return jsonify(num=plan.planNum+1, details=details)
+        
+        details = GetPreferenceWeb.getScheduleDetails(
+            userID, planID, semester, planName)
         plan.planNum = newNum
         db.session.commit()
-        print("Plan " + str(plan.planNum + 1))
+        print("Showing Plan " + str(plan.planNum + 1))
         # msg.append("See your schedules below")
-    except:
-        msg.append("Can't create your schedules")
+    except Exception as e:
+        print("Error in showing schedules: " + str(e))
+        msg.append("Error in showing schedules: " + str(e))
     session['messages'] = msg
-    return jsonify(num=plan.planNum+1)
+    return jsonify(num=plan.planNum+1, details=details)
 
 
 @app.teardown_request

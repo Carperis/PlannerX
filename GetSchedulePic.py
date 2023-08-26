@@ -44,7 +44,10 @@ def convertDays(days):
 def GetSchedulePic(semesterNew, userID, planID, planName):
     path = "./Users/" + userID + "/" + planID + "/" + semesterNew + " Info.xls"
     book = xlrd.open_workbook(path)
-    sheet = book.sheet_by_name(planName)
+    try:
+        sheet = book.sheet_by_name(planName)
+    except:
+        return False
 
     schedu = pdfscheduler.Schedule(
         ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
@@ -92,6 +95,7 @@ def GetSchedulePic(semesterNew, userID, planID, planName):
     for page in doc:
         pix = page.get_pixmap(alpha=True)
         pix.save(outfile_img)
+    return True
 
 
 if __name__ == "__main__":
