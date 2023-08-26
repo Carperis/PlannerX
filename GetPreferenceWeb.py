@@ -2,6 +2,7 @@
 import os
 import xlwt
 import xlrd
+from datetime import datetime
 
 
 def GetPreference(userID, planID, prefDict, semesterNew):
@@ -45,7 +46,7 @@ def checkCourses(courses, semester):
         rows = sheet.nrows
         cols = sheet.ncols
         for c in range(cols):
-            if(str(sheet.cell_value(0, c)) == "Code"):
+            if (str(sheet.cell_value(0, c)) == "Code"):
                 codeIndex = c
         for r in range(1, rows):
             dataList.append(sheet.cell_value(r, codeIndex))
@@ -67,7 +68,7 @@ def checkFolder(savePath):
     newPath = folders[0] + "/"
     for i in range(1, len(folders)):
         pathNotExist = bool(1 - (os.path.exists(newPath)))
-        if(pathNotExist):
+        if (pathNotExist):
             os.mkdir(newPath)
         newPath = newPath + folders[i] + "/"
 
@@ -79,7 +80,7 @@ def saveData(dataList, savePath, saveName, firstRow):
     for i in range(0, len(firstRow)):
         sheet.write(0, i, firstRow[i])
 
-    if(len(dataList) != 0):
+    if (len(dataList) != 0):
         for i in range(0, len(dataList)):
             data = dataList[i]
             for j in range(0, len(data)):
@@ -89,6 +90,7 @@ def saveData(dataList, savePath, saveName, firstRow):
     book.save(savePath)
     print("Preferences Data Saved!")
     # 3.保存数据
+
 
 def getAllCourseNames(semester):
     filePath = "./Semesters/" + semester + "/BU Courses " + semester + ".xls"
@@ -116,6 +118,7 @@ def getAllCourseNames(semester):
 
     return dataList
 
+
 def getYears():
     years = []
     for year in os.listdir("./Semesters"):
@@ -124,6 +127,7 @@ def getYears():
             if y is not None and y not in years:
                 years.append(y)
     return years
+
 
 def getAllTermNames(year):
     semesters = []
@@ -136,53 +140,92 @@ def getAllTermNames(year):
                 semesters.append(semester.split("-")[1])
     return semesters
 
+
 def checkSubmitSuccess(userID, planID, semester):
-    path = "./Users/" + str(userID) + "/" + str(planID) + "/" + semester + " Preferences.xls"
+    path = "./Users/" + str(userID) + "/" + str(planID) + \
+        "/" + semester + " Preferences.xls"
     if (os.path.exists(path)):
         return True
     else:
         return False
+
 
 def checkPlanSuccess(userID, planID, semester):
-    path = "./Users/" + str(userID) + "/" + str(planID) + "/" + semester + " Info.xls"
-    if (os.path.exists(path)):
-        return True
-    else:
-        return False
-    
-    
-def checkRankSuccess(userID, planID, semester):
-    path = "./Users/" + str(userID) + "/" + str(planID) + "/" + semester + " Ranking.xls"
+    path = "./Users/" + str(userID) + "/" + str(planID) + \
+        "/" + semester + " Info.xls"
     if (os.path.exists(path)):
         return True
     else:
         return False
 
+
+def checkRankSuccess(userID, planID, semester):
+    path = "./Users/" + str(userID) + "/" + str(planID) + \
+        "/" + semester + " Ranking.xls"
+    if (os.path.exists(path)):
+        return True
+    else:
+        return False
+
+
 def getScheduleDetails(userID, planID, semester, planName):
-    path = "./Users/" + str(userID) + "/" + str(planID) + "/" + semester + " InfoDetails.xls"
-    book = xlrd.open_workbook(path)
-    sheet = book.sheet_by_name(planName)
-    header_row = sheet.row_values(0)
-    rows = sheet.nrows
-    cols = sheet.ncols
-    keys = ["Average Score", "Earliest Time", "Latest Time"]
-    name = {"Average Score": "Average Score", "Earliest Time": "Starting Time", "Latest Time": "Ending Time"}
-    min_value = {"Average Score": 0, "Earliest Time": 0, "Latest Time": 0}
-    max_value = {"Average Score": 5, "Earliest Time": 24, "Latest Time": 24}
     scheduleDetails = {}
-    for key in keys:
-        scheduleDetails[key] = {"name": None, "value": None, "check": None, "min_value": None, "max_value": None}
-        key_index = header_row.index(key)
-        for r in range(1, rows):
-            if sheet.cell_value(r, key_index) != "":
-                scheduleDetails[key]["name"] = name[key]
-                scheduleDetails[key]["value"] = sheet.cell_value(r, key_index)
-                scheduleDetails[key]["check"] = True
-                scheduleDetails[key]["min_value"] = min_value[key]
-                scheduleDetails[key]["max_value"] = max_value[key]
-                break
+    try:
+        path = "./Users/" + str(userID) + "/" + str(planID) + \
+            "/" + semester + " InfoDetails.xls"
+        book = xlrd.open_workbook(path)
+        sheet = book.sheet_by_name(planName)
+        header_row = sheet.row_values(0)
+        rows = sheet.nrows
+        cols = sheet.ncols
+        keys = ["Average Score", "Earliest Time", "Latest Time"]
+        name = {"Average Score": "Average Score",
+                "Earliest Time": "Starting Time", "Latest Time": "Ending Time"}
+        min_value = {"Average Score": 0, "Earliest Time": 0, "Latest Time": 0}
+        max_value = {"Average Score": 5,
+                     "Earliest Time": 24, "Latest Time": 24}
+
+        for key in keys:
+            scheduleDetails[key] = {"name": None, "value": None,
+                                    "check": None, "min_value": None, "max_value": None}
+            key_index = header_row.index(key)
+            for r in range(1, rows):
+                if sheet.cell_value(r, key_index) != "":
+                    scheduleDetails[key]["name"] = name[key]
+                    scheduleDetails[key]["value"] = sheet.cell_value(
+                        r, key_index)
+                    scheduleDetails[key]["check"] = True
+                    scheduleDetails[key]["min_value"] = min_value[key]
+                    scheduleDetails[key]["max_value"] = max_value[key]
+                    break
+    except:
+        pass
     return scheduleDetails
-    
+
+
+def getEditDate(userID, planID, semester):
+    editDate = {}
+    file_path1 = "./Users/" + str(userID) + "/" + \
+        str(planID) + "/" + semester + " Info.xls"
+    file_path2 = "./Users/" + str(userID) + "/" + \
+        str(planID) + "/" + semester + " Ranking.xls"
+    try:
+        creation_time1 = os.path.getmtime(file_path1)
+        editDate1 = datetime.fromtimestamp(creation_time1)
+        editDate1 = editDate1.strftime("%Y-%m-%d %H:%M:%S")
+        editDate["Last Plan"] = editDate1
+    except FileNotFoundError:
+        print("File not found1.") 
+    try:
+        creation_time2 = os.path.getmtime(file_path2)
+        editDate2 = datetime.fromtimestamp(creation_time2)
+        editDate2 = editDate2.strftime("%Y-%m-%d %H:%M:%S")
+        editDate["Last Rank"] = editDate2
+        print("File Creation Date and Time:", editDate)
+    except FileNotFoundError:
+        print("File not found2.")
+    return editDate
+
 
 if __name__ == "__main__":
     planname = "Any"

@@ -11,15 +11,13 @@
 
     function displayDetails(data, divId) {
         var detailsContainer= $("#" + divId);
-      
-        // Clear the list before adding new items
+
         detailsContainer.empty();
       
         $.each(data, function(key, value) {
             var formattedValue = value.value.toFixed(2);
             var minValue = value.min_value;
             var maxValue = value.max_value;
-            console.log(key, formattedValue);
             if (key == 'Earliest Time' || key == 'Latest Time') {
                 var hours = Math.floor(formattedValue);
                 var minutes = Math.round((formattedValue - hours) * 60);
@@ -27,7 +25,7 @@
             }
             
             var formattedRow =
-            "<div class='row m-3 mt-0 w-100'>" +
+            "<div class='row m-3 mt-0 w-100 d-flex justify-content-center'>" +
                 "<span class='text-info text-lg mb-1'><strong>" + value.name + "</strong>: " + formattedValue + "</span>" +
                 "<div class='row w-100'>" +
                     "<div class='col-1 text-center'>" + minValue + "</div>" +
@@ -37,7 +35,7 @@
               "</div>";
             detailsContainer.append(formattedRow);
         });
-      }
+    }
 
 
     function generateProgressBar(value, min, max) {
@@ -49,42 +47,36 @@
         return progressBar;
     }
 
-    function shownext() {
-        $.ajax({
-            url: "/plan/showschedule/{{plan.id}}/-2",
-            type: "POST",
-            success: function (data) {
-                $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
-                $("#num").prop('value', data.num);
-                displayDetails(data.details, "schedule_details");
-                {%if (plan.planNum == -1)%}
-                location.reload();
-                {% endif %}
-            }
-        });
-    }
-
-    function showprevious() {
-        $.ajax({
-            url: "/plan/showschedule/{{plan.id}}/-4",
-            type: "POST",
-            success: function (data) {
-                $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
-                $("#num").prop('value', data.num);
-                displayDetails(data.details, "schedule_details");
-            }
-        });
-    }
-
-    function goto() {
-        var n = $("#num").val();
+    function showSchedule(n) {
         $.ajax({
             url: "/plan/showschedule/{{plan.id}}/" + n,
             type: "POST",
             success: function (data) {
                 $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
                 $("#num").prop('value', data.num);
-                displayDetails(data.details, "schedule_details");
+
+                if (!jQuery.isEmptyObject(data.details)) {
+                    displayDetails(data.details, "schedule_details");
+                }
+            }
+        });
+    }
+
+    function goto() {
+        var n = $("#num").val();
+        if (isNaN(n) || n.length === 0) {
+            n = "{{plan.planNum+1}}";
+        }
+        console.log(n);
+        $.ajax({
+            url: "/plan/showschedule/{{plan.id}}/" + n,
+            type: "POST",
+            success: function (data) {
+                $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
+                $("#num").prop('value', data.num);
+                if (!jQuery.isEmptyObject(data.details)) {
+                    displayDetails(data.details, "schedule_details");
+                }
             }
         });
     }
@@ -112,38 +104,33 @@
                 {% if plan %}
                 var selectedCourses = "{{ plan.courses }}";
                 var selectedCourses = selectedCourses.split("||");
-                console.log(selectedCourses);
                 {% else %}
                     {% if (request.form['courses']) %}
-    var selectedCourses = "{{ request.form['courses'] }}";
-    var selectedCourses = selectedCourses.split("||");
-    console.log(selectedCourses);
-    {% endif %}
-    {% endif %}
+                    var selectedCourses = "{{ request.form['courses'] }}";
+                    var selectedCourses = selectedCourses.split("||");
+                    {% endif %}
+                {% endif %}
 
-    console.log(data);
-    $("#courses").empty();
-    data.forEach(function (course_name) {
-        const option = $('<option>', { value: course_name, text: course_name });
-        $("#courses").append(option);
-        if (selectedCourses.includes(course_name)) {
-            option.prop('selected', true);
-        }
-    });
-    $("#courses").trigger("chosen:updated");
+                $("#courses").empty();
+                data.forEach(function (course_name) {
+                    const option = $('<option>', { value: course_name, text: course_name });
+                    $("#courses").append(option);
+                    if (selectedCourses.includes(course_name)) {
+                        option.prop('selected', true);
+                    }
+                });
+        $("#courses").trigger("chosen:updated");
             }
         });
     }
 
     function updateTermOptions() {
         var yearSelect = $('#year').val();
-        console.log('Year:', yearSelect);
 
         $.ajax({
             url: "/plan/fetch_term_names/" + yearSelect,
             type: "GET",
             success: function (data) {
-                console.log(data);
                 $('#term option').each(function () {
                     const optionValue = $(this).val();
                     if (!data.includes(optionValue)) {
@@ -176,7 +163,7 @@
             firstLoad = false;
             updateTermOptions();
             updateCourseOptions();
-            goto()
+            goto();
         }
 
         $('#courses').chosen();
@@ -221,7 +208,7 @@
             <form class="user" role="form" action="/plan/{%if plan.id%}{{plan.id}}{%else%}0{%endif%}" method="POST">
                 <div class="form-group">
                     <i class="fa-solid fa-user fa-inverse"></i>
-                    <label for="content">
+                    <label>
                         Plan Name
                         <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
                         data-title="{{ guidance["planname"][0] }}" data-content="{{ guidance["planname"][1] }}"><i
@@ -233,7 +220,7 @@
                 </div>
                 <div class="form-group">
                     <i class="fa-solid fa-calendar-days fa-inverse"></i>
-                    <label for="content">
+                    <label>
                         Semester
                         <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
                             data-title="{{ guidance["semester"][0] }}" data-content="{{ guidance["semester"][1] }}"><i
@@ -276,7 +263,7 @@
 
                 <div class="form-group">
                     <i class="fa-solid fa-book-open-reader fa-inverse"></i>
-                    <label for="content">
+                    <label>
                         Courses
                         <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
                         data-title="{{ guidance["courses"][0] }}" data-content="{{ guidance["courses"][1] }}"><i
@@ -290,7 +277,7 @@
 
                 <div class=" form-group">
                     <i class="fa-solid fa-chalkboard-user fa-inverse"></i>
-                    <label for="content">
+                    <label>
                         Average Professors Score
                         <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
                         data-title="{{ guidance["AvgScore"][0] }}" data-content="{{ guidance["AvgScore"][1] }}"><i
@@ -303,7 +290,7 @@
 
                 <div class="form-group">
                     <i class="fa-solid fa-person-running fa-inverse fa-lg"></i>
-                    <label for="content">
+                    <label>
                         Preferred Starting Time
                         <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus"
                         data-title="{{ guidance["EarlyTime"][0] }}" data-content="{{ guidance["EarlyTime"][1] }}"><i
@@ -316,7 +303,7 @@
 
                 <div class="form-group">
                     <i class="fa-solid fa-person-running fa-inverse fa-flip-horizontal fa-lg"></i>
-                    <label for="content">
+                    <label>
                         Preferred Ending Time
                         <a tabindex="0" role="button" class="btn p-0" data-toggle="popover" data-trigger="focus" data-custom-class="custom-popover"
                         data-title="{{ guidance["LateTime"][0] }}" data-content="{{ guidance["LateTime"][1] }}"><i
@@ -326,11 +313,16 @@
                         value="{% if (not (request.form['LateTime'])) %}{% if plan %}{{ plan.LateTime }}{% else %}21:00{% endif %}{% else %}{{request.form['LateTime']}}{% endif %}"
                         class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4">
                 </div>
-
-                <div class="text-lg-left text-center">
+                
+                <div class="d-flex justify-content-between">
                     <button id="btn" type="submit" class="btn btn-success btn-lg mt-2 mb-3">
                         Submit / Update
                     </button>
+                    <span class="text-white text-right align-self-center">
+                        {% for date in editDate %}
+                        {{ date }}: {{ editDate[date] }}<br/>
+                        {% endfor %}
+                    </span>
                 </div>
             </form>
         </div>
@@ -366,7 +358,7 @@
                 <div class="col-12 p-3">
                     <a href="/getplans/{{ plan.id }}" class="btn btn-info w-100 h-100" data-toggle="popover" data-trigger="hover"
                     data-title="{{ guidance["getschedules"][0] }}" data-content="{{ guidance["getschedules"][1] }}" data-placement="top">
-                        <span class="text">Get Schedules</span>
+                        <span class="text">Plan Schedules</span>
                     </a>
                 </div>
                 {% if (controls[1] == True) %}
@@ -407,7 +399,7 @@
     <div class="row d-flex align-items-center justify-content-center m-4">
         <div class="h3 mb-0 text-white font-weight-bold">Schedule</div>
     </div>
-    <div class="row d-flex align-content-center justify-content-center mt-4 mb-4">
+    <div class="row d-flex align-content-center justify-content-center m-4">
         {% if (controls[2] == True) %}
         <div class="col-xl-8 mb-4 d-flex justify-content-center">
             <img src="/static/Users/{{user.id}}/{{plan.id}}/schedule.png" id="img"
@@ -419,7 +411,7 @@
             <div class="row flex-grow-1"> </div>
             <div class="row mt-3">
                 <div class="col-3 text-left my-auto">
-                    <a onclick=" showprevious()" class="btn">
+                    <a onclick=" showSchedule(-4)" class="btn">
                         <i class="fa-solid fa-angle-left fa-inverse fa-2xl"></i>
                     </a>
                 </div>
@@ -432,7 +424,7 @@
                     </button>
                 </div>
                 <div class="col-3 text-right my-auto">
-                    <a onclick="shownext()" class="btn">
+                    <a onclick="showSchedule(-2)" class="btn">
                         <i class="fa-solid fa-angle-right fa-inverse fa-2xl"></i>
                     </a>
                 </div>
@@ -445,7 +437,7 @@
         </div>
         <div class="row w-lg-50">
             <div class="col-3 text-left my-auto">
-                <a onclick=" showprevious()" class="btn">
+                <a onclick=" showSchedule(-4)" class="btn">
                     <i class="fa-solid fa-angle-left fa-inverse fa-2xl"></i>
                 </a>
             </div>
@@ -458,7 +450,7 @@
                 </button>
             </div>
             <div class="col-3 text-right my-auto">
-                <a onclick="shownext()" class="btn">
+                <a onclick="showSchedule(-2)" class="btn">
                     <i class="fa-solid fa-angle-right fa-inverse fa-2xl"></i>
                 </a>
             </div>
