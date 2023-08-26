@@ -9,6 +9,46 @@
 <script>
     $('#courses').chosen();
 
+    function displayDetails(data, divId) {
+        var detailsContainer= $("#" + divId);
+      
+        // Clear the list before adding new items
+        detailsContainer.empty();
+      
+        $.each(data, function(key, value) {
+            var formattedValue = value.value.toFixed(2);
+            var minValue = value.min_value;
+            var maxValue = value.max_value;
+            console.log(key, formattedValue);
+            if (key == 'Earliest Time' || key == 'Latest Time') {
+                var hours = Math.floor(formattedValue);
+                var minutes = Math.round((formattedValue - hours) * 60);
+                formattedValue = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+            }
+            
+            var formattedRow =
+            "<div class='row m-3 mt-0 w-100'>" +
+                "<span class='text-info text-lg mb-1'><strong>" + value.name + "</strong>: " + formattedValue + "</span>" +
+                "<div class='row w-100'>" +
+                    "<div class='col-1 text-center'>" + minValue + "</div>" +
+                    "<div class='col-10 align-self-center'>" + generateProgressBar(value.value, minValue, maxValue) + "</div>" +
+                    "<div class='col-1 text-center'>" + maxValue + "</div>" +
+                    "</div>" +
+              "</div>";
+            detailsContainer.append(formattedRow);
+        });
+      }
+
+
+    function generateProgressBar(value, min, max) {
+        var percentage = ((value - min) / (max - min)) * 100;
+        var progressBar =
+            "<div class='progress'>" +
+                "<div class='progress-bar' role='progressbar' style='width: " + percentage + "%' aria-valuenow='" + value + "' aria-valuemin='" + min + "' aria-valuemax='" + max + "'></div>" +
+            "</div>";
+        return progressBar;
+    }
+
     function shownext() {
         $.ajax({
             url: "/plan/showschedule/{{plan.id}}/-2",
@@ -16,6 +56,7 @@
             success: function (data) {
                 $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
                 $("#num").prop('value', data.num);
+                displayDetails(data.details, "schedule_details");
                 {%if (plan.planNum == -1)%}
                 location.reload();
                 {% endif %}
@@ -30,6 +71,7 @@
             success: function (data) {
                 $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
                 $("#num").prop('value', data.num);
+                displayDetails(data.details, "schedule_details");
             }
         });
     }
@@ -42,6 +84,7 @@
             success: function (data) {
                 $("#img").prop('src', '/static/Users/{{user.id}}/{{plan.id}}/schedule.png?' + new Date().getTime());
                 $("#num").prop('value', data.num);
+                displayDetails(data.details, "schedule_details");
             }
         });
     }
@@ -133,6 +176,7 @@
             firstLoad = false;
             updateTermOptions();
             updateCourseOptions();
+            goto()
         }
 
         $('#courses').chosen();
@@ -364,6 +408,37 @@
         <div class="h3 mb-0 text-white font-weight-bold">Schedule</div>
     </div>
     <div class="row d-flex align-content-center justify-content-center mt-4 mb-4">
+        {% if (controls[2] == True) %}
+        <div class="col-xl-8 mb-4 d-flex justify-content-center">
+            <img src="/static/Users/{{user.id}}/{{plan.id}}/schedule.png" id="img"
+            class="bg-gray-200 rounded-lg w-100" />
+        </div>
+        <div class="col-xl-4 pb-4 d-flex flex-column justify-content-center">
+            <div class="row" id="schedule_details">
+            </div>
+            <div class="row flex-grow-1"> </div>
+            <div class="row mt-3">
+                <div class="col-3 text-left my-auto">
+                    <a onclick=" showprevious()" class="btn">
+                        <i class="fa-solid fa-angle-left fa-inverse fa-2xl"></i>
+                    </a>
+                </div>
+                <div class="col-6 text-white d-flex align-content-center justify-content-center">
+                    <p style="margin: 10px">Plan</p>
+                    <input type="number" min="0" name="num" id="num" value="{{plan.planNum+1}}"
+                        class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4" style="width: 100px;">
+                    <button onclick="goto()" id="goto" class="btn p-0">
+                        <i class="fa-solid fa-angles-right fa-inverse fa-xl " style="margin: 10px;"></i>
+                    </button>
+                </div>
+                <div class="col-3 text-right my-auto">
+                    <a onclick="shownext()" class="btn">
+                        <i class="fa-solid fa-angle-right fa-inverse fa-2xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
         <div class="row w-100 d-flex justify-content-center mb-4">
             <img src="/static/Users/{{user.id}}/{{plan.id}}/schedule.png" id="img"
                 class="col-xl-8 col-md-10 col-sm-12 bg-gray-200 rounded-lg" />
@@ -377,7 +452,7 @@
             <div class="col-6 text-white d-flex align-content-center justify-content-center">
                 <p style="margin: 10px">Plan</p>
                 <input type="number" min="0" name="num" id="num" value="{{plan.planNum+1}}"
-                    class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4">
+                    class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4" style="width: 100px;">
                 <button onclick="goto()" id="goto" class="btn p-0">
                     <i class="fa-solid fa-angles-right fa-inverse fa-xl " style="margin: 10px;"></i>
                 </button>
@@ -389,6 +464,7 @@
             </div>
 
         </div>
+        {% endif %}
     </div>
     {% endif %}
     {% endif %}

@@ -287,7 +287,7 @@ def plan(planID):
     years = GetPreferenceWeb.getYears()
     years = sorted(years, reverse=True)
     
-    controls = [False, False]
+    controls = [False, False, False]
 
     if (allowAccess(user, plan)):
         if (request.method == 'POST'):
@@ -357,15 +357,17 @@ def plan(planID):
                     
                     session['messages'] = msg
                     return redirect("/plan/" + str(plan.id))
-            except:
+            except Exception as e:
                 if (msg == []):
-                    msg.append("Something goes wrong.")
+                    msg.append("Error: " + str(e))
         else:
             pass
         if (plan):
             check1 = GetPreferenceWeb.checkSubmitSuccess(user.id, plan.id, plan.semester)
             check2 = GetPreferenceWeb.checkPlanSuccess(user.id, plan.id, plan.semester)
-            controls = [check1, check2]
+            check3 = GetPreferenceWeb.checkRankSuccess(user.id, plan.id, plan.semester)
+            controls = [check1, check2, check3]
+            
     else:
         return redirect(url_for('index'))
 
@@ -499,6 +501,8 @@ def showSchedule(planID, n):
         except:
             planName = "Plan " + str(newNum+1)
         GetSchedulePic.GetSchedulePic(semester, userID, planID, planName)
+        details = GetPreferenceWeb.getScheduleDetails(userID, planID, semester, planName)
+        print(details)
         plan.planNum = newNum
         db.session.commit()
         print("Plan " + str(plan.planNum + 1))
@@ -506,7 +510,7 @@ def showSchedule(planID, n):
     except:
         msg.append("Can't create your schedules")
     session['messages'] = msg
-    return jsonify(num=plan.planNum+1)
+    return jsonify(num=plan.planNum+1, details=details)
 
 
 @app.teardown_request

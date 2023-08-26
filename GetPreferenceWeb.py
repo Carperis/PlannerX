@@ -149,7 +149,40 @@ def checkPlanSuccess(userID, planID, semester):
         return True
     else:
         return False
+    
+    
+def checkRankSuccess(userID, planID, semester):
+    path = "./Users/" + str(userID) + "/" + str(planID) + "/" + semester + " Ranking.xls"
+    if (os.path.exists(path)):
+        return True
+    else:
+        return False
 
+def getScheduleDetails(userID, planID, semester, planName):
+    path = "./Users/" + str(userID) + "/" + str(planID) + "/" + semester + " InfoDetails.xls"
+    book = xlrd.open_workbook(path)
+    sheet = book.sheet_by_name(planName)
+    header_row = sheet.row_values(0)
+    rows = sheet.nrows
+    cols = sheet.ncols
+    keys = ["Average Score", "Earliest Time", "Latest Time"]
+    name = {"Average Score": "Average Score", "Earliest Time": "Starting Time", "Latest Time": "Ending Time"}
+    min_value = {"Average Score": 0, "Earliest Time": 0, "Latest Time": 0}
+    max_value = {"Average Score": 5, "Earliest Time": 24, "Latest Time": 24}
+    scheduleDetails = {}
+    for key in keys:
+        scheduleDetails[key] = {"name": None, "value": None, "check": None, "min_value": None, "max_value": None}
+        key_index = header_row.index(key)
+        for r in range(1, rows):
+            if sheet.cell_value(r, key_index) != "":
+                scheduleDetails[key]["name"] = name[key]
+                scheduleDetails[key]["value"] = sheet.cell_value(r, key_index)
+                scheduleDetails[key]["check"] = True
+                scheduleDetails[key]["min_value"] = min_value[key]
+                scheduleDetails[key]["max_value"] = max_value[key]
+                break
+    return scheduleDetails
+    
 
 if __name__ == "__main__":
     planname = "Any"
