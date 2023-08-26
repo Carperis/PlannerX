@@ -346,7 +346,7 @@
                 <div class="h5 mb-0 text-info mb-2">Preferred Starting Time:</div>
                 <div class="text-white text-lg mb-3">{{ plan.EarlyTime }}</div>
 
-                <div class="h5 mb-0 text-info mb-2">Preferred Finishing Time:</div>
+                <div class="h5 mb-0 text-info mb-2">Preferred Ending Time:</div>
                 <div class="text-white text-lg mb-3">{{ plan.LateTime }}</div>
 
             </div>
@@ -409,7 +409,7 @@
             <div class="row" id="schedule_details">
             </div>
             <div class="row flex-grow-1"> </div>
-            <div class="row mt-3">
+            <div class="row mt-3 mx-auto">
                 <div class="col-2 text-left my-auto">
                     <a onclick=" showSchedule(-4)" class="btn">
                         <i class="fa-solid fa-angle-left fa-inverse fa-2xl"></i>
@@ -418,7 +418,7 @@
                 <div class="col-8 text-white d-flex align-content-center justify-content-center">
                     <p style="margin: 10px">Plan</p>
                     <input type="number" min="0" name="num" id="num" value="{{plan.planNum+1}}"
-                        class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4">
+                        class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4" style="width: 100px">
                     <button onclick="goto()" id="goto" class="btn p-0">
                         <i class="fa-solid fa-angles-right fa-inverse fa-xl " style="margin: 10px;"></i>
                     </button>
@@ -435,7 +435,7 @@
             <img src="/static/Users/{{user.id}}/{{plan.id}}/schedule.png" id="img"
                 class="col-xl-8 col-md-10 col-sm-12 bg-gray-200 rounded-lg" />
         </div>
-        <div class="row w-lg-50">
+        <div class="row">
             <div class="col-3 text-left my-auto">
                 <a onclick=" showSchedule(-4)" class="btn">
                     <i class="fa-solid fa-angle-left fa-inverse fa-2xl"></i>
@@ -444,9 +444,9 @@
             <div class="col-6 text-white d-flex align-content-center justify-content-center">
                 <p style="margin: 10px">Plan</p>
                 <input type="number" min="0" name="num" id="num" value="{{plan.planNum+1}}"
-                    class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4">
+                    class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4" style="width: 100px">
                 <button onclick="goto()" id="goto" class="btn p-0">
-                    <i class="fa-solid fa-angles-right fa-inverse fa-xl " style="margin: 10px;"></i>
+                    <i class="fa-solid fa-angles-right fa-inverse fa-xl" style="margin: 10px;"></i>
                 </button>
             </div>
             <div class="col-3 text-right my-auto">
