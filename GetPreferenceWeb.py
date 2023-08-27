@@ -169,6 +169,12 @@ def checkRankSuccess(userID, planID, semester):
 
 
 def getScheduleDetails(userID, planID, semester, planName):
+    prefSheetName = "Preferences"
+    prefPath = "./Users/" + str(userID) + "/" + \
+        str(planID) + "/" + semester + " Preferences.xls"
+    from AutoRanking import readPrefData
+    prefDict = readPrefData(prefPath, prefSheetName)
+    # print(prefDict)
     scheduleDetails = {}
     try:
         path = "./Users/" + str(userID) + "/" + str(planID) + \
@@ -194,10 +200,17 @@ def getScheduleDetails(userID, planID, semester, planName):
                     scheduleDetails[key]["name"] = name[key]
                     scheduleDetails[key]["value"] = sheet.cell_value(
                         r, key_index)
-                    scheduleDetails[key]["check"] = True
                     scheduleDetails[key]["min_value"] = min_value[key]
                     scheduleDetails[key]["max_value"] = max_value[key]
                     break
+            if (key == "Average Score" and scheduleDetails[key]["value"] >= prefDict[key]):
+                scheduleDetails[key]["check"] = True
+            elif (key == "Earliest Time" and scheduleDetails[key]["value"] >= prefDict[key]):
+                scheduleDetails[key]["check"] = True
+            elif (key == "Latest Time" and scheduleDetails[key]["value"] <= prefDict[key]):
+                scheduleDetails[key]["check"] = True
+            else:
+                scheduleDetails[key]["check"] = False
     except:
         pass
     return scheduleDetails

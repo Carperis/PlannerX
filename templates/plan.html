@@ -18,15 +18,21 @@
             var formattedValue = value.value.toFixed(2);
             var minValue = value.min_value;
             var maxValue = value.max_value;
+            var check = value.check;
             if (key == 'Earliest Time' || key == 'Latest Time') {
                 var hours = Math.floor(formattedValue);
                 var minutes = Math.round((formattedValue - hours) * 60);
                 formattedValue = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
             }
+            console.log(key, formattedValue, minValue, maxValue, check);
+            var checkmark = "";
+            if (check){
+                checkmark = "<i class='fa-solid fa-lg fa-check text-success my-auto ml-2' ></i>";
+            }
             
             var formattedRow =
             "<div class='row m-3 mt-0 w-100 d-flex justify-content-center'>" +
-                "<span class='text-info text-lg mb-1'><strong>" + value.name + "</strong>: " + formattedValue + "</span>" +
+                "<span class='text-info text-lg mb-1'><strong>" + value.name + "</strong>: " + formattedValue + "</span>" + checkmark +
                 "<div class='row w-100'>" +
                     "<div class='col-1 text-center'>" + minValue + "</div>" +
                     "<div class='col-10 align-self-center'>" + generateProgressBar(value.value, minValue, maxValue) + "</div>" +
