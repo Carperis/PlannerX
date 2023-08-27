@@ -65,7 +65,11 @@
     function goto() {
         var n = $("#num").val();
         if (isNaN(n) || n.length === 0) {
-            n = "{{plan.planNum+1}}";
+            {% if plan %}
+                n = "{{plan.planNum+1}}";
+            {% else %}
+                return;
+            {% endif %}
         }
         console.log(n);
         $.ajax({

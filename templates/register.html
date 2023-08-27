@@ -1,7 +1,7 @@
 {% extends 'base_raw.html' %}
 
 {% block head %}
-<title>BU PlannerX - Login</title>
+<title>BU PlannerX - Register</title>
 {% endblock %}
 
 {% block content %}
@@ -32,11 +32,11 @@
                     <div class="card-body p-0">
                         <!-- Nested Row within Card Body -->
                         <div class="row">
-                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                            <div class="col-lg-6 d-none d-lg-block bg-register-image"></div>
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-white mb-4">Welcome Back!</h1>
+                                        <h1 class="h4 text-white mb-4">Create an Account!</h1>
                                     </div>
                                     <form class="user" method="POST" action="">
                                         {{ form.hidden_tag() }}
@@ -45,24 +45,18 @@
                                             border-0 text-white") }}
                                         </div>
                                         <div class="form-group">
+                                            {{ form.email(class="form-control form-control-user bg-gray-900
+                                            border-0 text-white") }}
+                                        </div>
+                                        <div class="form-group">
                                             {{ form.password(class="form-control form-control-user bg-gray-900
                                             border-0 text-white") }}
                                         </div>
-                                        <!-- <div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck">
-                                                <label class="custom-control-label" for="customCheck">Remember
-                                                    Me</label>
-                                            </div>
-                                        </div> -->
                                         {{ form.submit(class="btn btn-primary btn-user btn-block", id="btn") }}
                                     </form>
                                     <hr class="border-white">
-                                    <!-- <div class="text-center">
-                                        <a class="small" href="forgot-password.html">Forgot Password?</a>
-                                    </div> -->
                                     <div class="text-center mb-4">
-                                        <a class="small" href="/register">Create an Account!</a>
+                                        <a class="text-warning" href="/login">Already have an account? Login!</a>
                                     </div>
                                     <div class="text-center">
                                         <a href="/" class="btn">

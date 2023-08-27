@@ -8,6 +8,9 @@ from datetime import datetime
 from flask import Flask, redirect, render_template, request, flash, session, url_for, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField, EmailField
+from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 import xlrd
 import shutil
@@ -33,8 +36,11 @@ db = SQLAlchemy(app)
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), nullable=False, unique=True)
-    # password = db.Column(db.String(80), nullable=False)
+    username = db.Column(db.String(20), nullable=False)
+    email = db.Column(db.String(80), nullable=False, unique=True)
+    password = db.Column(db.String(80), nullable=False)
+    google = db.Column(db.Boolean, default=False)
+
     # def __repr__(self):
     #     return '<User %r>' % self.id
 
@@ -124,13 +130,20 @@ def google_callback():
     session["google_id"] = sub
     session["name"] = username
 
-    if (User.query.filter_by(username=email).first()):
-        user = User.query.filter_by(username=email).first()
-        login_user(user)
+    if (User.query.filter_by(email=email).first()):
+        user = User.query.filter_by(email=email).first()
+        if (user.google):
+            print(user.google)
+            login_user(user)
+        else:
+            warning = "Please login with your email and password."
+            return redirect(f'/login?warning={warning}')
     else:
-        # hashed_password = bcrypt.generate_password_hash(form.password.data)
-        # new_user = User(username=form.username.data, password=hashed_password)
-        new_user = User(username=email)
+        if email.split("@")[1] != "bu.edu":
+            warning = "Please login with your BU email."
+            return redirect(f'/login?warning={warning}')
+        hashed_password = bcrypt.generate_password_hash(email)  # not secure
+        new_user = User(username=username, email=email, password=hashed_password, google=True)
         db.session.add(new_user)
         db.session.commit()
         userID = new_user.id
@@ -150,48 +163,64 @@ login_manager.login_view = 'login'
 def user_loader(id):
     return User.query.get(id)
 
-# class RegisterForm(FlaskForm):
-#     username = StringField(validators=[
-#                            InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
 
-#     password = PasswordField(validators=[
-#                              InputRequired(), Length(min=6, max=20)], render_kw={"placeholder": "Password"})
+class RegisterForm(FlaskForm):
+    username = StringField(validators=[
+        InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+    
+    email = EmailField(validators=[
+        InputRequired()], render_kw={"placeholder": "Email"})
 
-#     submit = SubmitField('Register')
+    password = PasswordField(validators=[
+                             InputRequired(), Length(min=6, max=20)], render_kw={"placeholder": "Password"})
 
-#     def validate_username(self, username):
-#         existing_user_username = User.query.filter_by(
-#             username=username.data).first()
-#         if existing_user_username:
-#             raise ValidationError(
-#                 'That username already exists. Please choose a different one.')
+    submit = SubmitField('Register')
 
-# class LoginForm(FlaskForm):
-#     username = StringField(validators=[
-#                            InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+    def validate_email(self, email):
+        existing_user_email = User.query.filter_by(
+            email=email.data).first()
+        if existing_user_email:
+            print("Email already exists")
+            raise ValidationError(
+                'That email already exists. Please choose a different one.')
+            
 
-#     password = PasswordField(validators=[
-#                              InputRequired(), Length(min=6, max=20)], render_kw={"placeholder": "Password"})
 
-#     submit = SubmitField('Login')
+class LoginForm(FlaskForm):
+    email = EmailField(validators=[
+        InputRequired()], render_kw={"placeholder": "Email"})
+
+    password = PasswordField(validators=[
+                             InputRequired()], render_kw={"placeholder": "Password"})
+
+    submit = SubmitField('Login')
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    msg = []
 
-    # form = LoginForm()
-    # if request.method == 'POST':
-    #     msg.append("Invalid login!")
-    #     if form.validate_on_submit():
-    #         user = User.query.filter_by(username=form.username.data).first()
-    #         if user:
-    #             if bcrypt.check_password_hash(user.password, form.password.data):
-    #                 login_user(user)
-    #                 return redirect(url_for('dashboard'))
-    # return render_template('login.html', form=form, msg=msg)
+    warning = request.args.get('warning')
+    if (warning):
+        msg = [warning]
+    else:
+        msg = []
 
-    return render_template('login.html', msg=msg)
+    form = LoginForm()
+    if request.method == 'POST':
+        msg.append("Invalid email or password!")
+        if form.validate_on_submit():
+            user = User.query.filter_by(email=form.email.data).first()
+            if user:
+                if (user.google):
+                    msg = []
+                    msg.append("Please login with your Google account.")
+                else:
+                    if bcrypt.check_password_hash(user.password, form.password.data):
+                        login_user(user)
+                        return redirect(url_for('dashboard'))
+    return render_template('login.html', form=form, msg=msg)
+
+    # return render_template('login.html', msg=msg)
 
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -202,26 +231,29 @@ def logout():
     return redirect(url_for('index'))
 
 
-# @ app.route('/register', methods=['GET', 'POST'])
-# def register():
-#     msg = []
+@ app.route('/register', methods=['GET', 'POST'])
+def register():
+    msg = []
 
-#     form = RegisterForm()
+    form = RegisterForm()
 
-#     if request.method == 'POST':
-#         msg.append("Invalid registration!")
-#         if form.validate_on_submit():
-#             hashed_password = bcrypt.generate_password_hash(form.password.data)
-#             new_user = User(username=form.username.data,
-#                             password=hashed_password)
-#             db.session.add(new_user)
-#             db.session.commit()
-#             userID = new_user.id
-#             path = "./Users/" + str(userID) + "/"
-#             GetPreferenceWeb.checkFolder(path)
-#             return redirect(url_for('login'))
+    if request.method == 'POST':
+        msg.append("Invalid registration!")
+        if form.validate_on_submit():
+            hashed_password = bcrypt.generate_password_hash(form.password.data)
+            new_user = User(username= form.username.data, email=form.email.data,
+                            password=hashed_password, google=False)
+            db.session.add(new_user)
+            db.session.commit()
+            userID = new_user.id
+            path = "./Users/" + str(userID) + "/"
+            GetPreferenceWeb.checkFolder(path)
+            return redirect(url_for('login'))
+        else:
+            msg.append("That email may already exist. Please choose a different one.")
 
-#     return render_template('register.html', form=form, msg=msg)
+    return render_template('register.html', form=form, msg=msg)
+
 
 def allowAccess(user, other):
     if (hasattr(other, "user_id") and user.id != other.user_id):
@@ -373,7 +405,8 @@ def plan(planID):
             check3 = GetPreferenceWeb.checkRankSuccess(
                 user.id, plan.id, plan.semester)
             controls = [check1, check2, check3]
-            editDate = GetPreferenceWeb.getEditDate(user.id, plan.id, plan.semester)
+            editDate = GetPreferenceWeb.getEditDate(
+                user.id, plan.id, plan.semester)
 
     else:
         return redirect(url_for('index'))
@@ -389,9 +422,7 @@ def plan(planID):
         "rankschedules": ["Rank Schedules", "Click this button to rank your schedules. You can rank your schedules only after you get your schedules. The schedules below are shown in ranked order. The first one should be your best schedule."],
         "deleteplan": ["Delete Plan", "Click this button to delete this plan. WARNING: This action cannot be undone!"]
     }
-    
-    
-    
+
     return render_template('plan.html', msg=msg, plan=plan, user=user, classFullCodes=classFullCodes, years=years, guidance=guidance, controls=controls, editDate=editDate)
 
 
@@ -518,11 +549,12 @@ def showSchedule(planID, n):
             planName = sheet.cell_value(newNum, 0)
         except:
             planName = "Plan " + str(newNum+1)
-            
-        validSche = GetSchedulePic.GetSchedulePic(semester, userID, planID, planName)
+
+        validSche = GetSchedulePic.GetSchedulePic(
+            semester, userID, planID, planName)
         if (not validSche):
             return jsonify(num=plan.planNum+1, details=details)
-        
+
         details = GetPreferenceWeb.getScheduleDetails(
             userID, planID, semester, planName)
         plan.planNum = newNum
