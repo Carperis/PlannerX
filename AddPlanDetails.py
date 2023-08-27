@@ -2,14 +2,17 @@ import xlwt
 import xlrd
 
 
-def AddPlanDetails(semesterNew, userID, planID):
+def AddPlanDetails(semesterNew, userID, planID, ignoreSeats=False):
     Info_bookName = semesterNew + " Info"
     allPlansInfoPath = "./Users/" + userID + "/" + planID + "/"
     allPlansInfoDict = readPlanData(allPlansInfoPath, Info_bookName)
 
-    seatName = semesterNew + " Seats"
-    seatPath = "./Users/" + userID + "/" + planID + "/"
-    seatDict = readSeatData(seatPath, seatName)
+    if (ignoreSeats):
+        seatDict = {}
+    else:
+        seatName = semesterNew + " Seats"
+        seatPath = "./Users/" + userID + "/" + planID + "/"
+        seatDict = readSeatData(seatPath, seatName)
 
     firstRow = ("Section", "Open Seats", "Instructor", "Type", "Location", "Schedule",
                 "Dates", "Notes", "Semester", "Code", "RMP Score", "Average Score", "Earliest Time", "Latest Time")
@@ -17,7 +20,7 @@ def AddPlanDetails(semesterNew, userID, planID):
 
     addAverageScores(allPlansInfoDict)
     addTimeExtrema(allPlansInfoDict)
-    addSeats(allPlansInfoDict, seatDict)
+    addSeats(allPlansInfoDict, seatDict, ignoreSeats)
     savePlanData(allPlansInfoDict, allPlansInfoPath, Info_bookName, firstRow)
 
 # def addSeats(allPlansInfoDict):
@@ -187,14 +190,17 @@ def addTimeExtrema(allPlansInfoDict):
     return
 
 
-def addSeats(allPlansInfoDict, seatDict):
+def addSeats(allPlansInfoDict, seatDict, ignoreSeats):
     planKeys = list(allPlansInfoDict.keys())
     sectLen = len(allPlansInfoDict[planKeys[0]])
     for planKey in planKeys:
         plan = allPlansInfoDict[planKey]
         for section in plan:
             sectionName = section[9] + "-" + section[0]
-            section[1] = seatDict[sectionName]
+            if ignoreSeats:
+                section[1] = 1
+            else:
+                section[1] = seatDict[sectionName]
     return
 
 

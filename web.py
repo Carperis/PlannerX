@@ -505,9 +505,9 @@ def rankPlans(planID):
     planID = str(planID)
     semester = plan.semester
     try:
-        GetSeats.GetSeats(semester, userID, planID)
-        msg.append("Seats are checked.")
-        AddPlanDetails.AddPlanDetails(semester, userID, planID)
+        # GetSeats.GetSeats(semester, userID, planID)
+        # msg.append("Seats are checked.")
+        AddPlanDetails.AddPlanDetails(semester, userID, planID, ignoreSeats=True)
         msg.append("Plan details are added.")
         AutoRanking.AutoRanking(semester, userID, planID)
         msg.append("Your plans are ranked!")
