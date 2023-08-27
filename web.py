@@ -108,9 +108,11 @@ def google_login():
 @app.route("/google_callback")
 def google_callback():
     flow.fetch_token(authorization_response=request.url)
+    state1 = session["state"]
+    state2 = request.args.get('state')
 
-    # if not session["state"] == request.args["state"]:
-    #     abort(500)  # State does not match!
+    if (state1 != state2):
+        abort(500)  # State does not match!
 
     credentials = flow.credentials
     request_session = requests.session()
@@ -121,7 +123,8 @@ def google_callback():
     id_info = id_token.verify_oauth2_token(
         id_token=credentials._id_token,
         request=token_request,
-        audience=GOOGLE_CLIENT_ID
+        audience=GOOGLE_CLIENT_ID,
+        clock_skew_in_seconds=1
     )
 
     sub = id_info.get("sub")
