@@ -7,7 +7,7 @@ import AlgorithmV2
 import AlgorithmV2_1
 
 
-def AutoSelection(semesterNew, userID, planID):
+def AutoSelection(semesterNew, userID, planID, limit):
     semester = semesterNew.split("_")[0]
     prefSheetName = "Preferences"
     prefPath = "./Users/" + userID + "/" + planID + \
@@ -41,7 +41,7 @@ def AutoSelection(semesterNew, userID, planID):
 
     # choose one of the following algorithms
     # allPlans = AlgorithmV2_1.autoMatchCourses(prepData, SameTeacherDict)
-    allPlans = AlgorithmV2.autoMatchCourses(prepData, SameTeacherDict, 1000)
+    allPlans = AlgorithmV2.autoMatchCourses(prepData, SameTeacherDict, limit)
     # 3rd Arg: set max num of plans, "-1" means get all plans
 
     if(len(allPlans) == 0):

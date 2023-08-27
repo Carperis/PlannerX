@@ -483,7 +483,7 @@ def getPlans(planID):
         if (os.path.exists(path)):
             os.remove(path)
 
-    result = AutoSelection.AutoSelection(semester, userID, planID)
+    result = AutoSelection.AutoSelection(semester, userID, planID, 500)
     if (result == 0):
         msg.append("Can't find your plans")
     else:
