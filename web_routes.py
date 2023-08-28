@@ -10,7 +10,6 @@ import xlrd
 import shutil
 import os
 
-# The following are custom modules
 import GetPreferenceWeb
 import AutoSelection
 import AddPlanDetails
@@ -21,34 +20,7 @@ import GetSchedulePic
 from web_init import app, db, bcrypt
 from web_models import User, Plan
 from web_forms import LoginForm, RegisterForm
-
-
-def allowAccess(user, other):
-    if (hasattr(other, "user_id") and user.id != other.user_id):
-        return False
-    else:
-        return True
-
-
-def get_public_ip():
-    try:
-        response = requests.get("https://api.ipify.org?format=json")
-        if response.status_code == 200:
-            data = response.json()
-            return data["ip"]
-        else:
-            print("Request failed with status code:", response.status_code)
-            return None
-    except Exception as e:
-        print("Error:", e)
-        return None
-
-
-if (get_public_ip() == "158.101.17.48"):
-    google_redirect_uri = "https://buplannerx.my.to/google_callback"
-else:
-    # google_redirect_uri="http://localhost:5000/google_callback"
-    google_redirect_uri = "http://127.0.0.1:5000/google_callback"
+import web_api as wapi
 
 GOOGLE_CLIENT_ID = "697687543481-stsr0foi21nlt6abfc2cvls4266ofskv.apps.googleusercontent.com"
 client_secrets_file = os.path.join(
@@ -60,10 +32,15 @@ flow = Flow.from_client_secrets_file(
             "https://www.googleapis.com/auth/userinfo.email", "openid"],
 
     # go https://console.cloud.google.com to set up redirect_uri
-    redirect_uri=google_redirect_uri
+    redirect_uri=wapi.get_google_redirect_uri()
 )
 
-###################################################################################################
+
+@app.teardown_request
+def teardown_request(exception):
+    if exception:
+        db.session.rollback()
+    db.session.remove()
 
 
 @app.route("/google_login")
@@ -191,6 +168,7 @@ def index():
            "Any of your data might be DELETED at any time!", "Our team is not responsible for any loss of your data!"]
     return render_template('index.html', msg=msg)
 
+
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
@@ -245,7 +223,7 @@ def plan(planID):
     controls = [False, False, False]
     editDate = {}
 
-    if (allowAccess(user, plan)):
+    if (wapi.allow_access(user, plan)):
         if (request.method == 'POST'):
             try:
                 classFullNames = request.form.getlist('courses')
@@ -353,7 +331,7 @@ def plan(planID):
 def deletePlan(planID):
     user = User.query.get(current_user.get_id())
     plan = Plan.query.get(planID)
-    if (allowAccess(user, plan)):
+    if (wapi.allow_access(user, plan)):
         try:
             path1 = "./Users/"+str(user.id)+"/"+str(plan.id)+"/"
             path2 = "./static/Users/"+str(user.id)+"/"+str(plan.id)+"/"
@@ -429,7 +407,8 @@ def rankPlans(planID):
     try:
         # GetSeats.GetSeats(semester, userID, planID)
         # msg.append("Seats are checked.")
-        AddPlanDetails.AddPlanDetails(semester, userID, planID, ignoreSeats=True)
+        AddPlanDetails.AddPlanDetails(
+            semester, userID, planID, ignoreSeats=True)
         msg.append("Plan details are added.")
         AutoRanking.AutoRanking(semester, userID, planID)
         msg.append("Your plans are ranked!")
@@ -488,9 +467,3 @@ def showSchedule(planID, n):
         msg.append("Error in showing schedules: " + str(e))
     session['messages'] = msg
     return jsonify(num=plan.planNum+1, details=details)
-
-@app.teardown_request
-def teardown_request(exception):
-    if exception:
-        db.session.rollback()
-    db.session.remove()
