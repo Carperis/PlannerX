@@ -66,7 +66,7 @@ class RequestVerificationForm(FlaskForm):
     email = EmailField('Email',
                         validators=[DataRequired(), Email()], render_kw={"placeholder": "Email"})
 
-    submit = SubmitField('Verify My Email')
+    submit = SubmitField('Verify Email')
 
     def validate_email(self, email):
         existing_user_email = User.query.filter_by(email=email.data).first()

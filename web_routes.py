@@ -88,8 +88,7 @@ def google_callback():
                 login_user(user, remember=True)
                 return redirect(url_for('dashboard'))
             else:
-                warning = "Please verify your email first."
-                return redirect(f'/login?warning={warning}')
+                return redirect(f'/email_verification?email={email}')
         else:
             warning = "Please login with your email and password."
             return redirect(f'/login?warning={warning}')
@@ -158,8 +157,8 @@ def login():
                         login_user(user, remember=form.remember.data)
                         return redirect(url_for('dashboard'))
                 else:
-                    msg = []
-                    msg.append("Please verify your email first.")
+                    email = user.email
+                    return redirect(f'/email_verification?email={email}')
     return render_template('login.html', form=form, msg=msg)
 
     # return render_template('login.html', msg=msg)
