@@ -82,7 +82,7 @@ def google_callback():
         user = User.query.filter_by(email=email).first()
         if (user.google):
             if (user.verify):
-                userID = new_user.id
+                userID = user.id
                 path = "./Users/" + str(userID) + "/"
                 GetPreferenceWeb.checkFolder(path)
                 login_user(user, remember=True)
