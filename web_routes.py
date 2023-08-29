@@ -178,6 +178,27 @@ def reset_password_request():
     return render_template('reset_password_request.html', form=form, msg=msg)
 
 
+@app.route("/reset_password/<token>", methods=['GET', 'POST'])
+def reset_password_token(token):
+    msg = []
+
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    user = User.verify_token(token)
+    if user is None:
+        flash('That is an invalid or expired token', 'warning')
+        return redirect(url_for('reset_password_request'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(
+            form.password.data).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+        warning = "Your password has been updated! You are now able to login."
+        return redirect(f'/login?warning={warning}')
+    return render_template('reset_password_token.html', form=form, msg=msg)
+
+
 @app.route("/email_verification", methods=['GET', 'POST'])
 def email_verification_request():
     email = request.args.get('email')
@@ -202,27 +223,6 @@ def email_verification_request():
     return render_template('email_verification_request.html', form=form, msg=msg, email=email)
 
 
-@app.route("/reset_password/<token>", methods=['GET', 'POST'])
-def reset_password_token(token):
-    msg = []
-
-    if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
-    user = User.verify_token(token)
-    if user is None:
-        flash('That is an invalid or expired token', 'warning')
-        return redirect(url_for('reset_password_request'))
-    form = ResetPasswordForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(
-            form.password.data).decode('utf-8')
-        user.password = hashed_password
-        db.session.commit()
-        warning = "Your password has been updated! You are now able to login."
-        return redirect(f'/login?warning={warning}')
-    return render_template('reset_password_token.html', form=form, msg=msg)
-
-
 @app.route("/email_verification/<token>", methods=['GET', 'POST'])
 def email_verification_token(token):
     msg = []
@@ -239,7 +239,7 @@ def email_verification_token(token):
     return render_template('email_verification_token.html', msg=msg, email=email)
 
 
-@app.route('/logout', methods=['GET', 'POST'])
+@app.route('/logout')
 @login_required
 def logout():
     session.clear()
@@ -262,7 +262,7 @@ def dashboard():
     return render_template('dashboard.html', user=user, plans=plans)
 
 
-@app.route('/plan/fetch_course_names/<semester>', methods=['POST', 'GET'])
+@app.route('/plan/fetch_course_names/<semester>')
 def fetch_course_names(semester):
     courses = wapi.getAllCourseNames(semester.split("_")[0])
     name_list = []
@@ -272,7 +272,7 @@ def fetch_course_names(semester):
     return jsonify(name_list)
 
 
-@app.route('/plan/fetch_term_names/<year>', methods=['POST', 'GET'])
+@app.route('/plan/fetch_term_names/<year>')
 def fetch_term_names(year):
     semesters = wapi.getAllTermNames(year)
     print("fetch term names success!")
@@ -411,7 +411,7 @@ def plan(planID):
     return render_template('plan.html', msg=msg, plan=plan, user=user, classFullCodes=classFullCodes, years=years, guidance=guidance, controls=controls, editDate=editDate)
 
 
-@app.route('/deleteplan/<int:planID>', methods=['POST', 'GET'])
+@app.route('/deleteplan/<int:planID>')
 @login_required
 def deletePlan(planID):
     user = User.query.get(current_user.get_id())
@@ -431,7 +431,7 @@ def deletePlan(planID):
         return redirect(url_for('index'))
 
 
-@app.route('/deleteuser', methods=['POST', 'GET'])
+@app.route('/deleteuser')
 @login_required
 def deleteUser():
     user = User.query.get(current_user.get_id())
@@ -501,7 +501,7 @@ def rankPlans(planID):
     return redirect('/plan/' + planID)
 
 
-@app.route('/plan/showschedule/<int:planID>/<string:n>', methods=['POST'])
+@app.route('/plan/showschedule/<int:planID>/<string:n>')
 @login_required
 def showSchedule(planID, n):
     n = int(n)
@@ -520,7 +520,8 @@ def showSchedule(planID, n):
         if (newNum < 0):
             newNum = 0
         try:
-            result = wapi.get_ranked_plan_name(semester, userID, planID, newNum)
+            result = wapi.get_ranked_plan_name(
+                semester, userID, planID, newNum)
             planName = result[0]
             newNum = result[1]
         except:
