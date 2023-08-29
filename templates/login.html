@@ -38,16 +38,36 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-white mb-4">Welcome Back!</h1>
                                     </div>
-
-                                    <a class="btn btn-user btn-block text-center btn-facebook border-0 my-5" id="btn"
+                                    <form class="user text-center" method="POST" action="">
+                                        {{ form.hidden_tag() }}
+                                        <div class="form-group">
+                                            {{ form.email(class="form-control form-control-user bg-gray-900
+                                            border-0 text-white") }}
+                                        </div>
+                                        <div class="form-group">
+                                            {{ form.password(class="form-control form-control-user bg-gray-900
+                                            border-0 text-white") }}
+                                        </div>
+                                        <div class="form-group">
+                                            {{ form.remember(class="form-check-input") }}
+                                            {{ form.remember.label(class="form-check-label") }}
+                                        </div>
+                                        {{ form.submit(class="btn btn-primary btn-user btn-block", id="btn") }}
+                                    </form>
+                                    <a class="btn btn-light btn-user btn-block mt-3 rounded-pill" id="btn"
                                         href="/google_login">
                                         <img id="google"
                                             src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2048px-Google_%22G%22_Logo.svg.png"
-                                            alt="Google" style="width:50px;height:50px;">
-                                        <span class="small text-white pl-2">Login with Google</span>
+                                            alt="Google" style="width:30px;height:3n0px;">
+                                        <span class="small text-dark pl-2">Login with Google</span>
                                     </a>
-
                                     <hr class="border-white">
+                                    <div class="text-center mb-1">
+                                        <a class="small" href="/reset_password">Forgot Password?</a>
+                                    </div>
+                                    <div class="text-center mb-4">
+                                        <a class="text-warning" href="/register">Create an Account!</a>
+                                    </div>
                                     <div class="text-center">
                                         <a href="/" class="btn">
                                             <div class="btn-info btn-circle btn-sm">
@@ -61,6 +81,7 @@
                         </div>
                     </div>
                 </div>
+                <div style="height: 50px;"></div>
 
             </div>
 

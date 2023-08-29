@@ -1,7 +1,7 @@
 {% extends 'base_raw.html' %}
 
 {% block head %}
-<title>BU PlannerX - Register</title>
+<title>BU PlannerX - Login</title>
 {% endblock %}
 
 {% block content %}
@@ -32,28 +32,22 @@
                     <div class="card-body p-0">
                         <!-- Nested Row within Card Body -->
                         <div class="row">
-                            <div class="col-lg-6 d-none d-lg-block bg-register-image"></div>
+                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-white mb-4">Create an Account!</h1>
+                                        <h1 class="h4 text-white mb-4">Welcome Back!</h1>
                                     </div>
-                                    <form class="user" method="POST" action="">
-                                        {{ form.hidden_tag() }}
-                                        <div class="form-group">
-                                            {{ form.username(class="form-control form-control-user bg-gray-900
-                                            border-0 text-white") }}
-                                        </div>
-                                        <div class="form-group">
-                                            {{ form.password(class="form-control form-control-user bg-gray-900
-                                            border-0 text-white") }}
-                                        </div>
-                                        {{ form.submit(class="btn btn-primary btn-user btn-block", id="btn") }}
-                                    </form>
+
+                                    <a class="btn btn-user btn-block text-center btn-facebook border-0 my-5" id="btn"
+                                        href="/google_login">
+                                        <img id="google"
+                                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2048px-Google_%22G%22_Logo.svg.png"
+                                            alt="Google" style="width:50px;height:50px;">
+                                        <span class="small text-white pl-2">Login with Google</span>
+                                    </a>
+
                                     <hr class="border-white">
-                                    <div class="text-center mb-4">
-                                        <a class="small" href="/login">Already have an account? Login!</a>
-                                    </div>
                                     <div class="text-center">
                                         <a href="/" class="btn">
                                             <div class="btn-info btn-circle btn-sm">

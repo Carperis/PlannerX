@@ -1,40 +1,121 @@
-# -*- coding: utf-8 -*-
+import requests
+from flask_mail import Message
+from flask import url_for
+from web_init import mail, app
 import os
 import xlwt
 import xlrd
 from datetime import datetime
 
+# The following are custom modules
+import AutoSelection
+import AddPlanDetails
+import AutoRanking
+import GetSeats
+import GetSchedulePic
 
-def GetPreference(userID, planID, prefDict, semesterNew):
+
+def allow_access(user, other):
+    if (hasattr(other, "user_id") and user.id != other.user_id):
+        return False
+    else:
+        return True
+
+
+def get_google_redirect_uri():
+    def get_public_ip():
+        try:
+            response = requests.get("https://api.ipify.org?format=json")
+            if response.status_code == 200:
+                data = response.json()
+                return data["ip"]
+            else:
+                print("Request failed with status code:", response.status_code)
+                return None
+        except Exception as e:
+            print("Error:", e)
+            return None
+
+    if (get_public_ip() == "158.101.17.48"):
+        google_redirect_uri = "https://buplannerx.my.to/google_callback"
+    else:
+        # google_redirect_uri="http://localhost:5000/google_callback"
+        google_redirect_uri = "http://127.0.0.1:5000/google_callback"
+    return google_redirect_uri
+
+
+def send_reset_email(user):
+    token = user.get_token()
+    msg = Message('Password Reset Request',
+                  sender=app.config['MAIL_USERNAME'],
+                  recipients=[user.email])
+    msg.body = f'''To reset your password, please visit the following link. The link will be expired in 5 minutes.  
+{url_for('reset_password_token', token=token, _external=True)}
+
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
+    mail.send(msg)
+
+
+def send_verification_email(user):
+    print(app.config['MAIL_USERNAME'])
+    token = user.get_token()
+    msg = Message('Email Verification Request',
+                  sender=app.config['MAIL_USERNAME'],
+                  recipients=[user.email])
+    msg.body = f'''To confirm your email, please visit the following link. The link will be expired in 5 minutes.
+{url_for('email_verification_token', token=token, _external=True)}
+
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
+    mail.send(msg)
+
+
+def getPreference(userID, planID, prefDict, semesterNew):
+    def dict2List(prefDict):
+        def createMatrix(nrow, ncol):
+            matrix = []
+            for r in range(0, nrow):
+                matrix.append([])
+                for c in range(0, ncol):
+                    matrix[r].append("")
+            return matrix
+
+        keys = list(prefDict.keys())
+        nrow = len(prefDict[keys[0]])
+        ncol = len(keys)
+        prefList = createMatrix(nrow, ncol)
+
+        for c in range(0, ncol):
+            for r in range(0, len(prefDict[keys[c]])):
+                prefList[r][c] = prefDict[keys[c]][r]
+        return prefList
+
+    def saveData(dataList, savePath, saveName, firstRow):
+        book = xlwt.Workbook(encoding="utf-8")  # 创建workbook对象
+        sheetName = "Preferences"
+        sheet = book.add_sheet(sheetName, cell_overwrite_ok=True)
+        for i in range(0, len(firstRow)):
+            sheet.write(0, i, firstRow[i])
+
+        if (len(dataList) != 0):
+            for i in range(0, len(dataList)):
+                data = dataList[i]
+                for j in range(0, len(data)):
+                    sheet.write(i+1, j, data[j])  # i+1是因为第一行已经有了标题
+                # print("已保存到第%d条" % (i+1))
+        savePath = savePath + saveName + ".xls"
+        book.save(savePath)
+        print("Preferences Data Saved!")
+        # 3.保存数据
+
     savePath = "./Users/" + userID + "/" + planID + "/"
     checkFolder(savePath)
     saveName = semesterNew + " Preferences"
     firstRow = list(prefDict.keys())
-
     prefList = dict2List(prefDict)
-
     saveData(prefList, savePath, saveName, firstRow)
     print("saved")
-
-
-def dict2List(prefDict):
-    def createMatrix(nrow, ncol):
-        matrix = []
-        for r in range(0, nrow):
-            matrix.append([])
-            for c in range(0, ncol):
-                matrix[r].append("")
-        return matrix
-
-    keys = list(prefDict.keys())
-    nrow = len(prefDict[keys[0]])
-    ncol = len(keys)
-    prefList = createMatrix(nrow, ncol)
-
-    for c in range(0, ncol):
-        for r in range(0, len(prefDict[keys[c]])):
-            prefList[r][c] = prefDict[keys[c]][r]
-    return prefList
 
 
 def checkCourses(courses, semester):
@@ -71,25 +152,6 @@ def checkFolder(savePath):
         if (pathNotExist):
             os.mkdir(newPath)
         newPath = newPath + folders[i] + "/"
-
-
-def saveData(dataList, savePath, saveName, firstRow):
-    book = xlwt.Workbook(encoding="utf-8")  # 创建workbook对象
-    sheetName = "Preferences"
-    sheet = book.add_sheet(sheetName, cell_overwrite_ok=True)
-    for i in range(0, len(firstRow)):
-        sheet.write(0, i, firstRow[i])
-
-    if (len(dataList) != 0):
-        for i in range(0, len(dataList)):
-            data = dataList[i]
-            for j in range(0, len(data)):
-                sheet.write(i+1, j, data[j])  # i+1是因为第一行已经有了标题
-            # print("已保存到第%d条" % (i+1))
-    savePath = savePath + saveName + ".xls"
-    book.save(savePath)
-    print("Preferences Data Saved!")
-    # 3.保存数据
 
 
 def getAllCourseNames(semester):
@@ -169,6 +231,12 @@ def checkRankSuccess(userID, planID, semester):
 
 
 def getScheduleDetails(userID, planID, semester, planName):
+    prefSheetName = "Preferences"
+    prefPath = "./Users/" + str(userID) + "/" + \
+        str(planID) + "/" + semester + " Preferences.xls"
+    from AutoRanking import readPrefData
+    prefDict = readPrefData(prefPath, prefSheetName)
+    # print(prefDict)
     scheduleDetails = {}
     try:
         path = "./Users/" + str(userID) + "/" + str(planID) + \
@@ -194,10 +262,17 @@ def getScheduleDetails(userID, planID, semester, planName):
                     scheduleDetails[key]["name"] = name[key]
                     scheduleDetails[key]["value"] = sheet.cell_value(
                         r, key_index)
-                    scheduleDetails[key]["check"] = True
                     scheduleDetails[key]["min_value"] = min_value[key]
                     scheduleDetails[key]["max_value"] = max_value[key]
                     break
+            if (key == "Average Score" and scheduleDetails[key]["value"] >= prefDict[key]):
+                scheduleDetails[key]["check"] = True
+            elif (key == "Earliest Time" and scheduleDetails[key]["value"] >= prefDict[key]):
+                scheduleDetails[key]["check"] = True
+            elif (key == "Latest Time" and scheduleDetails[key]["value"] <= prefDict[key]):
+                scheduleDetails[key]["check"] = True
+            else:
+                scheduleDetails[key]["check"] = False
     except:
         pass
     return scheduleDetails
@@ -215,7 +290,7 @@ def getEditDate(userID, planID, semester):
         editDate1 = editDate1.strftime("%Y-%m-%d %H:%M:%S")
         editDate["Last Plan"] = editDate1
     except FileNotFoundError:
-        print("File not found1.") 
+        print("File not found1.")
     try:
         creation_time2 = os.path.getmtime(file_path2)
         editDate2 = datetime.fromtimestamp(creation_time2)
@@ -227,12 +302,34 @@ def getEditDate(userID, planID, semester):
     return editDate
 
 
-if __name__ == "__main__":
-    planname = "Any"
-    semester = "2022-FALL"
-    prefDict = {}
-    prefDict["Courses"] = ['ENG EC 327', 'ENG EC 311', 'ENG ME 305']
-    prefDict["AvgScore"] = [3.5]
-    prefDict["EarlyTime"] = [8]
-    prefDict["LateTime"] = [18]
-    GetPreference(planname, prefDict, semester)
+def get_all_schedules(semester, userID, planID, limit=500):
+    return AutoSelection.AutoSelection(semester, userID, planID, limit)
+
+
+def rank_all_schedules(semester, userID, planID, ignoreSeats=False):
+    msg = []
+    if not ignoreSeats:
+        GetSeats.GetSeats(semester, userID, planID)
+        msg.append("Seats are checked.")
+    AddPlanDetails.AddPlanDetails(semester, userID, planID, ignoreSeats)
+    msg.append("Plan details are added.")
+    AutoRanking.AutoRanking(semester, userID, planID)
+    msg.append("Your plans are ranked!")
+    return msg
+
+
+def get_ranked_plan_name(semester, userID, planID, newNum):
+    rankPath = "./Users/" + userID + "/" + planID + "/"
+    rankName = semester + " Ranking"
+    book = xlrd.open_workbook(rankPath + rankName + ".xls")
+    sheet = book.sheet_by_name(rankName)
+    maxNum = sheet.nrows
+    if (newNum > maxNum):
+        newNum = maxNum-1
+    planName = sheet.cell_value(newNum, 0)
+    return planName, newNum
+
+
+def create_schedule_pic(semester, userID, planID, planName):
+    check = GetSchedulePic.GetSchedulePic(semester, userID, planID, planName)
+    return check

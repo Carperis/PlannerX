@@ -11,6 +11,6 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 # except:
 #     print("No instance folder")
 
-from web import app, db
+from web_init import app, db
 app.app_context().push()
 db.create_all()

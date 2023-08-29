@@ -5,7 +5,7 @@ from datetime import datetime
 # import pdf2image
 from reportlab.lib.colors import black
 import fitz
-import GetPreferenceWeb
+import Archive.GetPreferenceWeb as GetPreferenceWeb
 
 
 def convertTime(time):
@@ -43,8 +43,8 @@ def convertDays(days):
 
 def GetSchedulePic(semesterNew, userID, planID, planName):
     path = "./Users/" + userID + "/" + planID + "/" + semesterNew + " Info.xls"
-    book = xlrd.open_workbook(path)
     try:
+        book = xlrd.open_workbook(path)
         sheet = book.sheet_by_name(planName)
     except:
         return False
