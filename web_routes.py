@@ -442,9 +442,9 @@ def deletePlan(planID):
 @login_required
 def deleteUser():
     user = User.query.get(current_user.get_id())
-    plans = Plan.query.filter_by(user_id=user.id)
-    # logout_user()
     session.clear()
+    logout_user()
+    plans = Plan.query.filter_by(user_id=user.id)
     try:
         path1 = "./Users/"+str(user.id)+"/"
         path2 = "./static/Users/"+str(user.id)+"/"
