@@ -5,7 +5,7 @@ from datetime import datetime
 # import pdf2image
 from reportlab.lib.colors import black
 import fitz
-import GetPreferenceWeb
+import Archive.GetPreferenceWeb as GetPreferenceWeb
 
 
 def convertTime(time):

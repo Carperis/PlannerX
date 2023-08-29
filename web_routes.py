@@ -6,16 +6,8 @@ from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
 from flask import redirect, render_template, request, session, url_for, jsonify, abort, flash
 from flask_login import login_user, login_required, logout_user, current_user
-import xlrd
 import shutil
 import os
-
-import GetPreferenceWeb
-import AutoSelection
-import AddPlanDetails
-import AutoRanking
-import GetSeats
-import GetSchedulePic
 
 from web_init import app, db, bcrypt
 from web_models import User, Plan
@@ -84,7 +76,7 @@ def google_callback():
             if (user.verify):
                 userID = user.id
                 path = "./Users/" + str(userID) + "/"
-                GetPreferenceWeb.checkFolder(path)
+                wapi.checkFolder(path)
                 login_user(user, remember=True)
                 return redirect(url_for('dashboard'))
             else:
@@ -153,7 +145,7 @@ def login():
                     if bcrypt.check_password_hash(user.password, form.password.data):
                         userID = user.id
                         path = "./Users/" + str(userID) + "/"
-                        GetPreferenceWeb.checkFolder(path)
+                        wapi.checkFolder(path)
                         login_user(user, remember=form.remember.data)
                         return redirect(url_for('dashboard'))
                 else:
@@ -189,7 +181,7 @@ def reset_password_request():
 @app.route("/email_verification", methods=['GET', 'POST'])
 def email_verification_request():
     email = request.args.get('email')
-    
+
     msg = []
 
     if current_user.is_authenticated:
@@ -246,6 +238,7 @@ def email_verification_token(token):
     db.session.commit()
     return render_template('email_verification_token.html', msg=msg, email=email)
 
+
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
@@ -271,7 +264,7 @@ def dashboard():
 
 @app.route('/plan/fetch_course_names/<semester>', methods=['POST', 'GET'])
 def fetch_course_names(semester):
-    courses = GetPreferenceWeb.getAllCourseNames(semester.split("_")[0])
+    courses = wapi.getAllCourseNames(semester.split("_")[0])
     name_list = []
     for course in courses:
         name_list.append(course["code"] + ": " + course["name"])
@@ -281,7 +274,7 @@ def fetch_course_names(semester):
 
 @app.route('/plan/fetch_term_names/<year>', methods=['POST', 'GET'])
 def fetch_term_names(year):
-    semesters = GetPreferenceWeb.getAllTermNames(year)
+    semesters = wapi.getAllTermNames(year)
     print("fetch term names success!")
     return jsonify(semesters)
 
@@ -309,7 +302,7 @@ def plan(planID):
     except:
         classFullNames = []
 
-    years = GetPreferenceWeb.getYears()
+    years = wapi.getYears()
     years = sorted(years, reverse=True)
 
     controls = [False, False, False]
@@ -352,7 +345,7 @@ def plan(planID):
                 prefDict["Average Score"] = [float(AvgScore)]
                 prefDict["Earliest Time"] = [EarlyT]
                 prefDict["Latest Time"] = [LateT]
-                rightCourses = GetPreferenceWeb.checkCourses(
+                rightCourses = wapi.checkCourses(
                     prefDict["Courses"], semester.split("_")[0])
                 if (not rightCourses):
                     msg.append("Invalid course input.")
@@ -377,7 +370,7 @@ def plan(planID):
                     path = "./Users/"+str(user.id)+"/"+str(plan.id)+"/"
                     if (os.path.exists(path)):
                         shutil.rmtree(path)
-                    GetPreferenceWeb.GetPreference(
+                    wapi.getPreference(
                         str(user.id), str(plan.id), prefDict, semester)
                     msg.append("Your prefereces is saved!")
 
@@ -390,14 +383,14 @@ def plan(planID):
         else:
             pass
         if (plan):
-            check1 = GetPreferenceWeb.checkSubmitSuccess(
+            check1 = wapi.checkSubmitSuccess(
                 user.id, plan.id, plan.semester)
-            check2 = GetPreferenceWeb.checkPlanSuccess(
+            check2 = wapi.checkPlanSuccess(
                 user.id, plan.id, plan.semester)
-            check3 = GetPreferenceWeb.checkRankSuccess(
+            check3 = wapi.checkRankSuccess(
                 user.id, plan.id, plan.semester)
             controls = [check1, check2, check3]
-            editDate = GetPreferenceWeb.getEditDate(
+            editDate = wapi.getEditDate(
                 user.id, plan.id, plan.semester)
 
     else:
@@ -475,7 +468,7 @@ def getPlans(planID):
         if (os.path.exists(path)):
             os.remove(path)
 
-    result = AutoSelection.AutoSelection(semester, userID, planID, 500)
+    result = wapi.get_all_schedules(semester, userID, planID)
     if (result == 0):
         msg.append("Can't find your plans")
     else:
@@ -497,13 +490,8 @@ def rankPlans(planID):
     planID = str(planID)
     semester = plan.semester
     try:
-        # GetSeats.GetSeats(semester, userID, planID)
-        # msg.append("Seats are checked.")
-        AddPlanDetails.AddPlanDetails(
-            semester, userID, planID, ignoreSeats=True)
-        msg.append("Plan details are added.")
-        AutoRanking.AutoRanking(semester, userID, planID)
-        msg.append("Your plans are ranked!")
+        msg += wapi.rank_all_schedules(semester,
+                                       userID, planID, ignoreSeats=True)
     except Exception as e:
         print("Error in ranking plans: " + str(e))
         msg.append("Error in ranking plans: " + str(e))
@@ -532,23 +520,18 @@ def showSchedule(planID, n):
         if (newNum < 0):
             newNum = 0
         try:
-            rankPath = "./Users/" + userID + "/" + planID + "/"
-            rankName = semester + " Ranking"
-            book = xlrd.open_workbook(rankPath + rankName + ".xls")
-            sheet = book.sheet_by_name(rankName)
-            maxNum = sheet.nrows
-            if (newNum > maxNum):
-                newNum = maxNum-1
-            planName = sheet.cell_value(newNum, 0)
+            result = wapi.get_ranked_plan_name(semester, userID, planID, newNum)
+            planName = result[0]
+            newNum = result[1]
         except:
             planName = "Plan " + str(newNum+1)
 
-        validSche = GetSchedulePic.GetSchedulePic(
+        validSche = wapi.create_schedule_pic(
             semester, userID, planID, planName)
         if (not validSche):
             return jsonify(num=plan.planNum+1, details=details)
 
-        details = GetPreferenceWeb.getScheduleDetails(
+        details = wapi.getScheduleDetails(
             userID, planID, semester, planName)
         plan.planNum = newNum
         db.session.commit()
