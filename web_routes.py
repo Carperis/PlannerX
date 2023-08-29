@@ -4,7 +4,7 @@ import google.auth.transport.requests
 from pip._vendor import cachecontrol
 from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
-from flask import redirect, render_template, request, session, url_for, jsonify, abort
+from flask import redirect, render_template, request, session, url_for, jsonify, abort, flash
 from flask_login import login_user, login_required, logout_user, current_user
 import xlrd
 import shutil
@@ -19,7 +19,7 @@ import GetSchedulePic
 
 from web_init import app, db, bcrypt
 from web_models import User, Plan
-from web_forms import LoginForm, RegisterForm
+from web_forms import LoginForm, RegisterForm, RequestResetForm, ResetPasswordForm, RequestVerificationForm
 import web_api as wapi
 
 GOOGLE_CLIENT_ID = "697687543481-stsr0foi21nlt6abfc2cvls4266ofskv.apps.googleusercontent.com"
@@ -81,8 +81,15 @@ def google_callback():
     if (User.query.filter_by(email=email).first()):
         user = User.query.filter_by(email=email).first()
         if (user.google):
-            print(user.google)
-            login_user(user)
+            if (user.verify):
+                userID = new_user.id
+                path = "./Users/" + str(userID) + "/"
+                GetPreferenceWeb.checkFolder(path)
+                login_user(user, remember=True)
+                return redirect(url_for('dashboard'))
+            else:
+                warning = "Please verify your email first."
+                return redirect(f'/login?warning={warning}')
         else:
             warning = "Please login with your email and password."
             return redirect(f'/login?warning={warning}')
@@ -92,15 +99,36 @@ def google_callback():
             return redirect(f'/login?warning={warning}')
         hashed_password = bcrypt.generate_password_hash(email)  # not secure
         new_user = User(username=username, email=email,
-                        password=hashed_password, google=True)
+                        password=hashed_password, google=True, verify=False)
         db.session.add(new_user)
         db.session.commit()
-        userID = new_user.id
-        path = "./Users/" + str(userID) + "/"
-        GetPreferenceWeb.checkFolder(path)
-        login_user(new_user)
+        return redirect(f'/email_verification?email={email}')
 
-    return redirect(url_for('dashboard'))
+
+@ app.route('/register', methods=['GET', 'POST'])
+def register():
+    msg = []
+
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    form = RegisterForm()
+    if request.method == 'POST':
+        msg.append("Invalid registration!")
+        if form.validate_on_submit():
+            if form.email.data.split("@")[1] != "bu.edu":
+                warning = "Please login with your BU email."
+                return redirect(f'/login?warning={warning}')
+            hashed_password = bcrypt.generate_password_hash(form.password.data)
+            new_user = User(username=form.username.data, email=form.email.data,
+                            password=hashed_password, google=False)
+            db.session.add(new_user)
+            db.session.commit()
+            return redirect(f'/email_verification?email={form.email.data}')
+        else:
+            msg.append(
+                "That email may already exist. Please choose a different one.")
+
+    return render_template('register.html', form=form, msg=msg)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -111,6 +139,8 @@ def login():
     else:
         msg = []
 
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
     form = LoginForm()
     if request.method == 'POST':
         msg.append("Invalid email or password!")
@@ -120,14 +150,102 @@ def login():
                 if (user.google):
                     msg = []
                     msg.append("Please login with your Google account.")
-                else:
+                elif (user.verify):
                     if bcrypt.check_password_hash(user.password, form.password.data):
-                        login_user(user)
+                        userID = user.id
+                        path = "./Users/" + str(userID) + "/"
+                        GetPreferenceWeb.checkFolder(path)
+                        login_user(user, remember=form.remember.data)
                         return redirect(url_for('dashboard'))
+                else:
+                    msg = []
+                    msg.append("Please verify your email first.")
     return render_template('login.html', form=form, msg=msg)
 
     # return render_template('login.html', msg=msg)
 
+
+@app.route("/reset_password", methods=['GET', 'POST'])
+def reset_password_request():
+    msg = []
+
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    form = RequestResetForm()
+    if request.method == 'POST':
+        msg.append(
+            "There is no account with that email. You must register first.")
+        if form.validate_on_submit():
+            user = User.query.filter_by(email=form.email.data).first()
+            if user:
+                if user.google:
+                    warning = "Please login with your Google account."
+                    return redirect(f'/login?warning={warning}')
+                wapi.send_reset_email(user)
+                warning = "An email has been sent with instructions to reset your password."
+                return redirect(f'/login?warning={warning}')
+    return render_template('reset_password_request.html', form=form, msg=msg)
+
+
+@app.route("/email_verification", methods=['GET', 'POST'])
+def email_verification_request():
+    email = request.args.get('email')
+    
+    msg = []
+
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    form = RequestVerificationForm()
+    if request.method == 'POST':
+        msg.append(
+            "There is no account with that email. You must register first.")
+        if form.validate_on_submit():
+            user = User.query.filter_by(email=email).first()
+            if user:
+                if user.verify:
+                    warning = "Your email has been verified. Please login with your email and password."
+                    return redirect(f'/login?warning={warning}')
+                wapi.send_verification_email(user)
+                warning = "An email has been sent with instructions to verify your email."
+                return redirect(f'/login?warning={warning}')
+    return render_template('email_verification_request.html', form=form, msg=msg, email=email)
+
+
+@app.route("/reset_password/<token>", methods=['GET', 'POST'])
+def reset_password_token(token):
+    msg = []
+
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    user = User.verify_token(token)
+    if user is None:
+        flash('That is an invalid or expired token', 'warning')
+        return redirect(url_for('reset_password_request'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(
+            form.password.data).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+        warning = "Your password has been updated! You are now able to login."
+        return redirect(f'/login?warning={warning}')
+    return render_template('reset_password_token.html', form=form, msg=msg)
+
+
+@app.route("/email_verification/<token>", methods=['GET', 'POST'])
+def email_verification_token(token):
+    msg = []
+
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    user = User.verify_token(token)
+    if user is None:
+        flash('That is an invalid or expired token', 'warning')
+        return redirect(url_for('email_verification_request'))
+    user.verify = True
+    email = user.email
+    db.session.commit()
+    return render_template('email_verification_token.html', msg=msg, email=email)
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
@@ -135,31 +253,6 @@ def logout():
     session.clear()
     logout_user()
     return redirect(url_for('index'))
-
-
-@ app.route('/register', methods=['GET', 'POST'])
-def register():
-    msg = []
-
-    form = RegisterForm()
-
-    if request.method == 'POST':
-        msg.append("Invalid registration!")
-        if form.validate_on_submit():
-            hashed_password = bcrypt.generate_password_hash(form.password.data)
-            new_user = User(username=form.username.data, email=form.email.data,
-                            password=hashed_password, google=False)
-            db.session.add(new_user)
-            db.session.commit()
-            userID = new_user.id
-            path = "./Users/" + str(userID) + "/"
-            GetPreferenceWeb.checkFolder(path)
-            return redirect(url_for('login'))
-        else:
-            msg.append(
-                "That email may already exist. Please choose a different one.")
-
-    return render_template('register.html', form=form, msg=msg)
 
 
 @app.route('/')

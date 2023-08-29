@@ -1,4 +1,7 @@
 import requests
+from flask_mail import Message
+from flask import url_for
+from web_init import mail
 
 # The following are custom modules
 import GetPreferenceWeb
@@ -36,3 +39,28 @@ def get_google_redirect_uri():
         # google_redirect_uri="http://localhost:5000/google_callback"
         google_redirect_uri = "http://127.0.0.1:5000/google_callback"
     return google_redirect_uri
+
+
+def send_reset_email(user):
+    token = user.get_token()
+    msg = Message('Password Reset Request',
+                  sender='plannerxofficial@gmail.com',
+                  recipients=[user.email])
+    msg.body = f'''To reset your password, visit the following link:
+{url_for('reset_password_token', token=token, _external=True)}
+
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
+    mail.send(msg)
+
+def send_verification_email(user):
+    token = user.get_token()
+    msg = Message('Email Verification Request',
+                  sender='plannerxofficial@gmail.com',
+                  recipients=[user.email])
+    msg.body = f'''To confirm your email, visit the following link:
+{url_for('email_verification_token', token=token, _external=True)}
+
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
+    mail.send(msg)

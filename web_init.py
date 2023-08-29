@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
+from flask_mail import Mail
 import os
 
 
@@ -20,5 +21,14 @@ os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+# app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
+# app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS')
+app.config['MAIL_USERNAME'] = 'plannerxofficial@gmail.com'
+app.config['MAIL_PASSWORD'] = 'gwgocsoseqnypylh'
+mail = Mail(app)
     
 import web_routes

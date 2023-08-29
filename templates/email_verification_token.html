@@ -1,5 +1,5 @@
 {% extends 'base_raw.html' %}
-{% block head %}<title>BU PlannerX - Register</title>{% endblock %}
+{% block head %}<title>BU PlannerX - Verify Email</title>{% endblock %}
 {% block content %}
   <body class="bg-gradient-primary">
     <div class="container">
@@ -24,34 +24,18 @@
                 <div class="col-lg-6">
                   <div class="p-5">
                     <div class="text-center">
-                      <h1 class="h4 text-white mb-4">Create an Account!</h1>
+                      <h1 class="h4 text-white mb-4">Verify Email</h1>
                     </div>
-                    <form class="user text-center" method="POST" action="">
-                      {{ form.hidden_tag() }}
-                      <div class="form-group">
-                        {{ form.username(class="form-control form-control-user bg-gray-900
-                                                border-0 text-white") }}
-                      </div>
-                      <div class="form-group">
-                        {{ form.email(class="form-control form-control-user bg-gray-900
-                                                border-0 text-white") }}
-                      </div>
-                      <div class="form-group">
-                        {{ form.password(class="form-control form-control-user bg-gray-900
-                                                border-0 text-white") }}
-                      </div>
-                      {{ form.submit(class="btn btn-primary btn-user btn-block", id="btn") }}
-                    </form>
+                    <p class="text-center">
+                      Your email <span class="font-weight-bold">{{ email }}</span> is successfully verified!
+                    </p>
                     <hr class="border-white">
-                    <div class="text-center mb-4">
-                      <a class="text-warning" href="/login">Already have an account? Login!</a>
-                    </div>
                     <div class="text-center">
-                      <a href="/" class="btn">
+                      <a href="/login" class="btn">
                         <div class="btn-info btn-circle btn-sm">
                           <i class="fas fa-arrow-left"></i>
                         </div>
-                        <span class="small text-info pl-2">Back to home</span>
+                        <span class="small text-info pl-2">Back to Login</span>
                       </a>
                     </div>
                   </div>

@@ -38,7 +38,7 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-white mb-4">Welcome Back!</h1>
                                     </div>
-                                    <form class="user" method="POST" action="">
+                                    <form class="user text-center" method="POST" action="">
                                         {{ form.hidden_tag() }}
                                         <div class="form-group">
                                             {{ form.email(class="form-control form-control-user bg-gray-900
@@ -48,13 +48,10 @@
                                             {{ form.password(class="form-control form-control-user bg-gray-900
                                             border-0 text-white") }}
                                         </div>
-                                        <!-- <div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck">
-                                                <label class="custom-control-label" for="customCheck">Remember
-                                                    Me</label>
-                                            </div>
-                                        </div> -->
+                                        <div class="form-group">
+                                            {{ form.remember(class="form-check-input") }}
+                                            {{ form.remember.label(class="form-check-label") }}
+                                        </div>
                                         {{ form.submit(class="btn btn-primary btn-user btn-block", id="btn") }}
                                     </form>
                                     <a class="btn btn-light btn-user btn-block mt-3 rounded-pill" id="btn"
@@ -66,7 +63,7 @@
                                     </a>
                                     <hr class="border-white">
                                     <div class="text-center mb-1">
-                                        <a class="small" href="forgot-password.html">Forgot Password?</a>
+                                        <a class="small" href="/reset_password">Forgot Password?</a>
                                     </div>
                                     <div class="text-center mb-4">
                                         <a class="text-warning" href="/register">Create an Account!</a>
