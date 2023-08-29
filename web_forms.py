@@ -4,16 +4,20 @@ from wtforms.validators import InputRequired, Length, ValidationError, DataRequi
 
 from web_models import User
 
+password_min = 6
+password_max = 20
+username_min = 1
+username_max = 20
 
 class RegisterForm(FlaskForm):
     username = StringField(validators=[
-        InputRequired(), Length(min=1, max=20)], render_kw={"placeholder": "Username"})
+        InputRequired(), Length(min=username_min, max=username_max)], render_kw={"placeholder": "Username"})
 
     email = EmailField(validators=[
         InputRequired()], render_kw={"placeholder": "Email"})
 
     password = PasswordField(validators=[
-                             InputRequired(), Length(min=6, max=20)], render_kw={"placeholder": "Password"})
+                             InputRequired(), Length(min=password_min, max=password_max)], render_kw={"placeholder": "Password"})
 
     submit = SubmitField('Register')
 
@@ -40,7 +44,7 @@ class LoginForm(FlaskForm):
 
 class RequestResetForm(FlaskForm):
     email = EmailField('Email',
-                        validators=[DataRequired(), Email()], render_kw={"placeholder": "Email"})
+                       validators=[DataRequired(), Email()], render_kw={"placeholder": "Email"})
 
     submit = SubmitField('Request Password Reset')
 
@@ -53,18 +57,18 @@ class RequestResetForm(FlaskForm):
 
 
 class ResetPasswordForm(FlaskForm):
-    password = PasswordField('Password', validators=[DataRequired()], render_kw={
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=password_min, max=password_max)], render_kw={
                              "placeholder": "New Password"})
 
     confirm_password = PasswordField('Confirm Password',
-                                     validators=[DataRequired(), EqualTo('password')], render_kw={"placeholder": "Confirm Password"})
+                                     validators=[DataRequired(), EqualTo('password'), Length(min=password_min, max=password_max)], render_kw={"placeholder": "Confirm Password"})
 
     submit = SubmitField('Reset Password')
 
 
 class RequestVerificationForm(FlaskForm):
     email = EmailField('Email',
-                        validators=[DataRequired(), Email()], render_kw={"placeholder": "Email"})
+                       validators=[DataRequired(), Email()], render_kw={"placeholder": "Email"})
 
     submit = SubmitField('Verify Email')
 

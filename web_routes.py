@@ -158,7 +158,11 @@ def login():
 
 @app.route("/reset_password", methods=['GET', 'POST'])
 def reset_password_request():
-    msg = []
+    warning = request.args.get('warning')
+    if (warning):
+        msg = [warning]
+    else:
+        msg = []
 
     if current_user.is_authenticated:
         return redirect(url_for('dashboard'))
@@ -186,24 +190,29 @@ def reset_password_token(token):
         return redirect(url_for('dashboard'))
     user = User.verify_token(token)
     if user is None:
-        flash('That is an invalid or expired token', 'warning')
-        return redirect(url_for('reset_password_request'))
+        warning = "That is an invalid or expired token."
+        return redirect(f'/reset_password?warning={warning}')
     form = ResetPasswordForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(
-            form.password.data).decode('utf-8')
-        user.password = hashed_password
-        db.session.commit()
-        warning = "Your password has been updated! You are now able to login."
-        return redirect(f'/login?warning={warning}')
+    if request.method == 'POST':
+        msg.append("Two passwords are not the same!")
+        if form.validate_on_submit():
+            hashed_password = bcrypt.generate_password_hash(
+                form.password.data).decode('utf-8')
+            user.password = hashed_password
+            db.session.commit()
+            warning = "Your password has been updated! You are now able to login."
+            return redirect(f'/login?warning={warning}')
     return render_template('reset_password_token.html', form=form, msg=msg)
 
 
 @app.route("/email_verification", methods=['GET', 'POST'])
 def email_verification_request():
     email = request.args.get('email')
-
-    msg = []
+    warning = request.args.get('warning')
+    if (warning):
+        msg = [warning]
+    else:
+        msg = []
 
     if current_user.is_authenticated:
         return redirect(url_for('dashboard'))
@@ -212,7 +221,7 @@ def email_verification_request():
         msg.append(
             "There is no account with that email. You must register first.")
         if form.validate_on_submit():
-            user = User.query.filter_by(email=email).first()
+            user = User.query.filter_by(email=form.email.data).first()
             if user:
                 if user.verify:
                     warning = "Your email has been verified. Please login with your email and password."
@@ -231,8 +240,8 @@ def email_verification_token(token):
         return redirect(url_for('dashboard'))
     user = User.verify_token(token)
     if user is None:
-        flash('That is an invalid or expired token', 'warning')
-        return redirect(url_for('email_verification_request'))
+        warning = "That is an invalid or expired token."
+        return redirect(f'/email_verification?warning={warning}&email={""}')
     user.verify = True
     email = user.email
     db.session.commit()
