@@ -277,14 +277,14 @@ def fetch_course_names(semester):
     name_list = []
     for course in courses:
         name_list.append(course["code"] + ": " + course["name"])
-    print("fetch course names success!")
+    # print("fetch course names success!")
     return jsonify(name_list)
 
 
 @app.route('/plan/fetch_term_names/<year>')
 def fetch_term_names(year):
     semesters = wapi.getAllTermNames(year)
-    print("fetch term names success!")
+    # print("fetch term names success!")
     return jsonify(semesters)
 
 
@@ -349,7 +349,7 @@ def plan(planID):
                     else:
                         courses += oneClass + "||"
                     classes.append(oneClass.split(":")[0].strip())
-                print(courses)
+                # print(courses)
                 prefDict["Courses"] = classes
                 prefDict["Average Score"] = [float(AvgScore)]
                 prefDict["Earliest Time"] = [EarlyT]
@@ -427,12 +427,9 @@ def deletePlan(planID):
     plan = Plan.query.get(planID)
     if (wapi.allow_access(user, plan)):
         try:
-            path1 = "./Users/"+str(user.id)+"/"+str(plan.id)+"/"
-            path2 = "./static/Users/"+str(user.id)+"/"+str(plan.id)+"/"
+            wapi.delete_user_files(plan.id)
             db.session.delete(plan)
-            db.session.commit()
-            shutil.rmtree(path1)
-            shutil.rmtree(path2)
+            db.session.commit()   
         except:
             pass
         return redirect(url_for('dashboard'))
@@ -448,16 +445,13 @@ def deleteUser():
     logout_user()
     plans = Plan.query.filter_by(user_id=user.id)
     try:
-        path1 = "./Users/"+str(user.id)+"/"
-        path2 = "./static/Users/"+str(user.id)+"/"
+        wapi.delete_user_files(user.id)
         db.session.delete(user)
         for plan in plans:
             db.session.delete(plan)
         db.session.commit()
-        shutil.rmtree(path1)
-        shutil.rmtree(path2)
-    except:
-        pass
+    except Exception as e:
+        print("Error in deleting user: " + str(e))
     return redirect(url_for('index'))
 
 
@@ -545,7 +539,7 @@ def showSchedule(planID, n):
             userID, planID, semester, planName)
         plan.planNum = newNum
         db.session.commit()
-        print("Showing Plan " + str(plan.planNum + 1))
+        # print("Showing Plan " + str(plan.planNum + 1))
         # msg.append("See your schedules below")
     except Exception as e:
         print("Error in showing schedules: " + str(e))

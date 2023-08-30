@@ -6,6 +6,7 @@ import os
 import xlwt
 import xlrd
 from datetime import datetime
+import shutil
 
 # The following are custom modules
 import AutoSelection
@@ -289,15 +290,14 @@ def getEditDate(userID, planID, semester):
         editDate1 = editDate1.strftime("%Y-%m-%d %H:%M:%S")
         editDate["Last Plan"] = editDate1
     except FileNotFoundError:
-        print("File not found1.")
+        pass
     try:
         creation_time2 = os.path.getmtime(file_path2)
         editDate2 = datetime.fromtimestamp(creation_time2)
         editDate2 = editDate2.strftime("%Y-%m-%d %H:%M:%S")
         editDate["Last Rank"] = editDate2
-        print("File Creation Date and Time:", editDate)
     except FileNotFoundError:
-        print("File not found2.")
+        pass
     return editDate
 
 
@@ -332,3 +332,16 @@ def get_ranked_plan_name(semester, userID, planID, newNum):
 def create_schedule_pic(semester, userID, planID, planName):
     check = GetSchedulePic.GetSchedulePic(semester, userID, planID, planName)
     return check
+
+
+def delete_user_files(userID):
+    path1 = "./Users/"+str(userID)+"/"
+    path2 = "./static/Users/"+str(userID)+"/"
+    shutil.rmtree(path1)
+    shutil.rmtree(path2)
+    
+def delete_plan_files(planID):
+    path1 = "./Users/"+str(planID)+"/"+str(planID)+"/"
+    path2 = "./static/Users/"+str(planID)+"/"+str(planID)+"/"
+    shutil.rmtree(path1)
+    shutil.rmtree(path2)
