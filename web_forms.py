@@ -25,7 +25,7 @@ class RegisterForm(FlaskForm):
         existing_user_email = User.query.filter_by(
             email=email.data).first()
         if existing_user_email:
-            print("Email already exists")
+            # print("Email already exists")
             raise ValidationError(
                 'That email already exists. Please choose a different one.')
 
@@ -51,7 +51,7 @@ class RequestResetForm(FlaskForm):
     def validate_email(self, email):
         existing_user_email = User.query.filter_by(email=email.data).first()
         if existing_user_email is None:
-            print("Email does not exist")
+            # print("Email does not exist")
             raise ValidationError(
                 'There is no account with that email. You must register first.')
 
@@ -75,6 +75,6 @@ class RequestVerificationForm(FlaskForm):
     def validate_email(self, email):
         existing_user_email = User.query.filter_by(email=email.data).first()
         if existing_user_email is None:
-            print("Email does not exist")
+            # print("Email does not exist")
             raise ValidationError(
                 'There is no account with that email. You must register first.')

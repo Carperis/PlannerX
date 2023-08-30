@@ -164,8 +164,8 @@ def reset_password_request():
     else:
         msg = []
 
-    if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+    # if current_user.is_authenticated:
+    #     return redirect(url_for('dashboard'))
     form = RequestResetForm()
     if request.method == 'POST':
         msg.append(
@@ -186,8 +186,8 @@ def reset_password_request():
 def reset_password_token(token):
     msg = []
 
-    if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+    # if current_user.is_authenticated:
+    #     return redirect(url_for('dashboard'))
     user = User.verify_token(token)
     if user is None:
         warning = "That is an invalid or expired token."
@@ -427,9 +427,9 @@ def deletePlan(planID):
     plan = Plan.query.get(planID)
     if (wapi.allow_access(user, plan)):
         try:
-            wapi.delete_user_files(plan.id)
             db.session.delete(plan)
-            db.session.commit()   
+            db.session.commit()
+            wapi.delete_user_files(planID)
         except:
             pass
         return redirect(url_for('dashboard'))
@@ -445,11 +445,12 @@ def deleteUser():
     logout_user()
     plans = Plan.query.filter_by(user_id=user.id)
     try:
-        wapi.delete_user_files(user.id)
+        userID = user.id
         db.session.delete(user)
         for plan in plans:
             db.session.delete(plan)
         db.session.commit()
+        wapi.delete_user_files(userID)
     except Exception as e:
         print("Error in deleting user: " + str(e))
     return redirect(url_for('index'))

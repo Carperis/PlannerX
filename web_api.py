@@ -337,11 +337,23 @@ def create_schedule_pic(semester, userID, planID, planName):
 def delete_user_files(userID):
     path1 = "./Users/"+str(userID)+"/"
     path2 = "./static/Users/"+str(userID)+"/"
-    shutil.rmtree(path1)
-    shutil.rmtree(path2)
+    try:
+        shutil.rmtree(path1)
+    except:
+        pass
+    try:
+        shutil.rmtree(path2)
+    except:
+        pass
     
 def delete_plan_files(planID):
     path1 = "./Users/"+str(planID)+"/"+str(planID)+"/"
     path2 = "./static/Users/"+str(planID)+"/"+str(planID)+"/"
-    shutil.rmtree(path1)
-    shutil.rmtree(path2)
+    try:
+        shutil.rmtree(path1)
+    except:
+        pass
+    try:
+        shutil.rmtree(path2)
+    except:
+        pass
