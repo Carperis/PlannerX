@@ -58,7 +58,6 @@ If you did not make this request then simply ignore this email and no changes wi
 
 
 def send_verification_email(user):
-    print(app.config['MAIL_USERNAME'])
     token = user.get_token()
     msg = Message('Email Verification Request',
                   sender=app.config['MAIL_USERNAME'],
