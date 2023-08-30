@@ -5,7 +5,7 @@ from datetime import datetime
 # import pdf2image
 from reportlab.lib.colors import black
 import fitz
-import Archive.GetPreferenceWeb as GetPreferenceWeb
+import web_api as wapi
 
 
 def convertTime(time):
@@ -64,7 +64,7 @@ def GetSchedulePic(semesterNew, userID, planID, planName):
     path = "./static/Users/" + userID + "/" + planID + "/"
     outfile_pdf = "./static/Users/" + userID + "/" + planID + "/schedule.pdf"
     outfile_img = "./static/Users/" + userID + "/" + planID + "/schedule.png"
-    GetPreferenceWeb.checkFolder(path)
+    wapi.checkFolder(path)
     c = pdfscheduler.Canvas(outfile_pdf, (800, 600))
     # c.setFillColorRGB(1, 1, 1) # set background color to white
     # c.setStrokeColorRGB(1, 1, 1) # set border color to white
