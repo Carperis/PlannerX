@@ -8,6 +8,7 @@ beautifulsoup4
 selenium
 Flask-Bcrypt
 Flask-Login
+Flask-Mail
 requests
 google-api-python-client
 google_auth_oauthlib
