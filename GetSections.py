@@ -149,17 +149,8 @@ def askURL(url):  # 得到指定一个URL的网页内容
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
     }
     request = urllib.request.Request(url, headers=head)
-    html = ""
-    try:
-        response = urllib.request.urlopen(request, timeout=5)
-        html = response.read().decode("utf-8")
-    # except urllib.error.URLError as e:
-    #     if hasattr(e, "code"):
-    #         print(e.code)
-    #     if hasattr(e, "reason"):
-    #         print(e.reason)
-    except Exception as e:
-        print(e)
+    response = urllib.request.urlopen(request, timeout=5)
+    html = response.read().decode("utf-8")
     return html
 
 
@@ -185,4 +176,4 @@ def saveData(dataList, savePath, saveName, firstRow):
 if __name__ == "__main__":
     semester = "2023-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
     # (startIndex, endIndex, semester) index=-1 -> default
-    GetSections(1900 , 1910, semester)
+    GetSections(2353 , -1, semester)
