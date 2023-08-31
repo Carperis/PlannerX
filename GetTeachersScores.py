@@ -1,21 +1,32 @@
 # -*- coding: utf-8 -*-
-
-from bs4 import BeautifulSoup  # 获取数据
+import requests
 import re  # 正则表达式，文字匹配
-import urllib.request
-import urllib.error  # 定制url
 import xlwt  # excel操作
 import json
 import os
 
 
 def GetTeachersScores():
-    baseURL = ["https://solr-aws-elb-production.ratemyprofessors.com//solr/rmp/select/?solrformat=true&rows=",
-               "&wt=json&json.wrf=noCB&callback=noCB&q=*%3A*+AND+schoolid_s%3A", "&defType=edismax&qf=teacherfirstname_t%5E2000+teacherlastname_t%5E2000+teacherfullname_t%5E2000+autosuggest&bf=pow(total_number_of_ratings_i%2C2.1)&sort=total_number_of_ratings_i+desc&siteName=rmp&rows=20&start=", "&fl=pk_id+teacherfirstname_t+teacherlastname_t+total_number_of_ratings_i+averageratingscore_rf+schoolid_s&fq="]
-    dataList = getData(baseURL)
+    url = "https://www.ratemyprofessors.com/graphql"
+    dataList = getData(url)
+    print(len(dataList))
+    cleanData(dataList)
+    print(len(dataList))
     savePath = "./Semesters/"
     checkFolder(savePath)
     saveData(dataList, savePath)
+
+def cleanData(dataList):
+    indices_to_delete = []
+    for i in range(len(dataList) - 1, 0, -1):
+        current_id = dataList[i][1]
+        prior_id = dataList[i - 1][1]
+        if current_id == prior_id:
+            indices_to_delete.append(i)
+
+    # Iterate through indices_to_delete in reverse order and delete elements
+    for index in indices_to_delete:
+        del dataList[index]
 
 
 def checkFolder(savePath):
@@ -23,85 +34,105 @@ def checkFolder(savePath):
     newPath = folders[0] + "/"
     for i in range(1, len(folders)):
         pathNotExist = bool(1 - (os.path.exists(newPath)))
-        if(pathNotExist):
+        if (pathNotExist):
             os.mkdir(newPath)
         newPath = newPath + folders[i] + "/"
 
 
-def getData(baseURL):
-    lastPage = False
+def getData(url):
     dataList = []
-    schoolID = 124  # BU school id in RMP
-    itemNum = 1000
-    itemStart = 0
-    while(~lastPage):
-        parameter = [itemNum, schoolID, itemStart]
-        url = formURL(baseURL, parameter)
-        html = askURL(url)
-        data = re.findall(r'noCB\((\{.*?\})\)', html)
-        jsonObj = json.loads(data[0])
-        if(len(jsonObj["response"]["docs"]) == 0):
-            lastPage = True
-            break
-        for item in jsonObj["response"]["docs"]:
-            item = dict(item)
+    itemNum = 1999
+    cursor = "" # initial cursor
+    while (True):
+        response = askURL(url, itemNum, cursor)
+        jsonObj = json.loads(response)
+        numTeachers = len(jsonObj["data"]["search"]["teachers"]["edges"])
+        for item in jsonObj["data"]["search"]["teachers"]["edges"]:
+            cursor = item["cursor"]
+            item = dict(item)["node"]
             itemData = []
 
             # 获取老师姓名
-            teacherName = item["teacherfirstname_t"] + \
-                " " + item["teacherlastname_t"]
+            teacherName = item["firstName"] + \
+                " " + item["lastName"]
             itemData.append(teacherName)
 
             # 获取老师ID
-            itemData.append(item["pk_id"])
+            itemData.append(item["id"])
 
             # 获取学校ID
-            itemData.append(item["schoolid_s"])
+            itemData.append(item["school"]["id"])
 
             # 获取老师评分
-            if(("averageratingscore_rf" in item.keys()) & (item["total_number_of_ratings_i"] > 0)):
-                itemData.append(item["averageratingscore_rf"])
+            if (("avgRating" in item.keys()) & (item["numRatings"] > 0)):
+                itemData.append(item["avgRating"])
             else:
                 itemData.append("NS")  # NS = No Scores
 
             # 获取评分人数
-            itemData.append(item["total_number_of_ratings_i"])
+            itemData.append(item["numRatings"])
 
             dataList.append(itemData)
             print(len(dataList), itemData)
-        itemStart += itemNum
+        if (numTeachers < itemNum):
+            print("All teachers' scores have been collected!")
+            break
     return dataList
 
 
-def formURL(baseURL, parameter):
-    url = ""
-    lenUrl = len(baseURL)
-    lenPara = len(parameter)
-    for i in range(0, abs(lenUrl - lenPara)):
-        parameter.append("")
-    for i in range(0, len(parameter)):
-        url += baseURL[i] + str(parameter[i])
-    return url
+def askURL(url, itemNum, cursor):
 
-
-def askURL(url):  # 得到指定一个URL的网页内容
-    head = {  # 模拟浏览器头部信息
-        # 用户代理：表示告诉服务器我们是什么类型的机器和浏览器
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
+    request_body = {
+        "query": "query TeacherSearchPaginationQuery(\n  $count: Int!\n  $cursor: String\n  $query: TeacherSearchQuery!\n) {\n  search: newSearch {\n    ...TeacherSearchPagination_search_1jWD3d\n  }\n}\n\nfragment TeacherSearchPagination_search_1jWD3d on newSearch {\n  teachers(query: $query, first: $count, after: $cursor) {\n    didFallback\n    edges {\n      cursor\n      node {\n        ...TeacherCard_teacher\n        id\n        __typename\n      }\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n    resultCount\n    filters {\n      field\n      options {\n        value\n        id\n      }\n    }\n  }\n}\n\nfragment TeacherCard_teacher on Teacher {\n  id\n  legacyId\n  avgRating\n  numRatings\n  ...CardFeedback_teacher\n  ...CardSchool_teacher\n  ...CardName_teacher\n  ...TeacherBookmark_teacher\n}\n\nfragment CardFeedback_teacher on Teacher {\n  wouldTakeAgainPercent\n  avgDifficulty\n}\n\nfragment CardSchool_teacher on Teacher {\n  department\n  school {\n    name\n    id\n  }\n}\n\nfragment CardName_teacher on Teacher {\n  firstName\n  lastName\n}\n\nfragment TeacherBookmark_teacher on Teacher {\n  id\n  isSaved\n}\n",
+        "variables": {
+            "count": itemNum,
+            "cursor": cursor,
+            "query": {
+                "text": "",
+                "schoolID": "U2Nob29sLTEyNA==",
+                "fallback": True,
+                "departmentID": None
+            }
+        }
     }
-    request = urllib.request.Request(url, headers=head)
-    html = ""
-    try:
-        response = urllib.request.urlopen(request, timeout=5)
-        html = response.read().decode("utf-8")
-    # except urllib.error.URLError as e:
-    #     if hasattr(e, "code"):
-    #         print(e.code)
-    #     if hasattr(e, "reason"):
-    #         print(e.reason)
-    except Exception as e:
-        print(e)
-    return html
+    
+    if cursor == "":
+        del request_body["variables"]["cursor"]
+    
+    request_body_string = json.dumps(request_body)
+    request_body_string = request_body_string.replace("\": ", "\":")
+    request_body_string = request_body_string.replace(", \"", ",\"")
+    body_length = len(request_body_string)
+    
+    headers = {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "zh,en;q=0.9,zh-CN;q=0.8",
+        "Authorization": "Basic dGVzdDp0ZXN0",
+        "Connection": "keep-alive",
+        "Content-Length": str(body_length),
+        "Content-Type": "application/json",
+        "Cookie": "ccpa-notice-viewed-02=true; userSchoolId=U2Nob29sLTEyNA==; userSchoolLegacyId=124; userSchoolName=Boston%20University; cid=FIPBWsE7uE-20230830",
+        "Host": "www.ratemyprofessors.com",
+        "Origin": "https://www.ratemyprofessors.com",
+        "Referer": "https://www.ratemyprofessors.com/search/professors/124?q=",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+        "sec-ch-ua": '"Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"Windows"'
+    }
+
+    response = requests.post(url, json=request_body, headers=headers)
+    if response.status_code == 200:
+        print("Request successful!")
+    else:
+        raise Exception("Request failed with status code:", response.status_code)
+    
+    return response.text
+
 
 
 def saveData(dataList, savePath):
@@ -120,6 +151,7 @@ def saveData(dataList, savePath):
     savePath = savePath + saveName + ".xls"
     book.save(savePath)
     print("Data saved!")
+
 
     # 3.保存数据
 if __name__ == "__main__":
