@@ -178,7 +178,8 @@ def reset_password_request():
                     return redirect(f'/login?warning={warning}')
                 wapi.send_reset_email(user)
                 msg = []
-                msg.append("An email has been sent with instructions to reset your password.")
+                msg.append(
+                    "An email has been sent with instructions to reset your password.")
                 # warning = "An email has been sent with instructions to reset your password."
                 # return redirect(f'/login?warning={warning}')
     return render_template('reset_password_request.html', form=form, msg=msg)
@@ -189,6 +190,7 @@ def reset_password_token(token):
     msg = []
 
     if current_user.is_authenticated:
+        msg.append("Update your password below and then re-login")
         session.clear()
         logout_user()
         # return redirect(url_for('dashboard'))
@@ -232,7 +234,8 @@ def email_verification_request():
                     return redirect(f'/login?warning={warning}')
                 wapi.send_verification_email(user)
                 msg = []
-                msg.append("An email has been sent with instructions to verify your email.")
+                msg.append(
+                    "An email has been sent with instructions to verify your email.")
                 # warning = "An email has been sent with instructions to verify your email."
                 # return redirect(f'/login?warning={warning}')
     return render_template('email_verification_request.html', form=form, msg=msg, email=email)
