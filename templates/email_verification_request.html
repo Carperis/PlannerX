@@ -1,19 +1,21 @@
 {% extends 'base_raw.html' %}
 {% block head %}
-<title>BU PlannerX - Verify Email</title>
-<script>
+  <title>BU PlannerX - Verify Email</title>
+  <script>
   $(document).ready(function () {
     $("#email").val("{{ email }}");
     });
-</script>
+  </script>
 {% endblock %}
 {% block content %}
   <body class="bg-gradient-primary">
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NSGFCZBD"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        height="0"
+        width="0"
+        style="display:none;
+               visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-    
     <div class="container">
       <!-- Outer Row -->
       <div class="row justify-content-center mt-5">
@@ -38,6 +40,7 @@
                     <div class="text-center">
                       <h1 class="h4 text-white mb-4">Verify Email</h1>
                     </div>
+                    <p class="text-center">Enter your email and click the button to send a verification link to your email.</p>
                     <form class="user text-center" method="POST" action="">
                       {{ form.hidden_tag() }}
                       <div class="form-group">

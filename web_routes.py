@@ -61,7 +61,7 @@ def google_callback():
         id_token=credentials._id_token,
         request=token_request,
         audience=GOOGLE_CLIENT_ID,
-        clock_skew_in_seconds=1
+        clock_skew_in_seconds=5
     )
 
     sub = id_info.get("sub")
@@ -77,6 +77,7 @@ def google_callback():
                 userID = user.id
                 path = "./Users/" + str(userID) + "/"
                 wapi.checkFolder(path)
+                print(f"{user.email} Google login success!")
                 login_user(user, remember=True)
                 return redirect(url_for('dashboard'))
             else:
@@ -146,6 +147,7 @@ def login():
                         userID = user.id
                         path = "./Users/" + str(userID) + "/"
                         wapi.checkFolder(path)
+                        print(f"{user.email} Login success!")
                         login_user(user, remember=form.remember.data)
                         return redirect(url_for('dashboard'))
                 else:
@@ -176,6 +178,7 @@ def reset_password_request():
                 if user.google:
                     warning = "Please login with your Google account."
                     return redirect(f'/login?warning={warning}')
+                print(f"{user.email} Reset password requested!")
                 wapi.send_reset_email(user)
                 msg = []
                 msg.append(
@@ -206,6 +209,7 @@ def reset_password_token(token):
                 form.password.data).decode('utf-8')
             user.password = hashed_password
             db.session.commit()
+            print(f"{user.email} Reset password success!")
             warning = "Your password has been updated! You are now able to login."
             return redirect(f'/login?warning={warning}')
     return render_template('reset_password_token.html', form=form, msg=msg)
@@ -232,6 +236,7 @@ def email_verification_request():
                 if user.verify:
                     warning = "Your email has been verified. Please login with your email and password."
                     return redirect(f'/login?warning={warning}')
+                print(f"{user.email} Email verification requested!")
                 wapi.send_verification_email(user)
                 msg = []
                 msg.append(
@@ -254,6 +259,7 @@ def email_verification_token(token):
     user.verify = True
     email = user.email
     db.session.commit()
+    print(f"{user.email} Email verification success!")
     return render_template('email_verification_token.html', msg=msg, email=email)
 
 
