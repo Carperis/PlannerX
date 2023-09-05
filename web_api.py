@@ -313,7 +313,7 @@ def rank_all_schedules(semester, userID, planID, ignoreSeats=False):
     AddPlanDetails.AddPlanDetails(semester, userID, planID, ignoreSeats)
     msg.append("Plan details are added.")
     AutoRanking.AutoRanking(semester, userID, planID)
-    msg.append("Your plans are ranked!")
+    msg.append("Your plans are ranked! You can see them below.")
     return msg
 
 

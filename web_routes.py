@@ -435,7 +435,7 @@ def plan(planID):
     quickTips = {
         "Don't know what you should enter in boxes?": "Click the question mark (?) beside each input box to learn more. ",
         "No schedule is available?": "There might be some inevitable time conflicts in your courses. If you believe it is not course problem, it may because of the special structure of your courses (e.g. ENG EK 100). Our current algorithm can't process them correctly.  TO SOLVE IT, please try to drop some courses from your preferences and submit again.",
-        "Can't find your courses?": "Please check if you have chosen the correct semester and entered the correct course code or course name. If you still can't find it, please contact us so that we can update our database."
+        "Can't find your courses?": "Please check if you have chosen the correct semester and entered the correct course code or course name. If you still cannot find it, please contact us so that we can update our database."
     }
 
     return render_template('plan.html', msg=msg, plan=plan, user=user, classFullCodes=classFullCodes, years=years, guidance=guidance, controls=controls, editDate=editDate, quickTips=quickTips)
