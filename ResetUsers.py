@@ -1,4 +1,5 @@
 import shutil
+import os
 import InitDatabase as init
 
 try:
@@ -19,6 +20,13 @@ try:
     path3 = "./instance/"
     shutil.rmtree(path3)
     print("instance folder deleted")
+except Exception as e:
+    print(e)
+    
+try:
+    path4 = "./web.db"
+    os.remove(path4)
+    print("web.db deleted")
 except Exception as e:
     print(e)
 

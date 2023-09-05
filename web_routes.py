@@ -432,7 +432,12 @@ def plan(planID):
         "deleteplan": ["Delete Plan", "Click this button to delete this plan. WARNING: This action cannot be undone!"]
     }
 
-    return render_template('plan.html', msg=msg, plan=plan, user=user, classFullCodes=classFullCodes, years=years, guidance=guidance, controls=controls, editDate=editDate)
+    quickTips = {
+        "Don't know what you should enter in boxes?": "Click the question mark (?) beside each input box to learn more. ",
+        "No schedule is available?": "There might be some inevitable time conflicts in your courses. If you believe it is not course problem, it may because of the special structure of your courses (e.g. ENG EK 100). Our current algorithm can't process them correctly.  TO SOLVE IT, please try to drop some courses from your preferences and submit again."
+    }
+
+    return render_template('plan.html', msg=msg, plan=plan, user=user, classFullCodes=classFullCodes, years=years, guidance=guidance, controls=controls, editDate=editDate, quickTips=quickTips)
 
 
 @app.route('/deleteplan/<int:planID>')
@@ -489,9 +494,9 @@ def getPlans(planID):
 
     result = wapi.get_all_schedules(semester, userID, planID)
     if (result == 0):
-        msg.append("Can't find your plans")
+        msg.append("Sorry, no schedule is available. There might be some inevitable time conflicts in your courses. Please try to change your preferences and submit again.")
     else:
-        msg.append("Got your plans!")
+        msg.append("Got your schedules! You can see them below.")
 
     showSchedule(planID, 1)
     session['messages'] = msg

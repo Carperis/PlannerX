@@ -209,6 +209,19 @@
         {% for message in msg %}<div class="alert font-weight-bold m-0 p-0">{{ message }}</div>{% endfor %}
       </div>
     {% endif %}
+    {% if plan %}
+    <div class="row">
+        <div class="h3 text-warning ml-3">Quick Tips</div>
+        <ul>
+        {% for item in quickTips %}
+        <li>
+            <span class="text-info">{{ item }}</span>
+            <span class="text-white">{{ quickTips[item] }}</span>
+        </li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
     <div class="row text-white">
       <div class="col-lg-8 p-4">
         <form class="user"
@@ -419,13 +432,13 @@
             </div>
           {% endif %}
         {% else %}
-          <div class="h3 mb-0 text-white mt-1">Quick Tips</div>
+          <div class="h3 mb-0 text-warning mt-1">Quick Tips</div>
           <br>
           <div class="text-white">
-            {% for item in guidance %}
-              <span class=" text-info">{{ guidance[item][0] }}</span>
+            {% for item in quickTips %}
+              <span class=" text-info">{{ item }}</span>
               <br>
-              <span>{{ guidance[item][1] }}</span>
+              <span>{{ quickTips[item] }}</span>
               <br>
               <br>
             {% endfor %}
