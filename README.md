@@ -36,8 +36,8 @@ If you first run the program, you need to follow the steps below to set up the e
    python web.py
    ```
 6. If it runs successfully, you should be able to open the website using this link: [http://127.0.0.1:5000/](http://127.0.0.1:5000/). In your browser, you should see the website looks like this:
-
-   ![schedule](https://file+.vscode-resource.vscode-cdn.net/c%3A/Users/Sam/Desktop/PlannerX/webpage.png)
+   
+   ![schedule](./webpage.png)
 7. Make sure you terminate the app before you continue the following setup.
 
 ### II. Set up a Gmail for User Messages
