@@ -5,6 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_mail import Mail
 import os
 
+# DO NOT USE AUTO FORMATTING IN THIS FILE
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -40,5 +41,6 @@ except:
 # print(app.config['MAIL_PASSWORD'])
 mail = Mail(app)
 
-# please put "import web_routes" below this line
+# To make sure you can run the app,
+# !!!!! PLEASE PUT "import web_routes" BELOW THIS LINE !!!!!
 import web_routes
