@@ -36,14 +36,14 @@ If you first run the program, you need to follow the steps below to set up the e
    python web.py
    ```
 6. If it runs successfully, you should be able to open the website using this link: [http://127.0.0.1:5000/](http://127.0.0.1:5000/). In your browser, you should see the website looks like this:
-   
+
    ![schedule](./webpage.png)
 7. Make sure you terminate the app before you continue the following setup.
 
 ### II. Set up a Gmail for User Messages
 
 1. Prepare a Google email, such as "example@gmail.com".
-2. In [Google account setting under &#34;Security&#34; tab](https://myaccount.google.com/security), if you have option _"2-Step Verification"_, continue step 3 below. If you have option _"Less secure app access"_, continue step 4 below.
+2. In [Google account setting under &#34;Security&#34; tab](https://myaccount.google.com/security), if you have the option _"2-Step Verification"_, continue step 3 below. If you have the option _"Less secure app access"_, continue step 4 below.
 3. Click in _"2-Step Verification"_ and turn ON the verification. On the same webpage, scorll down and click in _"App passwords"_. Create a new app password and record this password for later use.
 4. Click in _"Less secure app access"_ and turn it ON. And then record your gmail password for later use.
 5. In the PlannerX folder, create a txt file name **_"email.txt"_**. Put your google email address and the password (from step 3 or 4) into this txt file following the format below.
