@@ -34,6 +34,7 @@ try:
     app.config['MAIL_USERNAME'] = email
     app.config['MAIL_PASSWORD'] = password
 except:
+    print("email.txt not found")
     pass
 # print(app.config['MAIL_USERNAME'])
 # print(app.config['MAIL_PASSWORD'])
