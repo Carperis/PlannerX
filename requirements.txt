@@ -15,3 +15,4 @@ google_auth_oauthlib
 flask_wtf
 wtforms
 itsdangerous==2.0.1
+PyMuPDF
