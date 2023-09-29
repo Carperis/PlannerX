@@ -89,15 +89,6 @@
         });
     }
 
-    function getYear(date) {
-        if (date.getMonth() >= 10) {
-            return date.getFullYear() + 1;
-        }
-        else {
-            return date.getFullYear();
-        }
-    }
-
     function updateCourseOptions() {
         var selectedValue1 = $('#year').val();
         var selectedValue2 = $('#term').val();
@@ -163,8 +154,7 @@
 
     $(document).ready(function () {
         {% if not plan %}
-        const currentYear = getYear(new Date());
-        $('#year').val(currentYear);
+        $('#year').val({{years[0]}});
         {% endif %}
 
         if (firstLoad) {

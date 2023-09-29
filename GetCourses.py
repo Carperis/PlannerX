@@ -15,20 +15,22 @@ def GetCourses(semester):
 
     savePath = "./Semesters/" + semester + "/"
     checkFolder(savePath)
-    
+
     saveName = "BU Courses " + semester
     firstRow = ("Code", "Name", "Prerequisite", "Corequisite", "Intro", "Credits", "Hub Unit 1",
                 "Hub Unit 2", "Hub Unit 3", "Hub Unit 4", "Link")
     saveData(dataList, savePath, saveName, firstRow)
+
 
 def checkFolder(savePath):
     folders = savePath.split("/")
     newPath = folders[0] + "/"
     for i in range(1, len(folders)):
         pathNotExist = bool(1 - (os.path.exists(newPath)))
-        if(pathNotExist):
+        if (pathNotExist):
             os.mkdir(newPath)
         newPath = newPath + folders[i] + "/"
+
 
 findCode = re.compile(r'<h6>(.*?)</h6>')
 findName = re.compile(r'<h2>(.*?)</h2>')
@@ -51,7 +53,7 @@ def getData(baseURL, semester):
     credits = "*"
     hub_match = "all"
     dataList = []
-    while(~lastPage):
+    while (~lastPage):
         parameter = [page, pagesize, adv, nolog, search_adv_all,
                      yearsem_adv, credits, hub_match, pagesize]
         url = formURL(baseURL, parameter)
@@ -59,7 +61,7 @@ def getData(baseURL, semester):
         html = askURL(url)
         soup = BeautifulSoup(html, "html.parser")
         itemList = soup.find_all('li', class_="coursearch-result")
-        if(len(itemList) == 0):
+        if (len(itemList) == 0):
             lastPage = True
             break
         print("Page: %3d Item: %4d " % (page + 1, len(itemList)), end="")
@@ -109,11 +111,13 @@ def getData(baseURL, semester):
                 data.append("")
 
             # 获得课程Sections
-            if(len(re.findall(findSec, itemStr)) > 0):
+            if (len(re.findall(findSec, itemStr)) > 0):
                 secURL = re.findall(findSec, itemStr)[0]
                 secURL = "https://www.bu.edu" + secURL
             else:
                 secURL = ""
+            secURL = secURL.replace("&amp;", "&")
+            secURL = secURL.replace("\"", "")
             data.append(secURL.strip())
 
             dataList.append(data)
@@ -157,7 +161,7 @@ def saveData(dataList, savePath, saveName, firstRow):
     for i in range(0, len(firstRow)):
         sheet.write(0, i, firstRow[i])
 
-    if(len(dataList) != 0):
+    if (len(dataList) != 0):
         for i in range(0, len(dataList)):
             data = dataList[i]
             for j in range(0, len(data)):
@@ -170,6 +174,6 @@ def saveData(dataList, savePath, saveName, firstRow):
 
 
 if __name__ == "__main__":
-    semester = "2023-FALL"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
+    semester = "2024-SPRG"  # Fall:"FALL", Summer:"SUMM", Spring:"SPRG"
     GetCourses(semester)
     # getAndSaveSections("https://www.bu.edu/phpbin/course-search/section/?t=casaa103&amp;semester=2021-SUMM&amp;return=%2Fphpbin%2Fcourse-search%2Fsearch.php%3Fpage%3D0%26pagesize%3D100%26adv%3D1%26nolog%3D%26search_adv_all%3D%26yearsem_adv%3D2021-SUMM%26credits%3D%2A%26hub_match%3Dall%26pagesize%3D100", "CAS AA 103", "2021-SUMM")
