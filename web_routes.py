@@ -493,6 +493,10 @@ def plan(planID):
             "Delete Plan",
             "Click this button to delete this plan. WARNING: This action cannot be undone!",
         ],
+        "download": [
+            "Download Schedule",
+            "Click this button to download the schedule in .ics format, so you can import in Google Calendar or iCalendar easily without having to add your schedule manually one by one",
+        ],
     }
 
     quickTips = {
@@ -514,6 +518,20 @@ def plan(planID):
         quickTips=quickTips,
     )
 
+@app.route('/download_ics/<int:planID>')
+@login_required
+def download_ics():
+    # For demonstration purposes, let's assume a static event
+    event_name = "Sample Event"
+    start_time = datetime(2023, 12, 15, 10, 0)
+    end_time = datetime(2023, 12, 15, 11, 0)
+
+    ics_content = generate_ics_content(event_name, start_time, end_time)
+    
+    response = Response(ics_content)
+    response.headers["Content-Disposition"] = "attachment; filename=event.ics"
+    response.headers["Content-type"] = "text/calendar"
+    return response
 
 @app.route("/deleteplan/<int:planID>")
 @login_required
