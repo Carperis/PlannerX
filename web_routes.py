@@ -273,8 +273,7 @@ def logout():
 
 @app.route('/')
 def index():
-    msg = ["WARNING:", "The current version of the website is for TEST ONLY!",
-           "Any of your data might be DELETED at any time!", "Our team is not responsible for any loss of your data!"]
+    msg = ["Our database is NOW updated to Spring 2024. Let's plan it out!",]
     return render_template('index.html', msg=msg)
 
 
