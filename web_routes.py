@@ -44,12 +44,14 @@ def google_login():
 
 @app.route("/google_callback")
 def google_callback():
-    flow.fetch_token(authorization_response=request.url)
     state1 = session["state"]
     state2 = request.args.get('state')
 
     if (state1 != state2):
+        print("State does not match!")
         abort(500)  # State does not match!
+    flow.fetch_token(authorization_response=request.url)
+    
 
     credentials = flow.credentials
     request_session = requests.session()
