@@ -13,13 +13,14 @@ client_secrets_file = os.path.join(
     pathlib.Path(__file__).parent, "client_secret.json")
 client_secrer_json = json.loads(open(client_secrets_file, "r").read())
 oauth.register(
-    "myApp",
+    name='google',
     client_id=client_secrer_json['web']['client_id'],
     client_secret=client_secrer_json['web']['client_secret'],
-    client_kwargs={
-        "scope": "openid profile email",
-        # 'code_challenge_method': 'S256'  # enable PKCE
-    },
+    # access_token_url='https://accounts.google.com/o/oauth2/token',
+    # access_token_params=None,
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params={'access_type': 'offline', 'prompt': 'consent'}, # this is required to get a refresh token
+    client_kwargs={'scope': 'openid email profile'},
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration"
 )
 
@@ -34,12 +35,12 @@ def teardown_request(exception):
 @app.route("/google_login")
 def google_login():
     redirect_uri = wapi.get_google_redirect_uri()
-    return oauth.myApp.authorize_redirect(redirect_uri=redirect_uri)
+    return oauth.google.authorize_redirect(redirect_uri=redirect_uri)
 
 
 @app.route("/google_callback")
 def google_callback():
-    token = oauth.myApp.authorize_access_token()
+    token = oauth.google.authorize_access_token()
     session["user"] = token
 
     sub = token["userinfo"]["sub"]
