@@ -33,7 +33,8 @@ def teardown_request(exception):
 
 @app.route("/google_login")
 def google_login():
-    return oauth.myApp.authorize_redirect(redirect_uri=url_for("google_callback", _external=True))
+    redirect_uri = wapi.get_google_redirect_uri()
+    return oauth.myApp.authorize_redirect(redirect_uri=redirect_uri)
 
 
 @app.route("/google_callback")
