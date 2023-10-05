@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail
+from authlib.integrations.flask_client import OAuth
 import os
 
 # DO NOT USE AUTO FORMATTING IN THIS FILE
@@ -13,6 +14,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///web.db'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 
 db = SQLAlchemy(app)
+oauth = OAuth(app)
 
 # make sure this matches with that's in client_secret.json
 app.secret_key = "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"

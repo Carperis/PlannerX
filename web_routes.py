@@ -1,30 +1,26 @@
-import requests
 import pathlib
-import google.auth.transport.requests
-from pip._vendor import cachecontrol
-from google_auth_oauthlib.flow import Flow
-from google.oauth2 import id_token
 from flask import redirect, render_template, request, session, url_for, jsonify, abort, flash
 from flask_login import login_user, login_required, logout_user, current_user
 import shutil
 import os
+import json
 
-from web_init import app, db, bcrypt
+from web_init import app, db, bcrypt, oauth
 from web_models import User, Plan
 from web_forms import LoginForm, RegisterForm, RequestResetForm, ResetPasswordForm, RequestVerificationForm
 import web_api as wapi
-
-GOOGLE_CLIENT_ID = "697687543481-stsr0foi21nlt6abfc2cvls4266ofskv.apps.googleusercontent.com"
 client_secrets_file = os.path.join(
     pathlib.Path(__file__).parent, "client_secret.json")
-
-flow = Flow.from_client_secrets_file(
-    client_secrets_file=client_secrets_file,
-    scopes=["https://www.googleapis.com/auth/userinfo.profile",
-            "https://www.googleapis.com/auth/userinfo.email", "openid"],
-
-    # go https://console.cloud.google.com to set up redirect_uri
-    redirect_uri=wapi.get_google_redirect_uri()
+client_secrer_json = json.loads(open(client_secrets_file, "r").read())
+oauth.register(
+    "myApp",
+    client_id=client_secrer_json['web']['client_id'],
+    client_secret=client_secrer_json['web']['client_secret'],
+    client_kwargs={
+        "scope": "openid profile email",
+        # 'code_challenge_method': 'S256'  # enable PKCE
+    },
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration"
 )
 
 
@@ -37,36 +33,17 @@ def teardown_request(exception):
 
 @app.route("/google_login")
 def google_login():
-    authorization_url, state = flow.authorization_url()
-    session["state"] = state
-    return redirect(authorization_url)
+    return oauth.myApp.authorize_redirect(redirect_uri=url_for("google_callback", _external=True))
 
 
 @app.route("/google_callback")
 def google_callback():
-    flow.fetch_token(authorization_response=request.url)
-    state1 = session["state"]
-    state2 = request.args.get('state')
+    token = oauth.myApp.authorize_access_token()
+    session["user"] = token
 
-    if (state1 != state2):
-        abort(500)  # State does not match!
-
-    credentials = flow.credentials
-    request_session = requests.session()
-    cached_session = cachecontrol.CacheControl(request_session)
-    token_request = google.auth.transport.requests.Request(
-        session=cached_session)
-
-    id_info = id_token.verify_oauth2_token(
-        id_token=credentials._id_token,
-        request=token_request,
-        audience=GOOGLE_CLIENT_ID,
-        clock_skew_in_seconds=5
-    )
-
-    sub = id_info.get("sub")
-    username = id_info.get("name")
-    email = id_info.get("email")
+    sub = token["userinfo"]["sub"]
+    username = token["userinfo"]["name"]
+    email = token["userinfo"]["email"]
     session["google_id"] = sub
     session["name"] = username
 
