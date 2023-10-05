@@ -339,9 +339,9 @@ def plan(planID):
                 for i in range(len(classFullNames)):
                     oneClass = classFullNames[i]
                     if (i == len(classFullNames)-1):
-                        courses += oneClass
+                        courses += oneClass.split(":")[0].strip()
                     else:
-                        courses += oneClass + "||"
+                        courses += oneClass.split(":")[0].strip() + "||"
                     classes.append(oneClass.split(":")[0].strip())
                 # print(courses)
                 prefDict["Courses"] = classes

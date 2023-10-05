@@ -102,20 +102,20 @@
                 var selectedCourses = [];
                 {% if plan %}
                 var selectedCourses = "{{ plan.courses }}";
-                var selectedCourses = selectedCourses.split("||");
                 {% else %}
                     {% if (request.form['courses']) %}
                     var selectedCourses = "{{ request.form['courses'] }}";
-                    var selectedCourses = selectedCourses.split("||");
                     {% endif %}
                 {% endif %}
-
+                var selectedCourses = selectedCourses.split("||");
+                for (var i = 0; i < selectedCourses.length; i++) {
+                    selectedCourses[i] = selectedCourses[i].split(":")[0];
+                }
                 $("#courses").empty();
                 data.forEach(function (course_name) {
                     const option = $('<option>', { value: course_name, text: course_name });
                     $("#courses").append(option);
-                    var short_course_name = course_name.split("(")[0];
-                    short_course_name = short_course_name.replace(/\s+$/, '');
+                    var short_course_name = course_name.split(":")[0];
                     if (selectedCourses.includes(short_course_name)) {
                         option.prop('selected', true);
                     }
