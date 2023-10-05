@@ -19,7 +19,8 @@ oauth.register(
     # access_token_url='https://accounts.google.com/o/oauth2/token',
     # access_token_params=None,
     authorize_url='https://accounts.google.com/o/oauth2/auth',
-    authorize_params={'access_type': 'offline', 'prompt': 'consent'}, # this is required to get a refresh token
+    # this is required to get a refresh token
+    authorize_params={'access_type': 'offline', 'prompt': 'consent'},
     client_kwargs={'scope': 'openid email profile'},
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration"
 )
@@ -270,7 +271,10 @@ def fetch_course_names(semester):
     name_list = []
     for course in courses:
         shortcode = course["code"].replace(" ", "")
-        name_list.append(course["code"] + ": " + course["name"] + " (" + shortcode + ")")
+        supershortcode = (course["code"].split(
+            " ")[1] + course["code"].split(" ")[2]).replace(" ", "")
+        name_list.append(course["code"] + ": " + course["name"] +
+                         " (" + shortcode + ", " + supershortcode + ")")
     # print("fetch course names success!")
     return jsonify(name_list)
 
