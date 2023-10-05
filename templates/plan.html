@@ -114,7 +114,9 @@
                 data.forEach(function (course_name) {
                     const option = $('<option>', { value: course_name, text: course_name });
                     $("#courses").append(option);
-                    if (selectedCourses.includes(course_name)) {
+                    var short_course_name = course_name.split("(")[0];
+                    short_course_name = short_course_name.replace(/\s+$/, '');
+                    if (selectedCourses.includes(short_course_name)) {
                         option.prop('selected', true);
                     }
                 });
