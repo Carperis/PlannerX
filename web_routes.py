@@ -269,7 +269,8 @@ def fetch_course_names(semester):
     courses = wapi.getAllCourseNames(semester.split("_")[0])
     name_list = []
     for course in courses:
-        name_list.append(course["code"] + ": " + course["name"])
+        shortcode = course["code"].replace(" ", "")
+        name_list.append(course["code"] + ": " + course["name"] + " (" + shortcode + ")")
     # print("fetch course names success!")
     return jsonify(name_list)
 
