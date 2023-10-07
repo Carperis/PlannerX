@@ -1,3 +1,4 @@
+import json
 import xlwt
 import xlrd
 
@@ -7,23 +8,55 @@ def AddPlanDetails(semesterNew, userID, planID, ignoreSeats=False):
     allPlansInfoPath = "./Users/" + userID + "/" + planID + "/"
     allPlansInfoDict = readPlanData(allPlansInfoPath, Info_bookName)
 
-    if (ignoreSeats):
+    if ignoreSeats:
         seatDict = {}
     else:
         seatName = semesterNew + " Seats"
         seatPath = "./Users/" + userID + "/" + planID + "/"
         seatDict = readSeatData(seatPath, seatName)
 
-    firstRow = ("Section", "Open Seats", "Instructor", "Type", "Location", "Schedule",
-                "Dates", "Notes", "Semester", "Code", "RMP Score", "Average Score", "Earliest Time", "Latest Time")
+    firstRow = (
+        "Section",
+        "Open Seats",
+        "Instructor",
+        "Type",
+        "Location",
+        "Schedule",
+        "Dates",
+        "Notes",
+        "Semester",
+        "Code",
+        "RMP Score",
+        "Average Score",
+        "Earliest Time",
+        "Latest Time",
+        "X Coordinate",
+        "Y Coordinate",
+    )
     preAllocate(allPlansInfoDict, firstRow)
 
     addAverageScores(allPlansInfoDict)
     addTimeExtrema(allPlansInfoDict)
     addSeats(allPlansInfoDict, seatDict, ignoreSeats)
+    addBuildings(allPlansInfoDict)
     savePlanData(allPlansInfoDict, allPlansInfoPath, Info_bookName, firstRow)
 
-# def addSeats(allPlansInfoDict):
+
+def addBuildings(allPlansInfoDict):
+    # get building code to address dictionary
+    buildingDict = {}
+    with open("./Semesters/buildings.json", "r") as f:
+        buildingDict = json.load(f)
+        
+    planKeys = list(allPlansInfoDict.keys())
+    for planKey in planKeys:
+        for section in range(len(allPlansInfoDict[planKey])):
+            code = allPlansInfoDict[planKey][section][9].split(" ")[0]
+            # update location and put in x,y coordinates
+            if code in buildingDict:
+                allPlansInfoDict[planKey][section][4] = buildingDict[code][0]
+                allPlansInfoDict[planKey][section][14] = str(buildingDict[code][1][0])
+                allPlansInfoDict[planKey][section][15] = str(buildingDict[code][1][1])
 
 
 def readPlanData(path, bookName):
@@ -66,7 +99,7 @@ def preAllocate(allPlansInfoDict, firstRow):
         for i in range(0, length):
             section = plan[i]
             for j in range(0, num):
-                if (j >= len(section)):
+                if j >= len(section):
                     section.append("")
 
 
@@ -92,7 +125,11 @@ def addAverageScores(allPlansInfoDict):
 
     # Pair the teacher's scores with their scores
     for i in range(1, sheet.nrows):
-        if sheet.cell_value(i, 0) in scores and scores[sheet.cell_value(i, 0)] == -1 and sheet.cell_value(i, 3) != "NS":
+        if (
+            sheet.cell_value(i, 0) in scores
+            and scores[sheet.cell_value(i, 0)] == -1
+            and sheet.cell_value(i, 3) != "NS"
+        ):
             scores[sheet.cell_value(i, 0)] = sheet.cell_value(i, 3)
 
     # store teacher's scores in the dictionary
@@ -122,17 +159,16 @@ def addAverageScores(allPlansInfoDict):
         # see https://www.bu.edu/reg/registration/abbreviations/
         # rankedTypeList, from left to right, section types are ranked based on their importance in the course.
         # we only consider the score that of the most important section type.
-        rankedTypeList = ["LEC", "IND", "EXP", "APP",
-                          "DRS", "OTH", "LAB", "PLB", "DIS"]
+        rankedTypeList = ["LEC", "IND", "EXP", "APP", "DRS", "OTH", "LAB", "PLB", "DIS"]
         for name in courseNames:
             oneCourse = courses[name]
             oneCourseTypes = list(oneCourse.keys())
             for type in rankedTypeList:
-                if (type in oneCourseTypes):
-                    if (oneCourse[type] != -1):
+                if type in oneCourseTypes:
+                    if oneCourse[type] != -1:
                         sum += oneCourse[type]
                         num += 1
-        if (num != 0):
+        if num != 0:
             avgscores.append(sum / num)
         else:
             avgscores.append(0)
@@ -152,36 +188,36 @@ def addTimeExtrema(allPlansInfoDict):
         for i in range(0, length):
             times = allPlansInfoDict[key][i][5].split(",")
             for a in times:
-                days, start, mix, when2 = a.split(' ')
-                when1, end = mix.split('-')
-                hour1, minute1 = start.split(':')
-                hour2, minute2 = end.split(':')
+                days, start, mix, when2 = a.split(" ")
+                when1, end = mix.split("-")
+                hour1, minute1 = start.split(":")
+                hour2, minute2 = end.split(":")
                 if when1 == "pm" and int(hour1) != 12:
-                    start_time = int(hour1)+12+int(minute1)/60
+                    start_time = int(hour1) + 12 + int(minute1) / 60
                 else:
-                    start_time = int(hour1)+int(minute1)/60
+                    start_time = int(hour1) + int(minute1) / 60
                 if when2 == "pm" and int(hour2) != 12:
-                    end_time = int(hour2)+12+int(minute2)/60
+                    end_time = int(hour2) + 12 + int(minute2) / 60
                 else:
-                    end_time = int(hour2)+int(minute2)/60
-                if (start_time < startMax):
+                    end_time = int(hour2) + int(minute2) / 60
+                if start_time < startMax:
                     startMax = start_time
-                if (end_time > endMin):
+                if end_time > endMin:
                     endMin = end_time
         if startMax > 12:
-            hour1 = int(startMax)-12
+            hour1 = int(startMax) - 12
             when1 = "pm"
         else:
             hour1 = int(startMax)
             when1 = "am"
         if endMin > 12:
-            hour2 = int(endMin)-12
+            hour2 = int(endMin) - 12
             when2 = "pm"
         else:
             hour2 = int(endMin)
             when2 = "am"
-        minute1 = int((startMax - int(startMax))*60)
-        minute2 = int((endMin - int(endMin))*60)
+        minute1 = int((startMax - int(startMax)) * 60)
+        minute2 = int((endMin - int(endMin)) * 60)
         # print("max is: ", hour1, ':', minute1,
         #       when1, " ", hour2, ':', minute2, when2)
         timeExteme = [startMax, endMin]
@@ -211,17 +247,17 @@ def savePlanData(allPlansInfoDict, allPlansInfoPath, Info_bookName, firstRow):
         oneData = allPlansInfoDict[plan]
         # 创建表单对象，cell_overwrite_ok允许单元格被覆盖
         sheet = book.add_sheet(plan, cell_overwrite_ok=True)
-        if(firstRow):
+        if firstRow:
             for i in range(0, len(firstRow)):
                 sheet.write(0, i, firstRow[i])
             n = 1
         else:
             n = 0
-        if(len(oneData) != 0):
+        if len(oneData) != 0:
             for i in range(0, len(oneData)):
                 data = oneData[i]
                 for j in range(0, len(data)):
-                    sheet.write(i+n, j, data[j])  # i+n是因为第一行已经有了标题
+                    sheet.write(i + n, j, data[j])  # i+n是因为第一行已经有了标题
                 # print("已保存到第%d条" % (i+1))
     savePath = allPlansInfoPath + Info_bookName + "Details.xls"
     book.save(savePath)
@@ -229,5 +265,5 @@ def savePlanData(allPlansInfoDict, allPlansInfoPath, Info_bookName, firstRow):
 
 
 if __name__ == "__main__":
-    AddPlanDetails("2023-SPRG","1","1")
+    AddPlanDetails("2023-SPRG", "1", "1")
     pass

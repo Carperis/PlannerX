@@ -6,3 +6,5 @@
 /test.py
 /test.html
 /email.txt
+/myenv/
+/.env

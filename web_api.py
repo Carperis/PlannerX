@@ -17,7 +17,7 @@ import GetSchedulePic
 
 
 def allow_access(user, other):
-    if (hasattr(other, "user_id") and user.id != other.user_id):
+    if hasattr(other, "user_id") and user.id != other.user_id:
         return False
     else:
         return True
@@ -48,27 +48,31 @@ def get_google_redirect_uri():
 
 def send_reset_email(user):
     token = user.get_token()
-    msg = Message('Password Reset Request',
-                  sender=app.config['MAIL_USERNAME'],
-                  recipients=[user.email])
-    msg.body = f'''To reset your password, please visit the following link. The link will be expired in 5 minutes.  
+    msg = Message(
+        "Password Reset Request",
+        sender=app.config["MAIL_USERNAME"],
+        recipients=[user.email],
+    )
+    msg.body = f"""To reset your password, please visit the following link. The link will be expired in 5 minutes.  
 {url_for('reset_password_token', token=token, _external=True)}
 
 If you did not make this request then simply ignore this email and no changes will be made.
-'''
+"""
     mail.send(msg)
 
 
 def send_verification_email(user):
     token = user.get_token()
-    msg = Message('Email Verification Request',
-                  sender=app.config['MAIL_USERNAME'],
-                  recipients=[user.email])
-    msg.body = f'''To confirm your email, please visit the following link. The link will be expired in 5 minutes.
+    msg = Message(
+        "Email Verification Request",
+        sender=app.config["MAIL_USERNAME"],
+        recipients=[user.email],
+    )
+    msg.body = f"""To confirm your email, please visit the following link. The link will be expired in 5 minutes.
 {url_for('email_verification_token', token=token, _external=True)}
 
 If you did not make this request then simply ignore this email and no changes will be made.
-'''
+"""
     mail.send(msg)
 
 
@@ -99,11 +103,11 @@ def getPreference(userID, planID, prefDict, semesterNew):
         for i in range(0, len(firstRow)):
             sheet.write(0, i, firstRow[i])
 
-        if (len(dataList) != 0):
+        if len(dataList) != 0:
             for i in range(0, len(dataList)):
                 data = dataList[i]
                 for j in range(0, len(data)):
-                    sheet.write(i+1, j, data[j])  # i+1是因为第一行已经有了标题
+                    sheet.write(i + 1, j, data[j])  # i+1是因为第一行已经有了标题
                 # print("已保存到第%d条" % (i+1))
         savePath = savePath + saveName + ".xls"
         book.save(savePath)
@@ -128,7 +132,7 @@ def checkCourses(courses, semester):
         rows = sheet.nrows
         cols = sheet.ncols
         for c in range(cols):
-            if (str(sheet.cell_value(0, c)) == "Code"):
+            if str(sheet.cell_value(0, c)) == "Code":
                 codeIndex = c
         for r in range(1, rows):
             dataList.append(sheet.cell_value(r, codeIndex))
@@ -138,7 +142,7 @@ def checkCourses(courses, semester):
     try:
         allCourses = getAllCourses(filePath, semester)
         for course in courses:
-            if (course not in allCourses):
+            if course not in allCourses:
                 return False
         return True
     except:
@@ -150,7 +154,7 @@ def checkFolder(savePath):
     newPath = folders[0] + "/"
     for i in range(1, len(folders)):
         pathNotExist = bool(1 - (os.path.exists(newPath)))
-        if (pathNotExist):
+        if pathNotExist:
             os.mkdir(newPath)
         newPath = newPath + folders[i] + "/"
 
@@ -196,7 +200,7 @@ def getAllTermNames(year):
     semesters = []
     for semester in os.listdir("./Semesters"):
         if semester.startswith(year):
-            if (semester.split("-")[1] == "SUMM"):
+            if semester.split("-")[1] == "SUMM":
                 semesters.append("SUMM_1")
                 semesters.append("SUMM_2")
             else:
@@ -205,27 +209,34 @@ def getAllTermNames(year):
 
 
 def checkSubmitSuccess(userID, planID, semester):
-    path = "./Users/" + str(userID) + "/" + str(planID) + \
-        "/" + semester + " Preferences.xls"
-    if (os.path.exists(path)):
+    path = (
+        "./Users/"
+        + str(userID)
+        + "/"
+        + str(planID)
+        + "/"
+        + semester
+        + " Preferences.xls"
+    )
+    if os.path.exists(path):
         return True
     else:
         return False
 
 
 def checkPlanSuccess(userID, planID, semester):
-    path = "./Users/" + str(userID) + "/" + str(planID) + \
-        "/" + semester + " Info.xls"
-    if (os.path.exists(path)):
+    path = "./Users/" + str(userID) + "/" + str(planID) + "/" + semester + " Info.xls"
+    if os.path.exists(path):
         return True
     else:
         return False
 
 
 def checkRankSuccess(userID, planID, semester):
-    path = "./Users/" + str(userID) + "/" + str(planID) + \
-        "/" + semester + " Ranking.xls"
-    if (os.path.exists(path)):
+    path = (
+        "./Users/" + str(userID) + "/" + str(planID) + "/" + semester + " Ranking.xls"
+    )
+    if os.path.exists(path):
         return True
     else:
         return False
@@ -233,44 +244,73 @@ def checkRankSuccess(userID, planID, semester):
 
 def getScheduleDetails(userID, planID, semester, planName):
     prefSheetName = "Preferences"
-    prefPath = "./Users/" + str(userID) + "/" + \
-        str(planID) + "/" + semester + " Preferences.xls"
+    prefPath = (
+        "./Users/"
+        + str(userID)
+        + "/"
+        + str(planID)
+        + "/"
+        + semester
+        + " Preferences.xls"
+    )
     from AutoRanking import readPrefData
+
     prefDict = readPrefData(prefPath, prefSheetName)
     # print(prefDict)
     scheduleDetails = {}
     try:
-        path = "./Users/" + str(userID) + "/" + str(planID) + \
-            "/" + semester + " InfoDetails.xls"
+        path = (
+            "./Users/"
+            + str(userID)
+            + "/"
+            + str(planID)
+            + "/"
+            + semester
+            + " InfoDetails.xls"
+        )
         book = xlrd.open_workbook(path)
         sheet = book.sheet_by_name(planName)
         header_row = sheet.row_values(0)
         rows = sheet.nrows
         cols = sheet.ncols
         keys = ["Average Score", "Earliest Time", "Latest Time"]
-        name = {"Average Score": "Average Score",
-                "Earliest Time": "Starting Time", "Latest Time": "Ending Time"}
+        name = {
+            "Average Score": "Average Score",
+            "Earliest Time": "Starting Time",
+            "Latest Time": "Ending Time",
+        }
         min_value = {"Average Score": 0, "Earliest Time": 0, "Latest Time": 0}
-        max_value = {"Average Score": 5,
-                     "Earliest Time": 24, "Latest Time": 24}
+        max_value = {"Average Score": 5, "Earliest Time": 24, "Latest Time": 24}
 
         for key in keys:
-            scheduleDetails[key] = {"name": None, "value": None,
-                                    "check": None, "min_value": None, "max_value": None}
+            scheduleDetails[key] = {
+                "name": None,
+                "value": None,
+                "check": None,
+                "min_value": None,
+                "max_value": None,
+            }
             key_index = header_row.index(key)
             for r in range(1, rows):
                 if sheet.cell_value(r, key_index) != "":
                     scheduleDetails[key]["name"] = name[key]
-                    scheduleDetails[key]["value"] = sheet.cell_value(
-                        r, key_index)
+                    scheduleDetails[key]["value"] = sheet.cell_value(r, key_index)
                     scheduleDetails[key]["min_value"] = min_value[key]
                     scheduleDetails[key]["max_value"] = max_value[key]
                     break
-            if (key == "Average Score" and scheduleDetails[key]["value"] >= prefDict[key]):
+            if (
+                key == "Average Score"
+                and scheduleDetails[key]["value"] >= prefDict[key]
+            ):
                 scheduleDetails[key]["check"] = True
-            elif (key == "Earliest Time" and scheduleDetails[key]["value"] >= prefDict[key]):
+            elif (
+                key == "Earliest Time"
+                and scheduleDetails[key]["value"] >= prefDict[key]
+            ):
                 scheduleDetails[key]["check"] = True
-            elif (key == "Latest Time" and scheduleDetails[key]["value"] <= prefDict[key]):
+            elif (
+                key == "Latest Time" and scheduleDetails[key]["value"] <= prefDict[key]
+            ):
                 scheduleDetails[key]["check"] = True
             else:
                 scheduleDetails[key]["check"] = False
@@ -281,10 +321,12 @@ def getScheduleDetails(userID, planID, semester, planName):
 
 def getEditDate(userID, planID, semester):
     editDate = {}
-    file_path1 = "./Users/" + str(userID) + "/" + \
-        str(planID) + "/" + semester + " Info.xls"
-    file_path2 = "./Users/" + str(userID) + "/" + \
-        str(planID) + "/" + semester + " Ranking.xls"
+    file_path1 = (
+        "./Users/" + str(userID) + "/" + str(planID) + "/" + semester + " Info.xls"
+    )
+    file_path2 = (
+        "./Users/" + str(userID) + "/" + str(planID) + "/" + semester + " Ranking.xls"
+    )
     try:
         creation_time1 = os.path.getmtime(file_path1)
         editDate1 = datetime.fromtimestamp(creation_time1)
@@ -324,8 +366,8 @@ def get_ranked_plan_name(semester, userID, planID, newNum):
     book = xlrd.open_workbook(rankPath + rankName + ".xls")
     sheet = book.sheet_by_name(rankName)
     maxNum = sheet.nrows
-    if (newNum > maxNum):
-        newNum = maxNum-1
+    if newNum > maxNum:
+        newNum = maxNum - 1
     planName = sheet.cell_value(newNum, 0)
     return planName, newNum
 
@@ -336,8 +378,8 @@ def create_schedule_pic(semester, userID, planID, planName):
 
 
 def delete_user_files(userID):
-    path1 = "./Users/"+str(userID)+"/"
-    path2 = "./static/Users/"+str(userID)+"/"
+    path1 = "./Users/" + str(userID) + "/"
+    path2 = "./static/Users/" + str(userID) + "/"
     try:
         shutil.rmtree(path1)
     except:
@@ -346,10 +388,11 @@ def delete_user_files(userID):
         shutil.rmtree(path2)
     except:
         pass
-    
+
+
 def delete_plan_files(planID):
-    path1 = "./Users/"+str(planID)+"/"+str(planID)+"/"
-    path2 = "./static/Users/"+str(planID)+"/"+str(planID)+"/"
+    path1 = "./Users/" + str(planID) + "/" + str(planID) + "/"
+    path2 = "./static/Users/" + str(planID) + "/" + str(planID) + "/"
     try:
         shutil.rmtree(path1)
     except:
