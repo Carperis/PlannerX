@@ -99,7 +99,7 @@
             url: "/plan/fetch_course_names/" + semester,
             type: "GET",
             success: function (data) {
-                var selectedCourses = [];
+                var selectedCourses = "";
                 {% if plan %}
                 var selectedCourses = "{{ plan.courses }}";
                 {% else %}
