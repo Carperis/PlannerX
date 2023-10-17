@@ -74,44 +74,47 @@
             </a>
             <!-- Topbar Navbar -->
             <ul class="navbar-nav ml-auto">
-              <!-- Nav Item - Messages -->
-              <li class="nav-item no-arrow mx-1">
-                <a class="nav-link"
-                   href="https://github.com/Carperis/PlannerX"
-                   role="button"
-                   aria-haspopup="true"
-                   aria-expanded="false">
-                   <i class="fa-brands fa-github fa-xl text-white"></i>
-                </a>
-              </li>
-              <li class="nav-item no-arrow mx-1">
-                <a class="nav-link"
-                   href="https://www.instagram.com/plannerxofficial/"
-                   role="button"
-                   aria-haspopup="true"
-                   aria-expanded="false">
-                   <i class="fa-brands fa-instagram fa-xl text-white"></i>
-                </a>
-              </li>
-              <li class="nav-item no-arrow mx-1">
-                <a class="nav-link"
-                   href="https://discord.com/invite/NGFVvBfF4z"
-                   role="button"
-                   aria-haspopup="true"
-                   aria-expanded="false">
-                   <i class="fa-brands fa-discord fa-xl text-white"></i>
-                </a>
-              </li>
-              <li class="nav-item no-arrow mx-1">
-                <a class="nav-link"
-                   href="/static/img/weixin.png"
-                   role="button"
-                   aria-haspopup="true"
-                   aria-expanded="false">
-                   <i class="fa-brands fa-weixin fa-xl text-white"></i>
-                </a>
-              </li>
-              <div class="topbar-divider d-none d-sm-block"></div>
+              <div class="d-none d-sm-flex">
+                    <!-- Nav Item - Messages -->
+                <li class="nav-item no-arrow mx-1">
+                    <a class="nav-link"
+                    href="https://github.com/Carperis/PlannerX"
+                    role="button"
+                    aria-haspopup="true"
+                    aria-expanded="false">
+                    <i class="fa-brands fa-github fa-xl text-white"></i>
+                    </a>
+                </li>
+                <li class="nav-item no-arrow mx-1">
+                    <a class="nav-link"
+                    href="https://www.instagram.com/plannerxofficial/"
+                    role="button"
+                    aria-haspopup="true"
+                    aria-expanded="false">
+                    <i class="fa-brands fa-instagram fa-xl text-white"></i>
+                    </a>
+                </li>
+                <li class="nav-item no-arrow mx-1">
+                    <a class="nav-link"
+                    href="https://discord.com/invite/NGFVvBfF4z"
+                    role="button"
+                    aria-haspopup="true"
+                    aria-expanded="false">
+                    <i class="fa-brands fa-discord fa-xl text-white"></i>
+                    </a>
+                </li>
+                <li class="nav-item no-arrow mx-1">
+                    <a class="nav-link"
+                    href="/static/img/weixin.png"
+                    role="button"
+                    aria-haspopup="true"
+                    aria-expanded="false">
+                    <i class="fa-brands fa-weixin fa-xl text-white"></i>
+                    </a>
+                </li>
+              </div>
+              
+              <div class="topbar-divider d-none d-md-block"></div>
               <!-- Nav Item - User Information -->
               <li class="nav-item dropdown no-arrow">
                 {% if current_user.is_active %}
