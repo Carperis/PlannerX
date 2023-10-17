@@ -296,7 +296,7 @@ def saveMultiData(multiData, savePath, bookName, sheetName, firstRow):
         num += 1
     savePath = savePath + bookName + ".xls"
     book.save(savePath)
-    print("Data Saved!")
+    print("Plan Data Saved!")
 
 
 if __name__ == "__main__":

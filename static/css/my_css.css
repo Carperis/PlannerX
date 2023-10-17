@@ -119,3 +119,8 @@ li.highlighted {
 .search-choice-close {
   right: 4px !important;
 }
+
+input:disabled{ /* for input ignore in plan.html */
+    -webkit-text-fill-color: #ffffff;
+    opacity: 1; /* required on iOS from https://stackoverflow.com/questions/262158/disabled-input-text-color-on-ios */
+}

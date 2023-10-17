@@ -225,7 +225,7 @@ def savePlanData(allPlansInfoDict, allPlansInfoPath, Info_bookName, firstRow):
                 # print("已保存到第%d条" % (i+1))
     savePath = allPlansInfoPath + Info_bookName + "Details.xls"
     book.save(savePath)
-    print("Data Updated!")
+    print("Plan Details Updated!")
 
 
 if __name__ == "__main__":

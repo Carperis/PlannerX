@@ -267,7 +267,11 @@ def dashboard():
 
 @app.route('/plan/fetch_course_names/<semester>')
 def fetch_course_names(semester):
-    courses = wapi.getAllCourseNames(semester.split("_")[0])
+    courses = []
+    try:
+        courses = wapi.getAllCourseNames(semester.split("_")[0])
+    except:
+        pass
     name_list = []
     for course in courses:
         shortcode = course["code"].replace(" ", "")
@@ -318,22 +322,36 @@ def plan(planID):
     if (wapi.allow_access(user, plan)):
         if (request.method == 'POST'):
             try:
-                classFullNames = request.form.getlist('courses')
                 planname = request.form['planname']
-                AvgScore = request.form['AvgScore']
-                EarlyTime = request.form['EarlyTime']
-                LateTime = request.form['LateTime']
-                semester = request.form['years'] + '-' + request.form['term']
-                if classFullNames == []:
-                    msg.append("Missing Courses")
+                classFullNames = request.form.getlist('courses')
+                try:
+                    semester = request.form['years'] + '-' + request.form['term']
+                except:
+                    semester = ""
+                try:
+                    AvgScore = request.form['AvgScore']
+                except:
+                    AvgScore = 0
+                try:
+                    EarlyTime = request.form['EarlyTime']
+                except:
+                    EarlyTime = "00:00"
+                try:
+                    LateTime = request.form['LateTime']
+                except:
+                    LateTime = "23:59"
                 if (planname == ""):
                     msg.append("Missing Plan Name")
-                if (AvgScore == ""):
-                    msg.append("Missing Average Professor Score")
-                if (EarlyTime == ""):
-                    msg.append("Missing Starting Time")
-                if (LateTime == ""):
-                    msg.append("Missing Finishing Time")
+                if semester == "":
+                    msg.append("Missing Semester")
+                if classFullNames == []:
+                    msg.append("Missing Courses")
+                # if (AvgScore == ""):
+                #     msg.append("Missing Average Professor Score")
+                # if (EarlyTime == ""):
+                #     msg.append("Missing Starting Time")
+                # if (LateTime == ""):
+                #     msg.append("Missing Finishing Time")
                 EarlyT = float(str(EarlyTime).split(
                     ":")[0])+(float(str(EarlyTime).split(":")[1]))/60
                 LateT = float(str(LateTime).split(
@@ -380,6 +398,7 @@ def plan(planID):
                     wapi.getPreference(
                         str(user.id), str(plan.id), prefDict, semester)
                     msg.append("Your prefereces is saved!")
+                    msg.append("Click [Plan Schedules] to see all possible schedules!")
 
                     session['messages'] = msg
                     return redirect("/plan/" + str(plan.id))
@@ -481,6 +500,7 @@ def getPlans(planID):
         msg.append("Sorry, no schedule is available. There might be some inevitable time conflicts in your courses. Please try to change your preferences and submit again.")
     else:
         msg.append("Got your schedules! You can see them below.")
+        msg.append("Don't forget to [Rank Schedules] to get the best one!")
 
     showSchedule(planID, 1)
     session['messages'] = msg

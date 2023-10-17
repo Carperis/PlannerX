@@ -116,7 +116,6 @@ def getPreference(userID, planID, prefDict, semesterNew):
     firstRow = list(prefDict.keys())
     prefList = dict2List(prefDict)
     saveData(prefList, savePath, saveName, firstRow)
-    print("saved")
 
 
 def checkCourses(courses, semester):
@@ -315,6 +314,7 @@ def rank_all_schedules(semester, userID, planID, ignoreSeats=False):
     msg.append("Plan details are added.")
     AutoRanking.AutoRanking(semester, userID, planID)
     msg.append("Your plans are ranked! You can see them below.")
+    msg.append("No. 1 schedule should be the best one!")
     return msg
 
 
@@ -358,3 +358,4 @@ def delete_plan_files(planID):
         shutil.rmtree(path2)
     except:
         pass
+    

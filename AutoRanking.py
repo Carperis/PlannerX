@@ -40,7 +40,7 @@ def saveRankDict(dataDict, savePath, saveName):
             sheet.write(i, 1, dataDict[keys[i]])
     savePath = savePath + saveName + ".xls"
     book.save(savePath)
-    print("Data Ranking Saved!")
+    print("Ranking Data Saved!")
 
 
 def getPlanScore(allPlansInfoDetailDict, prefRank, prefDict):

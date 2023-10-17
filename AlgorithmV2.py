@@ -159,14 +159,14 @@ def getPlans(scheduleLayers, numSect, sectList, SameTeacherSect, limit):
                 allPlans.append(onePlan.copy())
                 numPlanDone[0] += 1
             alist[depth - 1] += 1
-            print("\r", end="")
-            print(alist, end="")
-            print(" %d Plans Done" % (numPlanDone[0]), end="")
+            # print("\r", end="")
+            # print(alist, end="")
+            # print(" %d Plans Done" % (numPlanDone[0]), end="")
             recursion(copyLayers(newlayers), depth-1)
 
     recursion(copyLayers(scheduleLayers), depth)
 
-    print("")
+    # print("")
     return allPlans
 
 
