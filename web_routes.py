@@ -253,7 +253,7 @@ def logout():
 
 @app.route('/')
 def index():
-    msg = ["Our database is NOW updated to Spring 2024. Let's plan it out!",]
+    msg = ["Our database is NOW updated to Spring 2024. Let's plan it out!", "Remember our NEW website link: www.plannerx.app"]
     return render_template('index.html', msg=msg)
 
 
