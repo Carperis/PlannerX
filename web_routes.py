@@ -127,7 +127,7 @@ def login():
                         userID = user.id
                         path = "./Users/" + str(userID) + "/"
                         wapi.checkFolder(path)
-                        print(f"{user.email} Login success!")
+                        print(f"{user.email} (ID:{user.id}) Login success!")
                         login_user(user, remember=form.remember.data)
                         return redirect(url_for('dashboard'))
                 else:
@@ -158,7 +158,7 @@ def reset_password_request():
                 if user.google:
                     warning = "Please login with your Google account."
                     return redirect(f'/login?warning={warning}')
-                print(f"{user.email} Reset password requested!")
+                print(f"{user.email} (ID:{user.id}) Reset password requested!")
                 wapi.send_reset_email(user)
                 msg = []
                 msg.append(
@@ -189,7 +189,7 @@ def reset_password_token(token):
                 form.password.data).decode('utf-8')
             user.password = hashed_password
             db.session.commit()
-            print(f"{user.email} Reset password success!")
+            print(f"{user.email} (ID:{user.id}) Reset password success!")
             warning = "Your password has been updated! You are now able to login."
             return redirect(f'/login?warning={warning}')
     return render_template('reset_password_token.html', form=form, msg=msg)
@@ -216,7 +216,7 @@ def email_verification_request():
                 if user.verify:
                     warning = "Your email has been verified. Please login with your email and password."
                     return redirect(f'/login?warning={warning}')
-                print(f"{user.email} Email verification requested!")
+                print(f"{user.email} (ID:{user.id}) Email verification requested!")
                 wapi.send_verification_email(user)
                 msg = []
                 msg.append(
@@ -239,7 +239,7 @@ def email_verification_token(token):
     user.verify = True
     email = user.email
     db.session.commit()
-    print(f"{user.email} Email verification success!")
+    print(f"{user.email} (ID:{user.id}) Email verification success!")
     return render_template('email_verification_token.html', msg=msg, email=email)
 
 
@@ -395,6 +395,7 @@ def plan(planID):
                     path = "./Users/"+str(user.id)+"/"+str(plan.id)+"/"
                     if (os.path.exists(path)):
                         shutil.rmtree(path)
+                    print(f"{user.email} (ID:{user.id}) ", end='')
                     wapi.getPreference(
                         str(user.id), str(plan.id), prefDict, semester)
                     msg.append("Your prefereces is saved!")
@@ -453,6 +454,7 @@ def deletePlan(planID):
             db.session.delete(plan)
             db.session.commit()
             wapi.delete_user_files(planID)
+            print(f"{user.email} (ID:{user.id}) delete plan (ID:{planID}) success!")
         except:
             pass
         return redirect(url_for('dashboard'))
@@ -468,12 +470,14 @@ def deleteUser():
     logout_user()
     plans = Plan.query.filter_by(user_id=user.id)
     try:
+        userEmail = user.email
         userID = user.id
         db.session.delete(user)
         for plan in plans:
             db.session.delete(plan)
         db.session.commit()
         wapi.delete_user_files(userID)
+        print(f"{userEmail} (ID:{userID}) delete user success!")
     except Exception as e:
         print("Error in deleting user: " + str(e))
     return redirect(url_for('index'))
@@ -494,7 +498,7 @@ def getPlans(planID):
         path = "./Users/" + userID + "/" + planID + "/" + semester + " " + name + ".xls"
         if (os.path.exists(path)):
             os.remove(path)
-
+    print(f"{user.email} (ID:{user.id}) ", end='')
     result = wapi.get_all_schedules(semester, userID, planID)
     if (result == 0):
         msg.append("Sorry, no schedule is available. There might be some inevitable time conflicts in your courses. Please try to change your preferences and submit again.")
@@ -517,6 +521,7 @@ def rankPlans(planID):
     userID = str(user.id)
     planID = str(planID)
     semester = plan.semester
+    print(f"{user.email} (ID:{user.id}) ", end='')
     try:
         msg += wapi.rank_all_schedules(semester,
                                        userID, planID, ignoreSeats=True)
