@@ -57,7 +57,7 @@ def google_callback():
                 userID = user.id
                 path = "./Users/" + str(userID) + "/"
                 wapi.checkFolder(path)
-                print(f"{user.email} Google login success!")
+                print(f"{user.email} (ID:{user.id}) Google login success!")
                 login_user(user, remember=True)
                 return redirect(url_for('dashboard'))
             else:
