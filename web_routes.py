@@ -98,7 +98,8 @@ def register():
             return redirect(f'/email_verification?email={form.email.data}')
         else:
             msg.append(
-                "That email may already exist. Please choose a different one.")
+                "That email may already exist. Please go back and try to login directly!")
+            msg.append("Or, if you want to create a new account, please choose a different email.")
 
     return render_template('register.html', form=form, msg=msg)
 
