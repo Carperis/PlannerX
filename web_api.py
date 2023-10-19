@@ -7,6 +7,7 @@ import xlwt
 import xlrd
 from datetime import datetime
 import shutil
+from threading import Thread
 
 # The following are custom modules
 import AutoSelection
@@ -45,6 +46,9 @@ def get_google_redirect_uri():
         google_redirect_uri = "http://127.0.0.1:5000/google_callback"
     return google_redirect_uri
 
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
 
 def send_reset_email(user):
     token = user.get_token()
@@ -56,7 +60,10 @@ def send_reset_email(user):
 
 If you did not make this request then simply ignore this email and no changes will be made.
 '''
-    mail.send(msg)
+    # mail.send(msg)
+    thr = Thread(target=send_async_email, args=[app, msg])
+    thr.start()
+    print(f"{user.email} (ID:{user.id}) Reset password requested!")
 
 
 def send_verification_email(user):
@@ -69,7 +76,10 @@ def send_verification_email(user):
 
 If you did not make this request then simply ignore this email and no changes will be made.
 '''
-    mail.send(msg)
+    # mail.send(msg)
+    thr = Thread(target=send_async_email, args=[app, msg])
+    thr.start()
+    print(f"{user.email} (ID:{user.id}) Email verification requested!")
 
 
 def getPreference(userID, planID, prefDict, semesterNew):

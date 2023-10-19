@@ -159,7 +159,6 @@ def reset_password_request():
                 if user.google:
                     warning = "Please login with your Google account."
                     return redirect(f'/login?warning={warning}')
-                print(f"{user.email} (ID:{user.id}) Reset password requested!")
                 wapi.send_reset_email(user)
                 msg = []
                 msg.append(
@@ -217,7 +216,6 @@ def email_verification_request():
                 if user.verify:
                     warning = "Your email has been verified. Please login with your email and password."
                     return redirect(f'/login?warning={warning}')
-                print(f"{user.email} (ID:{user.id}) Email verification requested!")
                 wapi.send_verification_email(user)
                 msg = []
                 msg.append(
