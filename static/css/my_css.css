@@ -15,10 +15,14 @@
   box-shadow: 0px 5px 20px 1px black !important;
 }
 
-.float_btn {
-  pointer-events: auto;
+.float_btn_box {
+  pointer-events: none;
   text-align: right;
   z-index: 123456;
+}
+
+.float_btn {
+  pointer-events: auto;
 }
 
 .float_box {

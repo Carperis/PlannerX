@@ -2,43 +2,80 @@
 <html lang="en">
   <head>
     <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-NSGFCZBD');
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-NSGFCZBD");
     </script>
     <!-- End Google Tag Manager -->
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
 
     <!-- Custom fonts for this template-->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- Custom styles for this template-->
-    <link href="/static/css/sb-admin-2.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="/static/css/my_css.css">
+    <link href="/static/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="/static/css/my_css.css" />
 
     <!-- Bootstrap core JavaScript-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js" integrity="sha512-TPh2Oxlg1zp+kz3nFA0C5vVC6leG/6mm1z9+mA81MI5eaUVqasPLO8Cuk4gMF4gUfP5etR73rgU/8PNMsSesoQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js" integrity="sha512-igl8WEUuas9k5dtnhKqyyld6TzzRjvMqLC79jkgT3z02FvJyHAuUtyemm/P/jYSne1xwFI06ezQxEwweaiV7VA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"
+      integrity="sha512-TPh2Oxlg1zp+kz3nFA0C5vVC6leG/6mm1z9+mA81MI5eaUVqasPLO8Cuk4gMF4gUfP5etR73rgU/8PNMsSesoQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+      integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"
+      integrity="sha512-igl8WEUuas9k5dtnhKqyyld6TzzRjvMqLC79jkgT3z02FvJyHAuUtyemm/P/jYSne1xwFI06ezQxEwweaiV7VA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
     <!-- Core plugin JavaScript-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js" integrity="sha512-0QbL0ph8Tc8g5bLhfVzSqxe9GERORsKhIn1IrpxDAgUsbBGz/V7iSav2zzW325XGd1OMLdL4UiqRJj702IeqnQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"
+      integrity="sha512-0QbL0ph8Tc8g5bLhfVzSqxe9GERORsKhIn1IrpxDAgUsbBGz/V7iSav2zzW325XGd1OMLdL4UiqRJj702IeqnQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
 
     <!-- Custom scripts for all pages-->
     <script src="/static/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
     <!-- <script src="/static/vendor/chart.js/Chart.min.js"></script> -->
-    
+
     <!-- Page level custom scripts -->
     <!-- <script src="/static/js/demo/chart-area-demo.js"></script> -->
     <!-- <script src="/static/js/demo/chart-pie-demo.js"></script> -->
@@ -47,19 +84,21 @@
     <link rel="Bookmark" href="/static/favicon.ico" />
     <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon" />
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="/static/favicon.ico">
-    <link rel="apple-touch-icon" href="/static/icon.png">
+    <link rel="apple-touch-icon" href="/static/favicon.ico" />
+    <link rel="apple-touch-icon" href="/static/icon.png" />
 
     {% block head %}{% endblock %}
-
   </head>
   <body id="page-top" class="bg-black">
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NSGFCZBD"
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-NSGFCZBD"
         height="0"
         width="0"
-        style="display:none;
-               visibility:hidden"></iframe></noscript>
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
     <!-- End Google Tag Manager (noscript) -->
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -68,94 +107,122 @@
         <!-- Main Content -->
         <div id="content">
           <!-- Topbar -->
-          <nav class="navbar navbar-expand navbar-light bg-blue topbar mb-4 static-top shadow">
+          <nav
+            class="navbar navbar-expand navbar-light bg-blue topbar mb-4 static-top shadow"
+          >
             <a href="/" class="text-decoration-none">
-              <div class="h2 text-white font-weight-bold my-auto pl-3">BU PlannerX</div>
+              <div class="h2 text-white font-weight-bold my-auto pl-3">
+                BU PlannerX
+              </div>
             </a>
             <!-- Topbar Navbar -->
             <ul class="navbar-nav ml-auto">
               <div class="d-none d-sm-flex">
-                    <!-- Nav Item - Messages -->
+                <!-- Nav Item - Messages -->
                 <li class="nav-item no-arrow mx-1">
-                    <a class="nav-link"
+                  <a
+                    class="nav-link"
                     href="https://github.com/Carperis/PlannerX"
                     role="button"
                     aria-haspopup="true"
-                    aria-expanded="false">
+                    aria-expanded="false"
+                  >
                     <i class="fa-brands fa-github fa-xl text-white"></i>
-                    </a>
+                  </a>
                 </li>
                 <li class="nav-item no-arrow mx-1">
-                    <a class="nav-link"
+                  <a
+                    class="nav-link"
                     href="https://www.instagram.com/plannerxofficial/"
                     role="button"
                     aria-haspopup="true"
-                    aria-expanded="false">
+                    aria-expanded="false"
+                  >
                     <i class="fa-brands fa-instagram fa-xl text-white"></i>
-                    </a>
+                  </a>
                 </li>
                 <li class="nav-item no-arrow mx-1">
-                    <a class="nav-link"
+                  <a
+                    class="nav-link"
                     href="https://discord.com/invite/NGFVvBfF4z"
                     role="button"
                     aria-haspopup="true"
-                    aria-expanded="false">
+                    aria-expanded="false"
+                  >
                     <i class="fa-brands fa-discord fa-xl text-white"></i>
-                    </a>
+                  </a>
                 </li>
                 <li class="nav-item no-arrow mx-1">
-                    <a class="nav-link"
+                  <a
+                    class="nav-link"
                     href="/static/img/weixin.png"
                     role="button"
                     aria-haspopup="true"
-                    aria-expanded="false">
+                    aria-expanded="false"
+                  >
                     <i class="fa-brands fa-weixin fa-xl text-white"></i>
-                    </a>
+                  </a>
                 </li>
               </div>
-              
+
               <div class="topbar-divider d-none d-md-block"></div>
               <!-- Nav Item - User Information -->
               <li class="nav-item dropdown no-arrow">
                 {% if current_user.is_active %}
-                  <a class="nav-link dropdown-toggle"
-                     href="/dashboard"
-                     id="userDropdown"
-                     role="button"
-                     data-toggle="dropdown"
-                     aria-haspopup="true"
-                     aria-expanded="false">
-                    <span class="mr-2 d-none d-lg-inline text-white">{{ current_user.username }}</span>
-                    <img class="img-profile rounded-circle"
-                         src="/static/img/undraw_profile.svg">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="/dashboard"
+                  id="userDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <span class="mr-2 d-none d-lg-inline text-white"
+                    >{{ current_user.username }}</span
+                  >
+                  <img
+                    class="img-profile rounded-circle"
+                    src="/static/img/undraw_profile.svg"
+                  />
+                </a>
+                <!-- Dropdown - User Information -->
+                <div
+                  class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                  aria-labelledby="userDropdown"
+                >
+                  <a class="dropdown-item" href="/dashboard">
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Dashboard
                   </a>
-                  <!-- Dropdown - User Information -->
-                  <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                       aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="/dashboard">
-                      <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                      Dashboard
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item"
-                       href="/logout"
-                       data-toggle="modal"
-                       data-target="#logoutModal">
-                      <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                      Logout
-                    </a>
-                  </div>
+                  <div class="dropdown-divider"></div>
+                  <a
+                    class="dropdown-item"
+                    href="/logout"
+                    data-toggle="modal"
+                    data-target="#logoutModal"
+                  >
+                    <i
+                      class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"
+                    ></i>
+                    Logout
+                  </a>
+                </div>
                 {% else %}
-                  <a class="nav-link"
-                     href="/login"
-                     id="userDropdown"
-                     role="button"
-                     aria-haspopup="true"
-                     aria-expanded="false">
-                    <span class="mr-2 d-none d-lg-inline text-white">Login</span>
-                    <img class="img-profile rounded-circle"
-                         src="/static/img/undraw_profile.svg">
-                  </a>
+                <a
+                  class="nav-link"
+                  href="/login"
+                  id="userDropdown"
+                  role="button"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <span class="mr-2 d-none d-lg-inline text-white">Login</span>
+                  <img
+                    class="img-profile rounded-circle"
+                    src="/static/img/undraw_profile.svg"
+                  />
+                </a>
                 {% endif %}
               </li>
             </ul>
@@ -172,47 +239,57 @@
         <footer class="sticky-footer bg-gray-900">
           <div class="container my-auto">
             <div class="copyright text-center my-auto text-white-50">
-                <nav class="navbar navbar-expand justify-content-center">
-                    <ul class="navbar-nav">
-                        <li class="nav-item no-arrow mx-1">
-                            <a class="nav-link"
-                               href="https://github.com/Carperis/PlannerX"
-                               role="button"
-                               aria-haspopup="true"
-                               aria-expanded="false">
-                               <i class="fa-brands fa-github fa-xl text-white"></i>
-                            </a>
-                          </li>
-                          <li class="nav-item no-arrow mx-1">
-                            <a class="nav-link"
-                               href="https://www.instagram.com/plannerxofficial/"
-                               role="button"
-                               aria-haspopup="true"
-                               aria-expanded="false">
-                               <i class="fa-brands fa-instagram fa-xl text-white"></i>
-                            </a>
-                          </li>
-                          <li class="nav-item no-arrow mx-1">
-                            <a class="nav-link"
-                               href="https://discord.com/invite/NGFVvBfF4z"
-                               role="button"
-                               aria-haspopup="true"
-                               aria-expanded="false">
-                               <i class="fa-brands fa-discord fa-xl text-white"></i>
-                            </a>
-                          </li>
-                          <li class="nav-item no-arrow mx-1">
-                            <a class="nav-link"
-                               href="/static/img/weixin.png"
-                               role="button"
-                               aria-haspopup="true"
-                               aria-expanded="false">
-                               <i class="fa-brands fa-weixin fa-xl text-white"></i>
-                            </a>
-                          </li>
-                    </ul>
-                </nav>
-              <span>Copyright &copy; BU PlannerX 2023 All Rights Reserved.</span>
+              <nav class="navbar navbar-expand justify-content-center">
+                <ul class="navbar-nav">
+                  <li class="nav-item no-arrow mx-1">
+                    <a
+                      class="nav-link"
+                      href="https://github.com/Carperis/PlannerX"
+                      role="button"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      <i class="fa-brands fa-github fa-xl text-white"></i>
+                    </a>
+                  </li>
+                  <li class="nav-item no-arrow mx-1">
+                    <a
+                      class="nav-link"
+                      href="https://www.instagram.com/plannerxofficial/"
+                      role="button"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      <i class="fa-brands fa-instagram fa-xl text-white"></i>
+                    </a>
+                  </li>
+                  <li class="nav-item no-arrow mx-1">
+                    <a
+                      class="nav-link"
+                      href="https://discord.com/invite/NGFVvBfF4z"
+                      role="button"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      <i class="fa-brands fa-discord fa-xl text-white"></i>
+                    </a>
+                  </li>
+                  <li class="nav-item no-arrow mx-1">
+                    <a
+                      class="nav-link"
+                      href="/static/img/weixin.png"
+                      role="button"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      <i class="fa-brands fa-weixin fa-xl text-white"></i>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+              <span
+                >Copyright &copy; BU PlannerX 2023 All Rights Reserved.</span
+              >
             </div>
           </div>
         </footer>
@@ -227,12 +304,16 @@
         <div class="container-fluid p-0 pt-2">
           <div id="survey_form">
             <div class="row">
-              <div class="col-12 text-white mt-2 text-lg text-center">Survey Form</div>
+              <div class="col-12 text-white mt-2 text-lg text-center">
+                Survey Form
+              </div>
             </div>
             <div class="row m-2">
-              <iframe class="rounded-lg border-0 w-100"
-                      style="height: 500px"
-                      src="https://forms.gle/svTchAzCQ2UjfqmM6">
+              <iframe
+                class="rounded-lg border-0 w-100"
+                style="height: 500px"
+                src="https://forms.gle/svTchAzCQ2UjfqmM6"
+              >
               </iframe>
             </div>
           </div>
@@ -251,8 +332,7 @@
               <ul>
                 <li>
                   <button class="btn text-white" id="survey_btn">
-                    Participate Survey to Earn Gift
-                    Card!
+                    Participate Survey to Earn Gift Card!
                   </button>
                 </li>
                 <!-- <li>
@@ -263,101 +343,154 @@
           </div>
         </div>
       </div>
-      <div class="float_btn">
-        <button class="btn btn-warning btn-lg rounded-pill" id="feedback_btn">
-          <i class=" fas fa-comments"></i>
+      <div class="float_btn_box">
+        <button class="btn btn-warning btn-lg rounded-pill float_btn" id="feedback_btn">
+          <i class="fas fa-comments"></i>
           Feedback Here!
-        </div>
+        </button>
       </div>
-      <script src="/static/js/my_js.js"></script>
-      <script>
-        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="popover"]'));
-        var popoverList = popoverTriggerList.map(function (popoverTrigger) {
-            return new bootstrap.Popover(popoverTrigger);
-        });
-        const popover = new bootstrap.Popover('.popover-dismiss', {
-            trigger: 'focus'
-        })
-      </script>
-      <!-- Scroll to Top Button-->
-      <a class="scroll-to-top rounded bg-info" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-      </a>
-      <!-- Logout Modal-->
-      <div class="modal fade"
-           id="logoutModal"
-           tabindex="-1"
-           role="dialog"
-           aria-labelledby="exampleModalLabel"
-           aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div class="modal-body">Click "Logout" below if you are ready to logout.</div>
-            <div class="modal-footer">
-              <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-              <a class="btn btn-primary" href="/logout">Logout</a>
-            </div>
+    </div>
+    <script src="/static/js/my_js.js"></script>
+    <script>
+      var popoverTriggerList = [].slice.call(
+        document.querySelectorAll('[data-toggle="popover"]')
+      );
+      var popoverList = popoverTriggerList.map(function (popoverTrigger) {
+        return new bootstrap.Popover(popoverTrigger);
+      });
+      const popover = new bootstrap.Popover(".popover-dismiss", {
+        trigger: "focus",
+      });
+    </script>
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded bg-info" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+    <!-- Logout Modal-->
+    <div
+      class="modal fade"
+      id="logoutModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+            <button
+              class="close"
+              type="button"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Click "Logout" below if you are ready to logout.
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              type="button"
+              data-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <a class="btn btn-primary" href="/logout">Logout</a>
           </div>
         </div>
       </div>
-      <!-- deleteAccount Modal-->
-      <div class="modal fade"
-           id="deleteAccountModal"
-           tabindex="-1"
-           role="dialog"
-           aria-labelledby="exampleModalLabel"
-           aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Are You Sure to Delete Your Account?</h5>
-              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              Click "Delete" below if you are sure to delete your account. This will delate
-              all your plan data and personal information. The operation CANNOT be undone.
-            </div>
-            <div class="modal-footer">
-              <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-              <a class="btn btn-danger" href="/deleteuser">Delete</a>
-            </div>
+    </div>
+    <!-- deleteAccount Modal-->
+    <div
+      class="modal fade"
+      id="deleteAccountModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">
+              Are You Sure to Delete Your Account?
+            </h5>
+            <button
+              class="close"
+              type="button"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Click "Delete" below if you are sure to delete your account. This
+            will delate all your plan data and personal information. The
+            operation CANNOT be undone.
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              type="button"
+              data-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <a class="btn btn-danger" href="/deleteuser">Delete</a>
           </div>
         </div>
       </div>
-      <!-- deleteAccount Modal-->
-      {% if (plan) %}
-        <div class="modal fade"
-             id="deletePlanModal"
-             tabindex="-1"
-             role="dialog"
-             aria-labelledby="exampleModalLabel"
-             aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Are You Sure to Delete This Plan?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                Click "Delete" below if you are sure to delete <span class="font-weight-bold">"{{ plan.planname }}"</span>. The operation CANNOT be undone.
-              </div>
-              <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-danger" href="/deleteplan/{{ plan.id }}">Delete</a>
-              </div>
-            </div>
+    </div>
+    <!-- deleteAccount Modal-->
+    {% if (plan) %}
+    <div
+      class="modal fade"
+      id="deletePlanModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">
+              Are You Sure to Delete This Plan?
+            </h5>
+            <button
+              class="close"
+              type="button"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Click "Delete" below if you are sure to delete
+            <span class="font-weight-bold">"{{ plan.planname }}"</span>. The
+            operation CANNOT be undone.
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              type="button"
+              data-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <a class="btn btn-danger" href="/deleteplan/{{ plan.id }}"
+              >Delete</a
+            >
           </div>
         </div>
-      {% endif %}
-    </body>
-  </html>
+      </div>
+    </div>
+    {% endif %}
+  </body>
+</html>
