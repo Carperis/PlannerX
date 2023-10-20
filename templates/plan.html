@@ -93,6 +93,9 @@
         var selectedValue1 = $('#year').val();
         var selectedValue2 = $('#term').val();
         if (selectedValue1 == null || selectedValue2 == null) {
+            $("#courses").empty();
+            const option = $('<option>', { value: "", text: "Please select a year and a term first"});
+            $("#courses").append(option);
             return;
         }
         var semester = selectedValue1 + "-" + selectedValue2;
@@ -102,6 +105,7 @@
             url: "/plan/fetch_course_names/" + semester,
             type: "GET",
             success: function (data) {
+                console.log(data)
                 var selectedCourses = "";
                 {% if plan %}
                 var selectedCourses = "{{ plan.courses }}";
@@ -192,6 +196,8 @@
     }
     
     $(document).ready(function () {
+        updateCourseOptions();
+        
         {% if plan %}
         if ("{{ plan.AvgScore }}" == "0.0"){
             $("#AvgScoreIgnore").attr('checked', true);
@@ -266,7 +272,7 @@
     {% endif %}
     {% if plan %}
       {% if (plan.planNum != -1) %}
-        <div style="height: 50px"></div>
+        <div style="height: 20px"></div>
         <div class="row d-flex align-items-center justify-content-center m-4">
           <div class="h3 mb-0 text-white font-weight-bold">Schedule</div>
         </div>
@@ -287,14 +293,16 @@
                   </a>
                 </div>
                 <div class="col-8 text-white d-flex align-content-center justify-content-center">
-                  <p style="margin: 10px">No.</p>
+                  <p style="margin: 10px;">No.</p>
                   <input type="number"
                          min="0"
+                         max="{{ totalPlanNum }}"
                          name="num"
                          id="num"
                          value="{{ plan.planNum+1 }}"
                          class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4"
-                         style="width: 100px">
+                         style="width: 80px">
+                <p style="margin: 10px">/&nbsp;{{ totalPlanNum }}</p>
                   <button onclick="goto()" id="goto" class="btn p-0">
                     <i class="fa-solid fa-angles-right fa-inverse fa-xl "
                        style="margin: 10px"></i>
@@ -309,40 +317,46 @@
             </div>
           {% else %}
             <div class="row w-100 d-flex justify-content-center mb-4">
-              <img src="/static/Users/{{ user.id }}/{{ plan.id }}/schedule.png"
-                   id="img"
-                   class="col-xl-8 col-md-10 col-sm-12 bg-gray-200 rounded-lg" />
+                    <img src="/static/Users/{{ user.id }}/{{ plan.id }}/schedule.png"
+                        id="img"
+                        class="col-xl-8 col-md-10 col-sm-12 bg-gray-200 rounded-lg" />
             </div>
-            <div class="row">
-              <div class="col-3 text-left my-auto">
-                <a onclick=" showSchedule(-4)" class="btn">
-                  <i class="fa-solid fa-angle-left fa-inverse fa-2xl"></i>
-                </a>
-              </div>
-              <div class="col-6 text-white d-flex align-content-center justify-content-center">
-                <p style="margin: 10px">Schedule</p>
-                <input type="number"
-                       min="0"
-                       name="num"
-                       id="num"
-                       value="{{ plan.planNum+1 }}"
-                       class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4"
-                       style="width: 100px">
-                <button onclick="goto()" id="goto" class="btn p-0">
-                  <i class="fa-solid fa-angles-right fa-inverse fa-xl"
-                     style="margin: 10px"></i>
-                </button>
-              </div>
-              <div class="col-3 text-right my-auto">
-                <a onclick="showSchedule(-2)" class="btn">
-                  <i class="fa-solid fa-angle-right fa-inverse fa-2xl"></i>
-                </a>
-              </div>
+            <div class="row w-100 d-flex justify-content-center">
+                <div class="col-xl-8 col-md-10 col-sm-12">
+                    <div class="row">
+                        <div class="col-2 text-left my-auto">
+                            <a onclick=" showSchedule(-4)" class="btn">
+                              <i class="fa-solid fa-angle-left fa-inverse fa-2xl"></i>
+                            </a>
+                        </div>
+                        <div class="col-8 text-white d-flex align-content-center justify-content-center">
+                        <p style="margin: 10px">Schedule</p>
+                        <input type="number"
+                                min="1"
+                                max="{{ totalPlanNum }}"
+                                name="num"
+                                id="num"
+                                value="{{ plan.planNum+1 }}"
+                                class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4"
+                                style="width: 100px">
+                        <p style="margin: 10px">/&nbsp;{{ totalPlanNum }}</p>
+                        <button onclick="goto()" id="goto" class="btn p-0">
+                            <i class="fa-solid fa-angles-right fa-inverse fa-xl"
+                                style="margin: 10px"></i>
+                        </button>
+                        </div>
+                        <div class="col-2 text-right my-auto">
+                        <a onclick="showSchedule(-2)" class="btn">
+                            <i class="fa-solid fa-angle-right fa-inverse fa-2xl"></i>
+                        </a>
+                        </div>
+                    </div>
+                </div>
             </div>
           {% endif %}
         </div>
         {% if (controls[0] == True) %}
-        <div class="d-flex flex-row text-center mb-5">
+        <div class="d-flex flex-row text-center mb-5 w-100">
             <div class="col-4 p-3">
             <a href="/getplans/{{ plan.id }}"
                 class="btn btn-info h-100"
@@ -400,18 +414,26 @@
               action="/plan/{% if plan.id %}{{ plan.id }}{% else %}0{% endif %}"
               method="POST">
           <div class="form-group">
-            <i class="fa-solid fa-user fa-inverse"></i>
-            <label>
-              Plan Name
-              <a tabindex="0"
-                 role="button"
-                 class="btn p-0"
-                 data-toggle="popover"
-                 data-trigger="focus"
-                 data-title="{{ guidance["planname"][0] }}"
-                 data-content="{{ guidance["planname"][1] }}"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
-                 <button id="btn" type="submit" class="btn btn-success btn-sm bg-black ml-2">Save / Update</button>
-            </label>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <i class="fa-solid fa-user fa-inverse"></i>
+                    <label>
+                        Plan Name
+                        <a tabindex="0"
+                           role="button"
+                           class="btn p-0"
+                           data-toggle="popover"
+                           data-trigger="focus"
+                           data-title="{{ guidance["planname"][0] }}"
+                           data-content="{{ guidance["planname"][1] }}"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+                      </label>
+                </div>
+                <div>
+                    <button id="btn" type="submit" class="btn btn-success btn-sm bg-black mb-2 mr-1 ">Save / Update</button>
+                </div>
+            </div>
+            
+            
             <input class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 pl-4"
                    type="text"
                    name="planname"
@@ -435,7 +457,7 @@
               <select class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 w-50 mr-1"
                       name="years"
                       id="year">
-                <option value="" disabled selected>Year</option>
+                <option value="" disabled selected>Select Year</option>
                 {% for year in years %}
                   <option id="years">
                     {{ year }}
@@ -445,7 +467,7 @@
               <select class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 w-50 ml-1"
                       name="term"
                       id="term">
-                <option value="" disabled selected>Term</option>
+                <option value="" disabled selected>Select Term</option>
                 <option value="SPRG">Spring</option>
                 <option value="FALL">Fall</option>
                 <option value="SUMM_1">Summer 1</option>

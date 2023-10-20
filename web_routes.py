@@ -317,6 +317,8 @@ def plan(planID):
 
     controls = [False, False, False]
     editDate = {}
+    
+    totalPlanNum = 0
 
     if (wapi.allow_access(user, plan)):
         if (request.method == 'POST'):
@@ -418,6 +420,9 @@ def plan(planID):
             controls = [check1, check2, check3]
             editDate = wapi.getEditDate(
                 user.id, plan.id, plan.semester)
+            if check2:
+                totalPlanNum = wapi.get_total_plan_num(
+                    user.id, plan.id, plan.semester)
 
     else:
         return redirect(url_for('index'))
@@ -440,7 +445,7 @@ def plan(planID):
         "Can't find your courses?": "Please check if you have chosen the correct semester and entered the correct course code or course name. If you still can't find it, please contact us so that we can update our database."
     }
 
-    return render_template('plan.html', msg=msg, plan=plan, user=user, classFullCodes=classFullCodes, years=years, guidance=guidance, controls=controls, editDate=editDate, quickTips=quickTips)
+    return render_template('plan.html', msg=msg, plan=plan, user=user, classFullCodes=classFullCodes, years=years, guidance=guidance, controls=controls, editDate=editDate, quickTips=quickTips, totalPlanNum=totalPlanNum)
 
 
 @app.route('/deleteplan/<int:planID>')

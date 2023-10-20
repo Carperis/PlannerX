@@ -93,6 +93,9 @@
         var selectedValue1 = $('#year').val();
         var selectedValue2 = $('#term').val();
         if (selectedValue1 == null || selectedValue2 == null) {
+            $("#courses").empty();
+            const option = $('<option>', { value: "", text: "Please select a year and a term first"});
+            $("#courses").append(option);
             return;
         }
         var semester = selectedValue1 + "-" + selectedValue2;
@@ -192,6 +195,8 @@
     }
     
     $(document).ready(function () {
+        updateCourseOptions();
+
         {% if plan %}
         if ("{{ plan.AvgScore }}" == "0.0"){
             $("#AvgScoreIgnore").attr('checked', true);
@@ -318,7 +323,7 @@
               <select class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 w-50 mr-1"
                       name="years"
                       id="year">
-                <option value="" disabled selected>Year</option>
+                <option value="" disabled selected>Select Year</option>
                 {% for year in years %}
                   <option id="years">
                     {{ year }}
@@ -328,7 +333,7 @@
               <select class="text-lg rounded-pill form-control bg-gray-900 text-white border-0 w-50 ml-1"
                       name="term"
                       id="term">
-                <option value="" disabled selected>Term</option>
+                <option value="" disabled selected>Select Term</option>
                 <option value="SPRG">Spring</option>
                 <option value="FALL">Fall</option>
                 <option value="SUMM_1">Summer 1</option>

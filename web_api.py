@@ -369,3 +369,10 @@ def delete_plan_files(planID):
     except:
         pass
     
+def get_total_plan_num(userID, planID, semester):
+    file_path = "./Users/" + str(userID) + "/" + \
+        str(planID) + "/" + semester + " Info.xls"
+    book = xlrd.open_workbook(file_path)
+    num_of_sheets = len(book.sheet_names())
+    return num_of_sheets
+    
