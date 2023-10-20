@@ -283,12 +283,12 @@
                    id="img"
                    class="bg-gray-200 rounded-lg w-100 my-auto" />
             </div>
-            <div class="col-xl-4 pb-4 d-flex flex-column justify-content-center">
+            <div class="col-xl-4 pb-4 d-flex flex-column">
               <div class="row" id="schedule_details"></div>
               <div class="row flex-grow-1"></div>
-              <div class="row mt-3 mx-auto">
+              <div class="row mt-3 w-100">
                 <div class="col-2 text-left my-auto">
-                  <a onclick=" showSchedule(-4)" class="btn">
+                  <a onclick="showSchedule(-4)" class="btn">
                     <i class="fa-solid fa-angle-left fa-inverse fa-2xl"></i>
                   </a>
                 </div>
@@ -496,7 +496,7 @@
           <div class=" form-group">
             <i class="fa-solid fa-chalkboard-user fa-inverse"></i>
             <label>
-              Average Professors Score
+              Preferred Professors Score
               <a tabindex="0"
                  role="button"
                  class="btn p-0 mr-4"
@@ -598,7 +598,7 @@
     <div class="row text-center">
         {% if (controls[0] == True) %}
 
-                <div class="col-3 p-3">
+                <div class="col-lg-3 col-4 p-3">
                 <a href="/getplans/{{ plan.id }}"
                     class="btn btn-info h-100"
                     data-toggle="popover"
@@ -610,7 +610,7 @@
                 </a>
                 </div>
                 {% if (controls[1] == True) %}
-                <div class="col-3  p-3">
+                <div class="col-lg-3 col-4  p-3">
                     <a href="/rankplans/{{ plan.id }}"
                         class="btn btn-warning h-100"
                         data-toggle="popover"
@@ -622,7 +622,7 @@
                     </a>
                 </div>
                 {% endif %}
-                <div class="col-2  p-3 my-auto">
+                <div class="col-lg-2 col-4 p-3 my-auto">
                 <a href="/deleteplan/{{ plan.id }}"
                     class="text-danger h-100"
                     data-toggle="modal"
@@ -630,7 +630,7 @@
                     <span class="text">Delete Plan</span>
                 </a>
                 </div>
-                <div class="col-4">
+                <div class="col-lg-4 col-12">
                     <span class="text-white text-right align-self-center">
                         {% for date in editDate %}
                         {{ date }}: {{ editDate[date] }}

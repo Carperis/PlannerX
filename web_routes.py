@@ -429,7 +429,7 @@ def plan(planID):
 
     guidance = {
         "planname": ["Plan Name", "Give a name for your course plan."],
-        "AvgScore": ["Average Professor Score", "Enter a average RateMyProfessor score (0~5) of your professors. When you rank your plans, the plans with higher average score will be ranked higher."],
+        "AvgScore": ["Preferred Professor Score", "Enter a preferred RateMyProfessor average score (0~5) of your professors. When you rank your plans, the plans with higher average score will be ranked higher."],
         "EarlyTime": ["Preferred Starting Time", "Enter a time you prefer to start your first class in a day. When you rank your plans, the plans with later starting time will be ranked higher."],
         "LateTime": ["Preferred Ending Time", "Enter a time you prefer to end your last class in a day. When you rank your plans, the plans with earlier finishing time will be ranked higher."],
         "courses": ["Courses", "Select courses you want to take. You can type the course code or the course name to search for the course. Multiple courses selection is available."],
