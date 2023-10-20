@@ -40,7 +40,8 @@ def get_google_redirect_uri():
     # go https://console.cloud.google.com to set up redirect_uri
     if (get_public_ip() == "158.101.17.48"):
         # google_redirect_uri = "https://buplannerx.my.to/google_callback"
-        google_redirect_uri = "https://www.plannerx.app/google_callback"
+        # google_redirect_uri = "https://www.plannerx.app/google_callback"
+        google_redirect_uri = "https://www.myplannerx.com/google_callback"
     else:
         # google_redirect_uri="http://localhost:5000/google_callback"
         google_redirect_uri = "http://127.0.0.1:5000/google_callback"
