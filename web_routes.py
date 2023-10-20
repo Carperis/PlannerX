@@ -398,7 +398,7 @@ def plan(planID):
                     wapi.getPreference(
                         str(user.id), str(plan.id), prefDict, semester)
                     msg.append("Your prefereces is saved!")
-                    msg.append("Click [Plan Schedules] to see all possible schedules!")
+                    msg.append("Scroll Down & Click [Plan Schedules] to see all possible schedules!")
 
                     session['messages'] = msg
                     return redirect("/plan/" + str(plan.id))
@@ -503,7 +503,7 @@ def getPlans(planID):
         msg.append("Sorry, no schedule is available. There might be some inevitable time conflicts in your courses. Please try to change your preferences and submit again.")
     else:
         msg.append("Got your schedules! You can see them below.")
-        msg.append("Don't forget to [Rank Schedules] to get the best one!")
+        msg.append("Scroll Down & Click [Rank Schedules] to get the best one!")
 
     showSchedule(planID, 1)
     session['messages'] = msg
