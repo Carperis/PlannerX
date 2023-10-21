@@ -224,9 +224,15 @@ def getAndCheckSchedule(sections, sch):
             for day in oneNewtime[0]:
                 [srow, scol] = findIndex(day, startHr, startMin)
                 [erow, ecol] = findIndex(day, endHr, endMin)
-                if(not sch[srow][scol]):
+                boundary_condition1 = (srow < len(sch)-1)  and sch[srow][scol] and not sch[srow+1][scol]
+                boundary_condition2 = (erow > 1)  and sch[erow][ecol] and not sch[erow-1][ecol]
+                if((not sch[srow][scol]) or boundary_condition1):
+                    if(boundary_condition1):
+                        srow += 1
                     sch[srow][scol] = title
-                    if(not sch[erow][ecol]):
+                    if((not sch[erow][ecol]) or boundary_condition2):
+                        if(boundary_condition2):
+                            erow -= 1
                         sch[erow][ecol] = title
                         for i in range(srow+1, erow):
                             if (not sch[i][ecol]):
