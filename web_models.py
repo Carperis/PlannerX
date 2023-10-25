@@ -15,7 +15,7 @@ class User(db.Model, UserMixin):
     google = db.Column(db.Boolean, default=False)
     verify = db.Column(db.Boolean, default=False)
     
-    def get_token(self, expires_sec=300):
+    def get_token(self, expires_sec=1200):
         s = Serializer(app.config['SECRET_KEY'], expires_sec)
         return s.dumps({'user_id': self.id}).decode('utf-8')
     

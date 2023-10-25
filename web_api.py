@@ -56,7 +56,7 @@ def send_reset_email(user):
     msg = Message('Password Reset Request',
                   sender=app.config['MAIL_USERNAME'],
                   recipients=[user.email])
-    msg.body = f'''To reset your password, please visit the following link. The link will be expired in 5 minutes.  
+    msg.body = f'''To reset your password, please visit the following link. The link will be expired in 20 minutes.  
 {url_for('reset_password_token', token=token, _external=True)}
 
 If you did not make this request then simply ignore this email and no changes will be made.
@@ -72,7 +72,7 @@ def send_verification_email(user):
     msg = Message('Email Verification Request',
                   sender=app.config['MAIL_USERNAME'],
                   recipients=[user.email])
-    msg.body = f'''To confirm your email, please visit the following link. The link will be expired in 5 minutes.
+    msg.body = f'''To confirm your email, please visit the following link. The link will be expired in 20 minutes.
 {url_for('email_verification_token', token=token, _external=True)}
 
 If you did not make this request then simply ignore this email and no changes will be made.
