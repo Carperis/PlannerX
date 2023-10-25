@@ -165,6 +165,8 @@ def reset_password_request():
                     "An email has been sent with instructions to reset your password.")
                 msg.append(
                     "Please be mind that there might be 5-10 min delay for the email to be sent.")
+                msg.append(
+                    "If you still can't receive the email, please click [Reset Password] again.")
                 # warning = "An email has been sent with instructions to reset your password."
                 # return redirect(f'/login?warning={warning}')
     return render_template('reset_password_request.html', form=form, msg=msg)
@@ -224,6 +226,8 @@ def email_verification_request():
                     "An email has been sent with instructions to verify your email.")
                 msg.append(
                     "Please be mind that there might be 5-10 min delay for the email to be sent.")
+                msg.append(
+                    "If you still can't receive the email, please click [Verify Email] again.")
                 # warning = "An email has been sent with instructions to verify your email."
                 # return redirect(f'/login?warning={warning}')
     return render_template('email_verification_request.html', form=form, msg=msg, email=email)
