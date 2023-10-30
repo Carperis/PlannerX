@@ -14,3 +14,4 @@ flask_wtf
 wtforms
 itsdangerous==2.0.1
 authlib
+pytz
