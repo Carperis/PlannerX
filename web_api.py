@@ -8,6 +8,7 @@ import xlrd
 from datetime import datetime
 import shutil
 from threading import Thread
+import pytz
 
 # The following are custom modules
 import AutoSelection
@@ -15,6 +16,14 @@ import AddPlanDetails
 import AutoRanking
 import GetSeats
 import GetSchedulePic
+
+
+def get_time():
+    EDT = pytz.timezone("US/Eastern")
+    current_time = datetime.now()
+    formatted_time = current_time.astimezone(
+        EDT).strftime("%Y-%m-%d %H:%M:%S %Z |")
+    return formatted_time
 
 
 def allow_access(user, other):
@@ -47,9 +56,11 @@ def get_google_redirect_uri():
         google_redirect_uri = "http://127.0.0.1:5000/google_callback"
     return google_redirect_uri
 
+
 def send_async_email(app, msg):
     with app.app_context():
         mail.send(msg)
+
 
 def send_reset_email(user):
     token = user.get_token()
@@ -64,7 +75,7 @@ If you did not make this request then simply ignore this email and no changes wi
     # mail.send(msg)
     thr = Thread(target=send_async_email, args=[app, msg])
     thr.start()
-    print(f"{user.email} (ID:{user.id}) Reset password requested!")
+    print(f"{get_time()} {user.email} (ID:{user.id}) Reset password requested!")
 
 
 def send_verification_email(user):
@@ -80,7 +91,7 @@ If you did not make this request then simply ignore this email and no changes wi
     # mail.send(msg)
     thr = Thread(target=send_async_email, args=[app, msg])
     thr.start()
-    print(f"{user.email} (ID:{user.id}) Email verification requested!")
+    print(f"{get_time()} {user.email} (ID:{user.id}) Email verification requested!")
 
 
 def getPreference(userID, planID, prefDict, semesterNew):
@@ -357,7 +368,8 @@ def delete_user_files(userID):
         shutil.rmtree(path2)
     except:
         pass
-    
+
+
 def delete_plan_files(planID):
     path1 = "./Users/"+str(planID)+"/"+str(planID)+"/"
     path2 = "./static/Users/"+str(planID)+"/"+str(planID)+"/"
@@ -369,11 +381,11 @@ def delete_plan_files(planID):
         shutil.rmtree(path2)
     except:
         pass
-    
+
+
 def get_total_plan_num(userID, planID, semester):
     file_path = "./Users/" + str(userID) + "/" + \
         str(planID) + "/" + semester + " Info.xls"
     book = xlrd.open_workbook(file_path)
     num_of_sheets = len(book.sheet_names())
     return num_of_sheets
-    

@@ -57,7 +57,7 @@ def google_callback():
                 userID = user.id
                 path = "./Users/" + str(userID) + "/"
                 wapi.checkFolder(path)
-                print(f"{user.email} (ID:{user.id}) Google login success!")
+                print(f"{wapi.get_time()} {user.email} (ID:{user.id}) Google login success!")
                 login_user(user, remember=True)
                 return redirect(url_for('dashboard'))
             else:
@@ -128,7 +128,7 @@ def login():
                         userID = user.id
                         path = "./Users/" + str(userID) + "/"
                         wapi.checkFolder(path)
-                        print(f"{user.email} (ID:{user.id}) Login success!")
+                        print(f"{wapi.get_time()} {user.email} (ID:{user.id}) Login success!")
                         login_user(user, remember=form.remember.data)
                         return redirect(url_for('dashboard'))
                 else:
@@ -193,7 +193,7 @@ def reset_password_token(token):
                 form.password.data).decode('utf-8')
             user.password = hashed_password
             db.session.commit()
-            print(f"{user.email} (ID:{user.id}) Reset password success!")
+            print(f"{wapi.get_time()} {user.email} (ID:{user.id}) Reset password success!")
             warning = "Your password has been updated! You are now able to login."
             return redirect(f'/login?warning={warning}')
     return render_template('reset_password_token.html', form=form, msg=msg)
@@ -246,7 +246,7 @@ def email_verification_token(token):
     user.verify = True
     email = user.email
     db.session.commit()
-    print(f"{user.email} (ID:{user.id}) Email verification success!")
+    print(f"{wapi.get_time()} {user.email} (ID:{user.id}) Email verification success!")
     return render_template('email_verification_token.html', msg=msg, email=email)
 
 
@@ -404,7 +404,7 @@ def plan(planID):
                     path = "./Users/"+str(user.id)+"/"+str(plan.id)+"/"
                     if (os.path.exists(path)):
                         shutil.rmtree(path)
-                    print(f"{user.email} (ID:{user.id}) ", end='')
+                    print(f"{wapi.get_time()} {user.email} (ID:{user.id}) ", end='')
                     wapi.getPreference(
                         str(user.id), str(plan.id), prefDict, semester)
                     msg.append("Your prefereces is saved!")
@@ -437,7 +437,7 @@ def plan(planID):
 
     guidance = {
         "planname": ["Plan Name", "Give a name for your course plan."],
-        "AvgScore": ["Preferred Professor Score", "Enter a preferred RateMyProfessor average score (0~5) of your professors. When you rank your plans, the plans with higher average score will be ranked higher."],
+        "AvgScore": ["Preferred Professors Score", "Enter a preferred RateMyProfessor average score (0~5) of your professors. When you rank your plans, the plans with higher average score will be ranked higher."],
         "EarlyTime": ["Preferred Starting Time", "Enter a time you prefer to start your first class in a day. When you rank your plans, the plans with later starting time will be ranked higher."],
         "LateTime": ["Preferred Ending Time", "Enter a time you prefer to end your last class in a day. When you rank your plans, the plans with earlier finishing time will be ranked higher."],
         "courses": ["Courses", "Select courses you want to take. You can type the course code or the course name to search for the course. Multiple courses selection is available."],
@@ -466,7 +466,7 @@ def deletePlan(planID):
             db.session.delete(plan)
             db.session.commit()
             wapi.delete_user_files(planID)
-            print(f"{user.email} (ID:{user.id}) delete plan (ID:{planID}) success!")
+            print(f"{wapi.get_time()} {user.email} (ID:{user.id}) delete plan (ID:{planID}) success!")
         except:
             pass
         return redirect(url_for('dashboard'))
@@ -489,7 +489,7 @@ def deleteUser():
             db.session.delete(plan)
         db.session.commit()
         wapi.delete_user_files(userID)
-        print(f"{userEmail} (ID:{userID}) delete user success!")
+        print(f"{wapi.get_time()} {userEmail} (ID:{userID}) delete user success!")
     except Exception as e:
         print("Error in deleting user: " + str(e))
     return redirect(url_for('index'))
@@ -510,7 +510,7 @@ def getPlans(planID):
         path = "./Users/" + userID + "/" + planID + "/" + semester + " " + name + ".xls"
         if (os.path.exists(path)):
             os.remove(path)
-    print(f"{user.email} (ID:{user.id}) ", end='')
+    print(f"{wapi.get_time()} {user.email} (ID:{user.id}) ", end='')
     result = wapi.get_all_schedules(semester, userID, planID)
     if (result == 0):
         msg.append("Sorry, no schedule is available. There might be some inevitable time conflicts in your courses. Please try to change your preferences and submit again.")
@@ -533,7 +533,7 @@ def rankPlans(planID):
     userID = str(user.id)
     planID = str(planID)
     semester = plan.semester
-    print(f"{user.email} (ID:{user.id}) ", end='')
+    print(f"{wapi.get_time()} {user.email} (ID:{user.id}) ", end='')
     try:
         msg += wapi.rank_all_schedules(semester,
                                        userID, planID, ignoreSeats=True)
